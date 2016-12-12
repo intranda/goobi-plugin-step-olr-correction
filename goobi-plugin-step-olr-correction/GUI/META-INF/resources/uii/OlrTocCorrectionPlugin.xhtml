@@ -1,0 +1,270 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/uii/template/template.html"
+	xmlns:x="http://myfaces.apache.org/tomahawk"
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites">
+
+	<ui:param name="myPageTitle"
+		value="#{msgs.plugin}: #{msgs[('plugin_').concat(AktuelleSchritteForm.myPlugin.title)]}" />
+
+	<ui:define name="breadcrumb">
+		<intranda:breadcrumb label="#{msgs.startseite}" action="index"
+			navId="a0" />
+		<intranda:breadcrumb label="#{msgs.aktuelleSchritte}"
+			action="#{AktuelleSchritteForm.paginator.returnToPreviousPage}" />
+		<intranda:breadcrumb
+			label="#{AktuelleSchritteForm.mySchritt.prozess.titel}"
+			action="task_edit" />
+		<intranda:breadcrumb label="#{myPageTitle}" noSeparator="#{true}" />
+	</ui:define>
+
+	<ui:define name="info">
+	</ui:define>
+
+	<ui:define name="content">
+
+		<style>
+
+.big-image-caption {
+	text-align: center;
+}
+
+.div-image img {
+	float: right;
+	border: solid 1px;
+	border-color: lightgrey;
+}
+
+.img-active {
+	background-color: #368ee0;
+	color: white;
+}
+
+.image-navigation {
+	margin-bottom: 5px;
+}
+
+#image-control-wrapper {
+	margin-left: 6px;
+}
+
+#mainImage {
+	widht: 100%;
+}
+</style>
+
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/openseadragon/openseadragon.min.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/openseadragon/openseadragon-viewerinputhook.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.controls.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.zoomSlider.js"></script>
+
+		<h:form id="qaform">
+			<div class="box box-color lightgrey box-bordered">
+				<div class="box-title">
+					<h3>
+						<i class="fa fa-puzzle-piece" />
+						<h:outputText id="id9" value="#{msgs.details}" />
+					</h3>
+					<div class="actions">
+						<h:commandLink id="id10" action="#{NavigationForm.Reload}"
+							styleClass="btn btn-mini">
+							<i class="fa fa-refresh" />
+						</h:commandLink>
+					</div>
+				</div>
+
+				<div class="box-content">
+
+					<h:panelGroup layout="block" styleClass="col-sm-7">
+						<x:dataList
+							value="#{AktuelleSchritteForm.myPlugin.image.entryList}"
+							var="entry">
+
+
+							<intranda:formInputText label="#{msgs.title}"
+								field="#{entry.title}" help="#{msgs.title}" name="title"
+								fieldStyle="form-control" displayAsRequired="false"
+								required="false" forceId="false" />
+							<intranda:formInputText label="#{msgs.authors}"
+								field="#{entry.authors}" help="#{msgs.authors}" name="authors"
+								fieldStyle="form-control" displayAsRequired="false"
+								required="false" forceId="false" />
+							<intranda:formInputText label="#{msgs.institutions}"
+								field="#{entry.institutions}" help="#{msgs.institutions}"
+								name="institutions" fieldStyle="form-control"
+								displayAsRequired="false" required="false" forceId="false" />
+							<intranda:formInputText label="#{msgs.pageLabel}"
+								field="#{entry.pageLabel}" help="#{msgs.pageLabel}"
+								name="pageLabel" fieldStyle="form-control"
+								displayAsRequired="false" required="false" forceId="false" />
+							<div>
+								<h:outputText value="&amp;nbsp;" escape="false"></h:outputText>
+								<h:commandLink
+									action="#{AktuelleSchritteForm.myPlugin.image.removeEntry}"
+									styleClass="pull-right">
+									<i class="fa fa-trash-o"></i>
+									<f:setPropertyActionListener value="#{entry}"
+										target="#{AktuelleSchritteForm.myPlugin.image.currentEntry}"></f:setPropertyActionListener>
+								</h:commandLink>
+							</div>
+
+						</x:dataList>
+
+						<h:commandLink
+							action="#{AktuelleSchritteForm.myPlugin.image.createEntry}">
+							<i class="fa fa-plus"></i>
+							<h:outputText value="#{msgs.createEntry}"></h:outputText>
+						</h:commandLink>
+
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="col-sm-5">
+
+						<h:panelGroup id="bigimage">
+
+							<div class="row pull-center">
+								<f:subview id="first_image">
+									<ui:include src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+								</f:subview>
+								<ui:include src="OlrTocCorrectionPlugin_include_imageControls.xhtml" />
+							</div>
+
+							<!-- big image -->
+							<div class="row margin-top-most margin-bottom-most">
+								<h:panelGroup styleClass="div-image" layout="block">
+									<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
+									<div id="mainImage" class="margin-bottom-regular"
+										rendered="#{AktuelleSchritteForm.myPlugin.image != null}" />
+									<div class="big-image-caption margin-top-regular font-light">
+										<h:outputText
+											value="#{AktuelleSchritteForm.myPlugin.image.imageName}" />
+									</div>
+									<script type="text/javascript">
+                                    $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.imageHeight}/#{AktuelleSchritteForm.myPlugin.imageWidth});
+                                    var imageViewConfig = {
+                            			    global: {
+                            			        divId : 'mainImage',
+                            			        zoomSlider : 'zoomSlider',
+                            			        maxZoomLevel: 10
+                            			    },
+                            			    image: {
+                            			        mimeType: "image/jpg",
+                            			        imageLevels: #{AktuelleSchritteForm.myPlugin.image.imageLevels},
+                            			        imageOriginalWidth: #{AktuelleSchritteForm.myPlugin.imageWidth},
+                            			        imageOriginalHeight: #{AktuelleSchritteForm.myPlugin.imageHeight},
+                            			        imageViewWidth: $('#mainImage').width(),
+                            			        imageViewHeight: $('#mainImage').height(),
+                            			        tileUrl: null
+                            			    }
+                            			}; 
+                                    viewImage.close();
+                                    viewImage.init(imageViewConfig);
+                                    </script>
+								</h:panelGroup>
+							</div>
+							<!-- // big image -->
+
+							<div class="row">
+								<f:subview id="second_image">
+									<ui:include src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+								</f:subview>
+							</div>
+
+						</h:panelGroup>
+					</h:panelGroup>
+
+					<h:panelGroup layout="block"
+						rendered="#{AktuelleSchritteForm.myPlugin.sizeOfImageList == 0}"
+						styleClass="col-sm-12">
+						<h:outputText value="#{msgs.noImagesFound}" />
+					</h:panelGroup>
+				</div>
+
+				<div class="form-actions">
+
+					<!-- Save -->
+					<h:commandLink
+						styleClass="btn btn-lightgrey pull-right font-size-s" id="cancel"
+						action="#{AktuelleSchritteForm.myPlugin.cancel}">
+						<i class="fa fa-check margin-right-5"></i>
+						<h:outputText value="#{msgs.pluginLeave}" />
+					</h:commandLink>
+
+
+
+					<h:commandLink
+						styleClass="btn btn-lightgrey pull-right font-size-s" id="save"
+						action="#{AktuelleSchritteForm.myPlugin.finish}">
+						<i class="fa fa-check margin-right-5"></i>
+						<h:outputText value="#{msgs.saveAndLeave}" />
+					</h:commandLink>
+				</div>
+
+			</div>
+
+		</h:form>
+
+
+		<script type="text/javascript">
+
+	window.onload = function() {
+    	loadImages();
+    }
+	
+  
+
+
+jsf.ajax.addOnEvent(function(data) {
+    var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+      
+      switch (ajaxstatus) {
+          case "success": // This is called when ajax response is successfully processed.
+              loadImages();
+            
+              break;
+      }
+	
+});
+
+function copyValue(element, e) {
+    console.log(element.id);
+    if (element.id =='qaform:first:txtMoveTo2') {
+        document.getElementById('qaform:second:txtMoveTo2').value = element.value;
+    } else if (element.id =='qaform:second:txtMoveTo2'){
+        document.getElementById('qaform:first:txtMoveTo2').value = element.value;
+    } else if (element.id =='qaform:first_image:txtImageMoveTo2') {
+        document.getElementById('qaform:second_image:txtImageMoveTo2').value = element.value;
+    } else {
+        document.getElementById('qaform:first_image:txtImageMoveTo2').value = element.value;
+    }
+    
+    var keycode;
+	if (window.event)
+		keycode = window.event.keyCode;
+	else if (e)
+		keycode = e.which;
+	else
+		return true;
+	
+	if (keycode == 13) {
+		document.getElementById(element.id).nextSibling.click();
+		return false;
+	} else
+		return true;
+    
+}
+
+</script>
+	</ui:define>
+
+</ui:composition>

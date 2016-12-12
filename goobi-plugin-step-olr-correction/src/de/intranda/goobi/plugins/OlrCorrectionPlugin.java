@@ -343,7 +343,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
     @Override
     public String getPagePath() {
-        return "/" + getTheme() + "/ImageQAPlugin.xhtml";
+        return "/" + getTheme() + "/OlrTocCorrectionPlugin.xhtml";
     }
 
     @Override
