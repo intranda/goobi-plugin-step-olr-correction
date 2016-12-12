@@ -72,19 +72,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private static final String PLUGIN_NAME = "intranda_step_olr-correction";
 
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
-    private int THUMBNAIL_SIZE_IN_PIXEL = 175;
-    private String THUMBNAIL_FORMAT = "png";
+//    private int THUMBNAIL_SIZE_IN_PIXEL = 175;
+//    private String THUMBNAIL_FORMAT = "png";
     private String MAINIMAGE_FORMAT = "jpg";
-    private boolean allowDeletion = false;
-    private boolean allowRotation = false;
-    private boolean allowRenaming = false;
-    private boolean allowSelection = false;
-    private boolean allowDownload = false;
-
-    private String rotationCommandLeft = "";
-    private String rotationCommandRight = "";
-    private String deletionCommand = "";
-    boolean askForConfirmation = true;
+//    private boolean allowDeletion = false;
+//    private boolean allowRotation = false;
+//    private boolean allowRenaming = false;
+//    private boolean allowSelection = false;
+//    private boolean allowDownload = false;
+//
+//    private String rotationCommandLeft = "";
+//    private String rotationCommandRight = "";
+//    private String deletionCommand = "";
+//    boolean askForConfirmation = true;
 
     private int pageNo = 0;
 
@@ -118,19 +118,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             }
         }
 
-        allowDeletion = myconfig.getBoolean("allowDeletion", false);
-        allowRotation = myconfig.getBoolean("allowRotation", false);
-        allowRenaming = myconfig.getBoolean("allowRenaming", false);
-        allowSelection = myconfig.getBoolean("allowSelection", false);
-        allowDownload = myconfig.getBoolean("allowDownload", false);
-
-        deletionCommand = myconfig.getString("deletionCommand", "-");
-        rotationCommandLeft = myconfig.getString("rotationCommands.left", "-");
-        rotationCommandRight = myconfig.getString("rotationCommands.right", "-");
-
-        NUMBER_OF_IMAGES_PER_PAGE = myconfig.getInt("numberOfImagesPerPage", 50);
-        THUMBNAIL_SIZE_IN_PIXEL = myconfig.getInt("thumbnailsize", 200);
-        THUMBNAIL_FORMAT = myconfig.getString("thumbnailFormat", "png");
+//        allowDeletion = myconfig.getBoolean("allowDeletion", false);
+//        allowRotation = myconfig.getBoolean("allowRotation", false);
+//        allowRenaming = myconfig.getBoolean("allowRenaming", false);
+//        allowSelection = myconfig.getBoolean("allowSelection", false);
+//        allowDownload = myconfig.getBoolean("allowDownload", false);
+//
+//        deletionCommand = myconfig.getString("deletionCommand", "-");
+//        rotationCommandLeft = myconfig.getString("rotationCommands.left", "-");
+//        rotationCommandRight = myconfig.getString("rotationCommands.right", "-");
+//
+//        NUMBER_OF_IMAGES_PER_PAGE = myconfig.getInt("numberOfImagesPerPage", 50);
+//        THUMBNAIL_SIZE_IN_PIXEL = myconfig.getInt("thumbnailsize", 200);
+//        THUMBNAIL_FORMAT = myconfig.getString("thumbnailFormat", "png");
         MAINIMAGE_FORMAT = myconfig.getString("mainImageFormat", "jpg");
         imageSizes = myconfig.getList("imagesize");
         if (imageSizes == null || imageSizes.isEmpty()) {
@@ -197,11 +197,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         } else {
             subList = allImages.subList(pageNo * NUMBER_OF_IMAGES_PER_PAGE, allImages.size());
         }
-        //        for (Image currentImage : subList) {
-        //            if (StringUtils.isEmpty(currentImage.getThumbnailUrl())) {
-        //                createImage(currentImage);
-        //            }
-        //        }
         return subList;
     }
 
@@ -210,12 +205,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         if (currentImage.getSize() == null) {
             currentImage.setSize(getActualImageSize(currentImage));
         }
-
-        //        String thumbUrl = createImageUrl(currentImage, THUMBNAIL_SIZE_IN_PIXEL, THUMBNAIL_FORMAT, "");
-        //        currentImage.setThumbnailUrl(thumbUrl);
-        //
-        //        String largeThumbUrl = createImageUrl(currentImage, THUMBNAIL_SIZE_IN_PIXEL * 4, THUMBNAIL_FORMAT, "");
-        //        currentImage.setLargeThumbnailUrl(largeThumbUrl);
 
         String contextPath = getContextPath();
         for (String sizeString : imageSizes) {
@@ -585,14 +574,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         return allImages.size();
     }
 
-    public int getThumbnailSize() {
-        return THUMBNAIL_SIZE_IN_PIXEL;
-    }
-
-    public void setThumbnailSize(int value) {
-
-    }
-
     private String getTheme() {
         FacesContext context = FacesContextHelper.getCurrentFacesContext();
         String completePath = context.getExternalContext().getRequestServletPath();
@@ -603,189 +584,4 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         return "";
     }
 
-    public String renameImages(Image myimage) {
-        DecimalFormat myFormatter = new DecimalFormat("0000");
-
-        int myindex = getImageIndex();
-        int generalCounter = 1;
-        int fileCounter = 1;
-        boolean imageFound = false;
-
-        System.out.println("Dateien werden jetzt umbenannt auf der Basis von: " + myimage.getTempName());
-
-        //Path path = Paths.get(imageFolderName + myimage.getImageName());
-        for (Path f : NIOFileUtils.listFiles(imageFolderName)) {
-            String filenameold = f.getFileName().toString();
-            String prefix = myFormatter.format(generalCounter) + "_";
-            String suffix = filenameold.substring(filenameold.lastIndexOf("."), filenameold.length());
-
-            if (!imageFound && myimage.getImageName().equals(filenameold)) {
-                imageFound = true;
-                System.out.println("Bild gefunden: " + filenameold);
-            }
-
-            if (imageFound) {
-                String filenamenew = prefix + myimage.getTempName() + "_" + myFormatter.format(fileCounter) + suffix;
-                System.out.println(filenameold + " will be renamed to " + filenamenew);
-                try {
-                    NIOFileUtils.renameTo(f, filenamenew);
-                } catch (IOException e) {
-                    log.error(e);
-                }
-                fileCounter++;
-            } else {
-                System.out.println(filenameold + " will not be renamed");
-            }
-
-            generalCounter++;
-
-        }
-        //        if (Files.exists(path)) {
-        //            NIOFileUtils.deleteDir(path);
-        //        }
-        allImages = new ArrayList<Image>();
-        initialize(this.step, "");
-
-        for (Image image : allImages) {
-            image.setTempName(myimage.getTempName());
-        }
-
-        setImageIndex(myindex);
-        return "";
-    }
-
-    public void deleteImage(Image myimage) {
-        callScript(myimage, deletionCommand, true);
-    }
-
-    public void rotateRight(Image myimage) {
-        callScript(myimage, rotationCommandRight, false);
-    }
-
-    public void rotateLeft(Image myimage) {
-        callScript(myimage, rotationCommandLeft, false);
-    }
-
-    public void deleteSelection() {
-        for (Image image : allImages) {
-            if (image.isSelected()) {
-                callScript(image, deletionCommand, true);
-            }
-        }
-    }
-
-    public void rotateSelectionRight() {
-        for (Image image : allImages) {
-            if (image.isSelected()) {
-                callScript(image, rotationCommandRight, false);
-            }
-        }
-    }
-
-    public void rotateSelectionLeft() {
-        for (Image image : allImages) {
-            if (image.isSelected()) {
-                callScript(image, rotationCommandLeft, false);
-            }
-        }
-    }
-
-    public void callScript(Image myimage, String rotationCommand, boolean selectOtherImage) {
-        int myindex = getImageIndex();
-        if (selectOtherImage && myindex == allImages.indexOf(myimage)) {
-            myindex--;
-        }
-        String command = rotationCommand.replace("IMAGE_FILE", imageFolderName + myimage.getImageName());
-        command = command.replace("IMAGE_FOLDER", imageFolderName);
-        log.debug(command);
-
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            int result = process.waitFor();
-            if (result != 0) {
-                log.debug("A problem occured while calling command '" + command + "'. Error code was " + result);
-            }
-        } catch (IOException e) {
-            log.error("IOException in rotate()", e);
-            Helper.setFehlerMeldung("Aborted Command '" + command + "' in callScript()!");
-        } catch (InterruptedException e) {
-            log.error("InterruptedException in callScript()", e);
-            Helper.setFehlerMeldung("Command '" + command + "' is interrupted in callScript()!");
-        }
-
-        allImages = new ArrayList<Image>();
-        initialize(this.step, "");
-
-        setImageIndex(myindex);
-    }
-
-    public void selectAllImages() {
-        for (Image image : allImages) {
-            image.setSelected(true);
-        }
-    }
-
-    public void unselectAllImages() {
-        for (Image image : allImages) {
-            image.setSelected(false);
-        }
-    }
-
-    public void downloadSelectedImages() {
-
-        BufferedInputStream buf = null;
-
-        try {
-            Path tempfile = Files.createTempFile(step.getProzess().getTitel(), ".zip");
-
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempfile.toFile()));
-
-            for (Image image : allImages) {
-                if (image.isSelected()) {
-                    Path currentImagePath = Paths.get(imageFolderName, image.getImageName());
-                    FileInputStream in = new FileInputStream(currentImagePath.toFile());
-                    out.putNextEntry(new ZipEntry(image.getImageName()));
-                    byte[] b = new byte[1024];
-                    int count;
-
-                    while ((count = in.read(b)) > 0) {
-                        out.write(b, 0, count);
-                    }
-                    in.close();
-                }
-            }
-            out.close();
-
-            FacesContext facesContext = FacesContextHelper.getCurrentFacesContext();
-            ExternalContext ec = facesContext.getExternalContext();
-            ec.responseReset();
-            ec.setResponseContentType("application/zip");
-            ec.setResponseContentLength((int) Files.size(tempfile));
-
-            ec.setResponseHeader("Content-Disposition", "attachment; filename=" + step.getProzess().getTitel() + ".zip");
-            OutputStream responseOutputStream = ec.getResponseOutputStream();
-
-            FileInputStream input = new FileInputStream(tempfile.toString());
-            buf = new BufferedInputStream(input);
-            int readBytes = 0;
-
-            //read from the file; write to the ServletOutputStream
-            while ((readBytes = buf.read()) != -1) {
-                responseOutputStream.write(readBytes);
-            }
-            responseOutputStream.flush();
-            responseOutputStream.close();
-            facesContext.responseComplete();
-        } catch (IOException e) {
-            log.error(e);
-        } finally {
-            if (buf != null) {
-                try {
-                    buf.close();
-                } catch (IOException e) {
-                    log.error(e);
-                }
-            }
-        }
-    }
 }
