@@ -29,7 +29,6 @@
 	<ui:define name="content">
 
 		<style>
-
 .big-image-caption {
 	text-align: center;
 }
@@ -69,7 +68,7 @@
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.zoomSlider.js"></script>
 
-		<h:form id="qaform">
+		<h:form id="qaform" styleClass="form-horizontal form-bordered">
 			<div class="box box-color lightgrey box-bordered">
 				<div class="box-title">
 					<h3>
@@ -84,72 +83,87 @@
 					</div>
 				</div>
 
-				<div class="box-content">
-
-					<h:panelGroup layout="block" styleClass="col-sm-7">
-						<x:dataList
-							value="#{AktuelleSchritteForm.myPlugin.image.entryList}"
-							var="entry">
-
-
-							<intranda:formInputText label="#{msgs.title}"
-								field="#{entry.title}" help="#{msgs.title}" name="title"
-								fieldStyle="form-control" displayAsRequired="false"
-								required="false" forceId="false" />
-							<intranda:formInputText label="#{msgs.authors}"
-								field="#{entry.authors}" help="#{msgs.authors}" name="authors"
-								fieldStyle="form-control" displayAsRequired="false"
-								required="false" forceId="false" />
-							<intranda:formInputText label="#{msgs.institutions}"
-								field="#{entry.institutions}" help="#{msgs.institutions}"
-								name="institutions" fieldStyle="form-control"
-								displayAsRequired="false" required="false" forceId="false" />
-							<intranda:formInputText label="#{msgs.pageLabel}"
-								field="#{entry.pageLabel}" help="#{msgs.pageLabel}"
-								name="pageLabel" fieldStyle="form-control"
-								displayAsRequired="false" required="false" forceId="false" />
-							<div>
-								<h:outputText value="&amp;nbsp;" escape="false"></h:outputText>
-								<h:commandLink
-									action="#{AktuelleSchritteForm.myPlugin.image.removeEntry}"
-									styleClass="pull-right">
-									<i class="fa fa-trash-o"></i>
-									<f:setPropertyActionListener value="#{entry}"
-										target="#{AktuelleSchritteForm.myPlugin.image.currentEntry}"></f:setPropertyActionListener>
-								</h:commandLink>
-							</div>
-
-						</x:dataList>
-
-						<h:commandLink
-							action="#{AktuelleSchritteForm.myPlugin.image.createEntry}">
-							<i class="fa fa-plus"></i>
-							<h:outputText value="#{msgs.createEntry}"></h:outputText>
-						</h:commandLink>
-
-					</h:panelGroup>
-					<h:panelGroup layout="block" styleClass="col-sm-5">
-
-						<h:panelGroup id="bigimage">
-
-							<div class="row pull-center">
-								<f:subview id="first_image">
-									<ui:include src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-								</f:subview>
-								<ui:include src="OlrTocCorrectionPlugin_include_imageControls.xhtml" />
-							</div>
-
-							<!-- big image -->
-							<div class="row margin-top-most margin-bottom-most">
-								<h:panelGroup styleClass="div-image" layout="block">
-									<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
-									<div id="mainImage" class="margin-bottom-regular"
-										rendered="#{AktuelleSchritteForm.myPlugin.image != null}" />
-									<div class="big-image-caption margin-top-regular font-light">
-										<h:outputText
-											value="#{AktuelleSchritteForm.myPlugin.image.imageName}" />
+				<div class="box-content nopadding">
+					<div class="row">
+						<div class="col-sm-7">
+							<x:dataList value="#{AktuelleSchritteForm.myPlugin.image.entryList}" var="entry">
+								<div class="row">
+									<div class="col-sm-11">
+										<intranda:formInputText style="border-right:1px solid #ccc"
+											label="#{msgs.plugin_intranda_step_olr_toc_title}"
+											field="#{entry.title}"
+											help="#{msgs.plugin_intranda_step_olr_toc_title}"
+											name="title" fieldStyle="form-control"
+											displayAsRequired="false" required="false" forceId="false" />
+										<intranda:formInputText style="border-right:1px solid #ccc"
+											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
+											field="#{entry.authors}"
+											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
+											name="authors" fieldStyle="form-control"
+											displayAsRequired="false" required="false" forceId="false" />
+										<intranda:formInputText style="border-right:1px solid #ccc"
+											label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
+											field="#{entry.institutions}"
+											help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
+											name="institutions" fieldStyle="form-control"
+											displayAsRequired="false" required="false" forceId="false" />
+										<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
+											label="#{msgs.plugin_intranda_step_olr_toc_page}"
+											field="#{entry.pageLabel}"
+											help="#{msgs.plugin_intranda_step_olr_toc_page}"
+											name="pageLabel" fieldStyle="form-control"
+											displayAsRequired="false" required="false" forceId="false" />
 									</div>
-									<script type="text/javascript">
+									<div class="col-sm-1 nopadding">
+										<h:commandLink
+											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
+											action="#{AktuelleSchritteForm.myPlugin.image.removeEntry}"
+											styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
+											<i class="fa fa-trash-o"></i>
+											<f:setPropertyActionListener value="#{entry}"
+												target="#{AktuelleSchritteForm.myPlugin.image.currentEntry}"></f:setPropertyActionListener>
+										</h:commandLink>
+									</div>
+
+								</div>
+							</x:dataList>
+
+							<div class="row">
+								<div class="col-sm-11">
+									<!-- Create -->
+									<h:commandLink
+										styleClass="btn btn-blue pull-right font-size-s margin-top-10 margin-right-10"
+										action="#{AktuelleSchritteForm.myPlugin.image.createEntry}">
+										<i class="fa fa-plus margin-right-5"></i>
+										<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
+									</h:commandLink>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-5" style="padding:10px;right:30px;">
+							
+							<h:panelGroup id="bigimage">
+							
+								<div class="row pull-center">
+									<f:subview id="first_image">
+										<ui:include
+											src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+									</f:subview>
+									<ui:include
+										src="OlrTocCorrectionPlugin_include_imageControls.xhtml" />
+								</div>
+
+								<!-- big image -->
+								<div class="row margin-top-most margin-bottom-most">
+									<h:panelGroup styleClass="div-image" layout="block">
+										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
+										<div id="mainImage" class="margin-bottom-regular"
+											rendered="#{AktuelleSchritteForm.myPlugin.image != null}" />
+										<div class="big-image-caption margin-top-regular font-light">
+											<h:outputText
+												value="#{AktuelleSchritteForm.myPlugin.image.imageName}" />
+										</div>
+										<script type="text/javascript">
                                     $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.imageHeight}/#{AktuelleSchritteForm.myPlugin.imageWidth});
                                     var imageViewConfig = {
                             			    global: {
@@ -170,48 +184,46 @@
                                     viewImage.close();
                                     viewImage.init(imageViewConfig);
                                     </script>
-								</h:panelGroup>
-							</div>
-							<!-- // big image -->
+									</h:panelGroup>
+								</div>
+								<!-- // big image -->
 
-							<div class="row">
-								<f:subview id="second_image">
-									<ui:include src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-								</f:subview>
-							</div>
+								<div class="row">
+									<f:subview id="second_image">
+										<ui:include
+											src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+									</f:subview>
+								</div>
+							</h:panelGroup>
+						</div>
 
+						<h:panelGroup layout="block"
+							rendered="#{AktuelleSchritteForm.myPlugin.sizeOfImageList == 0}"
+							styleClass="col-sm-12">
+							<h:outputText value="#{msgs.noImagesFound}" />
 						</h:panelGroup>
-					</h:panelGroup>
+					</div>
 
-					<h:panelGroup layout="block"
-						rendered="#{AktuelleSchritteForm.myPlugin.sizeOfImageList == 0}"
-						styleClass="col-sm-12">
-						<h:outputText value="#{msgs.noImagesFound}" />
-					</h:panelGroup>
+					<div class="form-actions">
+
+						<!-- Cancel -->
+						<h:commandLink styleClass="btn font-size-s" id="cancel"
+							action="#{AktuelleSchritteForm.myPlugin.cancel}">
+							<h:outputText
+								value="#{msgs.plugin_intranda_step_olr_toc_pluginLeave}" />
+						</h:commandLink>
+
+						<!-- Save -->
+						<h:commandLink styleClass="btn btn-success pull-right font-size-s"
+							id="save" action="#{AktuelleSchritteForm.myPlugin.finish}">
+							<i class="fa fa-save margin-right-5"></i>
+							<h:outputText
+								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
+						</h:commandLink>
+					</div>
+
 				</div>
-
-				<div class="form-actions">
-
-					<!-- Save -->
-					<h:commandLink
-						styleClass="btn btn-lightgrey pull-right font-size-s" id="cancel"
-						action="#{AktuelleSchritteForm.myPlugin.cancel}">
-						<i class="fa fa-check margin-right-5"></i>
-						<h:outputText value="#{msgs.pluginLeave}" />
-					</h:commandLink>
-
-
-
-					<h:commandLink
-						styleClass="btn btn-lightgrey pull-right font-size-s" id="save"
-						action="#{AktuelleSchritteForm.myPlugin.finish}">
-						<i class="fa fa-check margin-right-5"></i>
-						<h:outputText value="#{msgs.saveAndLeave}" />
-					</h:commandLink>
-				</div>
-
 			</div>
-
 		</h:form>
 
 
