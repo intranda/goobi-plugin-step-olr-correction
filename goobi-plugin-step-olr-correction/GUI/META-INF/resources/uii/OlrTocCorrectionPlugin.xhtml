@@ -55,6 +55,96 @@
 #mainImage {
 	widht: 100%;
 }
+
+.pagenum {
+	opacity: 0.2;
+	background: #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+}
+
+.title {
+	opacity: 0.2;
+	background-color: #{AktuelleSchritteForm.myPlugin.colors['title']};
+}
+
+.author {
+	opacity: 0.2;
+	background-color: #{AktuelleSchritteForm.myPlugin.colors['author']};
+}
+
+.institution {
+	opacity: 0.2;
+	background-color: #{AktuelleSchritteForm.myPlugin.colors['institution']};
+}
+
+.entry {
+	opacity: 0.2;
+	background-color: #{AktuelleSchritteForm.myPlugin.colors['entry']};
+}
+
+.pagenum-border {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+}
+
+.title-border {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
+}
+
+.author-border {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
+}
+
+.institution-border {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
+}
+
+.entry-border {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['entry']};
+}
+
+
+
+.active-entry .pagenum-border-focus {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+}
+
+.active-entry .title-border-focus {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
+}
+
+.active-entry .author-border-focus {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
+}
+
+.active-entry .institution-border-focus {
+	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
+}
+
+.active-entry .control-label label {
+	font-weight: bold;
+}
+
+.toc-entry.active-entry .form-group .col-sm-9 {
+	background-color: #f6f6f6;
+}
+
+.toc-entry.active-entry .form-group {
+	background-color: #e6e6e6;
+}
+
+.scroll-y {
+	overflow-y: auto;
+	overflow-x: hidden;
+	direction: rtl;
+}
+
+.scroll-y div {
+ 	direction: ltr; 
+}
+
+.max-height {
+	max-height: 1106px;
+	height: 1106px;
+}
 </style>
 
 		<script type="text/javascript"
@@ -62,11 +152,23 @@
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/openseadragon/openseadragon-viewerinputhook.js"></script>
 		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rx.lite.min.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/q.min.js"></script>
+		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.js"></script>
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.controls.js"></script>
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.zoomSlider.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.overlays.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.tileSourceResolver.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.measures.js"></script>
+		<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rectDrawing.js"></script>
 
 		<h:form id="qaform" styleClass="form-horizontal form-bordered">
 			<div class="box box-color lightgrey box-bordered">
@@ -86,39 +188,45 @@
 				<div class="box-content nopadding">
 					<div class="row">
 						<div class="col-sm-7">
-							<x:dataList value="#{AktuelleSchritteForm.myPlugin.image.entryList}" var="entry">
+							<div class=" max-height scroll-y">
+							<x:dataList value="#{AktuelleSchritteForm.myPlugin.image.entryList}" var="entry" rowIndexVar="idx">
 								<div class="row">
-									<div class="col-sm-11">
+									<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
 										<intranda:formInputText style="border-right:1px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_title}"
 											field="#{entry.title}"
 											help="#{msgs.plugin_intranda_step_olr_toc_title}"
-											name="title" fieldStyle="form-control"
-											displayAsRequired="false" required="false" forceId="false" />
+											name="title" fieldStyle="form-control title-border-focus"
+											displayAsRequired="false" required="false" forceId="false" 
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
 											field="#{entry.authors}"
 											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
-											name="authors" fieldStyle="form-control"
-											displayAsRequired="false" required="false" forceId="false" />
+											name="authors" fieldStyle="form-control author-border-focus"
+											displayAsRequired="false" required="false" forceId="false" 
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
 											field="#{entry.institutions}"
 											help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
-											name="institutions" fieldStyle="form-control"
-											displayAsRequired="false" required="false" forceId="false" />
+											name="institutions" fieldStyle="form-control institution-border-focus"
+											displayAsRequired="false" required="false" forceId="false" 
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_page}"
 											field="#{entry.pageLabel}"
 											help="#{msgs.plugin_intranda_step_olr_toc_page}"
-											name="pageLabel" fieldStyle="form-control"
-											displayAsRequired="false" required="false" forceId="false" />
+											name="pageLabel" fieldStyle="form-control pagenum-border-focus"
+											displayAsRequired="false" required="false" forceId="false" 
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
 									</div>
 									<div class="col-sm-1 nopadding">
 										<h:commandLink
 											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
 											action="#{AktuelleSchritteForm.myPlugin.image.removeEntry}"
-											styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
+											styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
+											onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
 											<i class="fa fa-trash-o"></i>
 											<f:setPropertyActionListener value="#{entry}"
 												target="#{AktuelleSchritteForm.myPlugin.image.currentEntry}"></f:setPropertyActionListener>
@@ -127,7 +235,7 @@
 
 								</div>
 							</x:dataList>
-
+							</div>
 							<div class="row">
 								<div class="col-sm-11">
 									<!-- Create -->
@@ -144,13 +252,11 @@
 							
 							<h:panelGroup id="bigimage">
 							
-								<div class="row pull-center">
+								<div class="row">
 									<f:subview id="first_image">
 										<ui:include
 											src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
 									</f:subview>
-									<ui:include
-										src="OlrTocCorrectionPlugin_include_imageControls.xhtml" />
 								</div>
 
 								<!-- big image -->
@@ -165,24 +271,92 @@
 										</div>
 										<script type="text/javascript">
                                     $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.imageHeight}/#{AktuelleSchritteForm.myPlugin.imageWidth});
+                                    
+                                    var entryGroup = {
+	                                        name : "entry",
+	                                        styleClass : "entry",
+	                                        interactive: false
+	                                    }; 
+                                    var authorGroup = {
+	                                        name : "author",
+	                                        styleClass : "author",
+	                                        interactive: false
+	                                    }; 
+                                    var pagenumGroup = {
+	                                        name : "pagenum",
+	                                        styleClass : "pagenum",
+	                                        interactive: false
+	                                    }; 
+                                    var institutionGroup = {
+	                                        name : "institution",
+	                                        styleClass : "institution",
+	                                        interactive: false
+	                                    }; 
+                                    var titleGroup = {
+	                                        name : "title",
+	                                        styleClass : "title",
+	                                        interactive: false
+	                                    }; 
+                                    
+                                    var entryBorderGroup = {
+	                                        name : "entry-border",
+	                                        styleClass: "entry-border",
+	                                        interactive: false
+	                                    }; 
+                                    var authorBorderGroup = {
+	                                        name : "author-border",
+	                                        styleClass: "author-border",
+	                                        interactive: false
+	                                    }; 
+                                    var pagenumBorderGroup = {
+	                                        name : "pagenum-border",
+	                                        styleClass: "pagenum-border",
+	                                        interactive: false
+	                                    }; 
+                                    var institutionBorderGroup = {
+	                                        name : "institution-border",
+	                                        styleClass: "institution-border",
+	                                        interactive: false
+	                                    }; 
+                                    var titleBorderGroup = {
+	                                        name : "title-border",
+	                                        styleClass: "title-border",
+	                                        interactive: false
+	                                    }; 
                                     var imageViewConfig = {
                             			    global: {
+                            			        zoomSpeed: 0,
                             			        divId : 'mainImage',
                             			        zoomSlider : 'zoomSlider',
-                            			        maxZoomLevel: 10
+                            			        maxZoomLevel: 10,
+                            			        overlayGroups: [entryGroup, authorGroup, pagenumGroup, institutionGroup, titleGroup,
+                            			            entryBorderGroup, authorBorderGroup, pagenumBorderGroup, institutionBorderGroup, titleBorderGroup] 
                             			    },
                             			    image: {
-                            			        mimeType: "image/jpg",
-                            			        imageLevels: #{AktuelleSchritteForm.myPlugin.image.imageLevels},
-                            			        imageOriginalWidth: #{AktuelleSchritteForm.myPlugin.imageWidth},
-                            			        imageOriginalHeight: #{AktuelleSchritteForm.myPlugin.imageHeight},
-                            			        imageViewWidth: $('#mainImage').width(),
-                            			        imageViewHeight: $('#mainImage').height(),
-                            			        tileUrl: null
-                            			    }
-                            			}; 
+                                                mimeType: "image/jpg",
+                                                tileSource : '#{AktuelleSchritteForm.myPlugin.image.imageUrl}',
+                                            } 
+                            			};
                                     viewImage.close();
-                                    viewImage.init(imageViewConfig);
+                                    viewImage.init(imageViewConfig).then(function() {
+	                                    entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.image.entriesAsJSON}');
+	                                    scaleFactor = #{AktuelleSchritteForm.myPlugin.image.scale};
+	                                    if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
+	                                        drawAllRects(viewImage, entries, scaleFactor);
+	                                    } else {
+	                                    	$('#tocEntry'+0).find('input').first().focus();
+	                                    }
+	                                    $( '#mainImage' ).click( function( event ) {
+	                                        if(event.target.nodeName !== "CANVAS") {
+	                                            return;
+	                                        }
+	                                        var pixel = new OpenSeadragon.Point( event.offsetX, event.offsetY );
+	                                        var pos = viewImage.viewer.viewport.viewerElementToImageCoordinates( pixel );
+	                                        findAndMarkRect(entries, pos, scaleFactor);
+	                                    } );
+                                    }).catch(function(err) {
+                                        console.log(err);
+                                    });
                                     </script>
 									</h:panelGroup>
 								</div>

@@ -8,11 +8,11 @@
 	<composite:implementation>
 	<style>
 	.image-navigation {
-		display: inline-block;
+		text-align: center;
 	}
 	</style>
 		<!-- navigation for big image -->
-		<div class="pull-center image-navigation">
+		<div class="image-navigation">
 				<h:commandLink styleClass="btn font-size-s margin-sides-10" title="#{msgs.firstImage}">
 					<i class="fa fa-double-angle-left"></i>
 					<f:ajax execute="@form" render="@form :bigimage" />
@@ -53,8 +53,22 @@
 					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.sizeOfImageList - 1}" property="#{AktuelleSchritteForm.myPlugin.imageIndex}" />
 				</h:commandLink>
 				
+				<h:commandLink id="showAllButton"
+				onclick="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'drawCurrentSelected()':'drawAllRects(viewImage, entries, scaleFactor)'}"
+				action="#{NavigationForm.Reload}"
+				title="#{msgs.olr_showAllBlocks}"
+				styleClass="image-navigation btn pull-right #{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'btn-blue':''}">
+				<i class="fa fa-eye"></i>
+				<f:setPropertyActionListener
+					value="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'':'on'}"
+					target="#{NavigationForm.uiStatus.olr_showAllEntries}" />
+				<f:passThroughAttribute name="data-toggle" value="tooltip" />
+				<f:ajax execute="@this" render="@this"/>
+			</h:commandLink>
+				
 		</div>
-		<!-- // navigation for big image -->
+		
+		<div class="clearfix"></div>
 
 	</composite:implementation>
 </ui:composition>

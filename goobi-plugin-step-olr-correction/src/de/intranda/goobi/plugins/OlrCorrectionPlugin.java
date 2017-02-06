@@ -2,31 +2,29 @@ package de.intranda.goobi.plugins;
 
 import java.awt.Dimension;
 import java.awt.image.RenderedImage;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.nio.file.*;
-import java.text.DecimalFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
@@ -47,7 +45,6 @@ import org.jdom2.output.XMLOutputter;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.FacesContextHelper;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.NIOFileUtils;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -57,6 +54,7 @@ import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
 import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
+import de.unigoettingen.sub.commons.contentlib.imagelib.PngInterpreter;
 import de.unigoettingen.sub.commons.contentlib.servlet.controller.GetImageDimensionAction;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
@@ -72,19 +70,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private static final String PLUGIN_NAME = "intranda_step_olr-correction";
 
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
-//    private int THUMBNAIL_SIZE_IN_PIXEL = 175;
-//    private String THUMBNAIL_FORMAT = "png";
+    //    private int THUMBNAIL_SIZE_IN_PIXEL = 175;
+    //    private String THUMBNAIL_FORMAT = "png";
     private String MAINIMAGE_FORMAT = "jpg";
-//    private boolean allowDeletion = false;
-//    private boolean allowRotation = false;
-//    private boolean allowRenaming = false;
-//    private boolean allowSelection = false;
-//    private boolean allowDownload = false;
-//
-//    private String rotationCommandLeft = "";
-//    private String rotationCommandRight = "";
-//    private String deletionCommand = "";
-//    boolean askForConfirmation = true;
+    //    private boolean allowDeletion = false;
+    //    private boolean allowRotation = false;
+    //    private boolean allowRenaming = false;
+    //    private boolean allowSelection = false;
+    //    private boolean allowDownload = false;
+    //
+    //    private String rotationCommandLeft = "";
+    //    private String rotationCommandRight = "";
+    //    private String deletionCommand = "";
+    //    boolean askForConfirmation = true;
 
     private int pageNo = 0;
 
@@ -93,6 +91,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private String imageFolderName = "";
 
     private List<Image> allImages = new ArrayList<Image>();
+    private Map<String, String> colors;
 
     private Image image = null;
     private List<String> imageSizes;
@@ -100,6 +99,53 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private ExecutorService executor;
 
     private String returnPath;
+
+    public void setImage(Image image) {
+        this.image = image;
+        FacesContext context = FacesContextHelper.getCurrentFacesContext();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        String scaledImageOut = ConfigurationHelper.getTempImagesPathAsCompleteDirectory() + session.getId() + "_" + image.getImageName() + "_large_"
+                + ".png";
+        String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
+        String currentImageUrl = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
+                + ".png";
+        try {
+            if (scaledImageOut != null) {
+                float scale = scaleFile(imageFolderName + "/" + image.getImageName(), scaledImageOut, 1200);
+                image.setScale(scale);
+                image.setImageUrl(currentImageUrl);
+            }
+        } catch (ContentLibException | IOException e) {
+            log.error(e);
+        }
+    }
+
+    private float scaleFile(String inFileName, String outFileName, int size) throws IOException, ContentLibException {
+        ImageManager im = null;
+        PngInterpreter pi = null;
+        FileOutputStream outputFileStream = null;
+        try {
+            im = new ImageManager(new File(inFileName).toURI().toURL());
+            Dimension dim = new Dimension();
+            dim.setSize(size, size);
+            float originalHeight = im.getMyInterpreter().getHeight();
+            RenderedImage ri = im.scaleImageByPixel(dim, ImageManager.SCALE_TO_BOX, 0);
+            pi = new PngInterpreter(ri);
+            outputFileStream = new FileOutputStream(outFileName);
+            pi.writeToStream(null, outputFileStream);
+            return originalHeight / size;
+        } finally {
+            if (im != null) {
+                im.close();
+            }
+            if (pi != null) {
+                pi.close();
+            }
+            if (outputFileStream != null) {
+                outputFileStream.close();
+            }
+        }
+    }
 
     @Override
     public void initialize(Step step, String returnPath) {
@@ -118,19 +164,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             }
         }
 
-//        allowDeletion = myconfig.getBoolean("allowDeletion", false);
-//        allowRotation = myconfig.getBoolean("allowRotation", false);
-//        allowRenaming = myconfig.getBoolean("allowRenaming", false);
-//        allowSelection = myconfig.getBoolean("allowSelection", false);
-//        allowDownload = myconfig.getBoolean("allowDownload", false);
-//
-//        deletionCommand = myconfig.getString("deletionCommand", "-");
-//        rotationCommandLeft = myconfig.getString("rotationCommands.left", "-");
-//        rotationCommandRight = myconfig.getString("rotationCommands.right", "-");
-//
-//        NUMBER_OF_IMAGES_PER_PAGE = myconfig.getInt("numberOfImagesPerPage", 50);
-//        THUMBNAIL_SIZE_IN_PIXEL = myconfig.getInt("thumbnailsize", 200);
-//        THUMBNAIL_FORMAT = myconfig.getString("thumbnailFormat", "png");
+        //        allowDeletion = myconfig.getBoolean("allowDeletion", false);
+        //        allowRotation = myconfig.getBoolean("allowRotation", false);
+        //        allowRenaming = myconfig.getBoolean("allowRenaming", false);
+        //        allowSelection = myconfig.getBoolean("allowSelection", false);
+        //        allowDownload = myconfig.getBoolean("allowDownload", false);
+        //
+        //        deletionCommand = myconfig.getString("deletionCommand", "-");
+        //        rotationCommandLeft = myconfig.getString("rotationCommands.left", "-");
+        //        rotationCommandRight = myconfig.getString("rotationCommands.right", "-");
+        //
+        //        NUMBER_OF_IMAGES_PER_PAGE = myconfig.getInt("numberOfImagesPerPage", 50);
+        //        THUMBNAIL_SIZE_IN_PIXEL = myconfig.getInt("thumbnailsize", 200);
+        //        THUMBNAIL_FORMAT = myconfig.getString("thumbnailFormat", "png");
         MAINIMAGE_FORMAT = myconfig.getString("mainImageFormat", "jpg");
         imageSizes = myconfig.getList("imagesize");
         if (imageSizes == null || imageSizes.isEmpty()) {
@@ -162,6 +208,11 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 }
                 setImageIndex(0);
             }
+            this.colors = new HashMap<>();
+            List<HierarchicalConfiguration> colors = myconfig.configurationsAt("class");
+            for (HierarchicalConfiguration color : colors) {
+                this.colors.put(color.getString("type"), color.getString("color"));
+            }
         } catch (SwapException | DAOException | IOException | InterruptedException e) {
             log.error(e);
         }
@@ -179,10 +230,14 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 String institutions = xmlEntry.getChildText("institutions");
                 String title = xmlEntry.getChildText("title");
                 String pageLabel = xmlEntry.getChildText("pageLabel");
-                Entry entry = new Entry(institutions, authors, title, pageLabel);
+                List<Box> boxes = new ArrayList<>();
+                Element coords = xmlEntry.getChild("coordinates");
+                for (Element boxEl : coords.getChildren("box")) {
+                    boxes.add(new Box(boxEl));
+                }
+                Entry entry = new Entry(institutions, authors, title, pageLabel, boxes);
                 returnList.add(entry);
             }
-
         } catch (JDOMException | IOException e) {
             log.error(e);
         }
@@ -356,7 +411,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
     @Override
     public String finish() {
-        
+
         Path xmlPath = null;
         try {
             xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_xml");
@@ -374,13 +429,13 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             for (Entry entry : image.getEntryList()) {
                 Element xmlEntry = new Element("entry");
                 root.addContent(xmlEntry);
-                
+
                 if (StringUtils.isNotBlank(entry.getAuthors())) {
                     Element authors = new Element("authors");
                     authors.setText(entry.getAuthors());
                     xmlEntry.addContent(authors);
                 }
-                    
+
                 if (StringUtils.isNotBlank(entry.getInstitutions())) {
                     Element authors = new Element("institutions");
                     authors.setText(entry.getInstitutions());
@@ -406,7 +461,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 log.error(e);
             }
         }
-        
+
         return "/" + getTheme() + returnPath;
     }
 
@@ -433,11 +488,34 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             return null;
         } else {
             FacesContext context = FacesContextHelper.getCurrentFacesContext();
+            String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-            String currentImageURL = session.getServletContext().getContextPath() + ConfigurationHelper.getTempImagesPath() + session.getId() + "_"
-                    + image.getImageName() + "_large_" + ".jpg";
+            String currentImageURL = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
+                    + ".jpg";
             return currentImageURL;
         }
+    }
+
+    public static String getServletPathWithHostAsUrlFromJsfContext() {
+        if (FacesContext.getCurrentInstance() != null) {
+            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            if (request != null) {
+                return getServletPathWithHostAsUrlFromRequest(request);
+            }
+        }
+
+        return "";
+    }
+
+    public static String getServletPathWithHostAsUrlFromRequest(HttpServletRequest request) {
+        String scheme = request.getScheme(); // http
+        String serverName = request.getServerName(); // hostname.com
+        int serverPort = request.getServerPort(); // 80
+        String contextPath = request.getContextPath(); // /mywebapp
+        if (serverPort != 80) {
+            return scheme + "://" + serverName + ":" + serverPort + contextPath;
+        }
+        return scheme + "://" + serverName + contextPath;
     }
 
     public int getImageWidth() {
