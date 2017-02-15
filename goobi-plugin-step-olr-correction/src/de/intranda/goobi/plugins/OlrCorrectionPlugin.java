@@ -187,9 +187,9 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         this.step = step;
         try {
             if (myconfig.getBoolean("useOrigFolder", false)) {
-                imageFolderName = step.getProzess().getImagesOrigDirectory(false);
-            } else {
                 imageFolderName = step.getProzess().getImagesTifDirectory(false);
+            } else {
+                imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             }
             Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
