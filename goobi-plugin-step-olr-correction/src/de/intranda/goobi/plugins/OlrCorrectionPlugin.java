@@ -191,7 +191,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             } else {
                 imageFolderName = step.getProzess().getImagesTifDirectory(false);
             }
-            Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_xml");
+            Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
             Path path = Paths.get(imageFolderName);
             if (Files.exists(path) && Files.exists(xmlPath)) {
@@ -400,6 +400,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         return PLUGIN_NAME;
     }
 
+    @Override
     public String getDescription() {
         return PLUGIN_NAME;
     }
