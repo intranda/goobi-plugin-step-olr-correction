@@ -400,7 +400,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         return PLUGIN_NAME;
     }
 
-    @Override
     public String getDescription() {
         return PLUGIN_NAME;
     }
