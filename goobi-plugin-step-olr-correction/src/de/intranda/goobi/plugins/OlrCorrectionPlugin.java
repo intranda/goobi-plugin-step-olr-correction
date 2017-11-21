@@ -414,7 +414,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
         Path xmlPath = null;
         try {
-            xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_xml");
+            xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
         } catch (SwapException | DAOException | IOException | InterruptedException e1) {
             log.error(e1);
         }
