@@ -451,6 +451,21 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     authors.setText(entry.getTitle());
                     xmlEntry.addContent(authors);
                 }
+                
+                if (entry.getBoxes() != null){
+                		Element coords = new Element("coordinates");
+                		for (Box box : entry.getBoxes()) {
+                			Element ebox = new Element("box");
+                			ebox.setAttribute("x", String.valueOf(box.getX()));
+                			ebox.setAttribute("y", String.valueOf(box.getY()));
+                			ebox.setAttribute("height", String.valueOf(box.getHeight()));
+                			ebox.setAttribute("width", String.valueOf(box.getWidth()));
+                			ebox.setAttribute("type", box.getType());
+                			coords.addContent(ebox);
+					}
+                		xmlEntry.addContent(coords);
+                }
+                
             }
             OutputStream os = null;
             try {
