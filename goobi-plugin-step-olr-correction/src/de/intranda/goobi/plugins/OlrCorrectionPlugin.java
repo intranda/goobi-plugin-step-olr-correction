@@ -103,6 +103,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     currentImage.setEntryList(entries);
                 }
             }
+            tih.setImageIndex(0);
             this.colors = new HashMap<>();
             List<HierarchicalConfiguration> colors = myconfig.configurationsAt("class");
             for (HierarchicalConfiguration color : colors) {

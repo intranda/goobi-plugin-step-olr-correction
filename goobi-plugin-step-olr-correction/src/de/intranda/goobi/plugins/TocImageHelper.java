@@ -157,19 +157,6 @@ public class TocImageHelper {
 	        return image.getSize().height;
 	    }
 	    
-	    public String getBild() {
-	        if (image == null) {
-	            return null;
-	        } else {
-	            FacesContext context = FacesContextHelper.getCurrentFacesContext();
-	            String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
-	            HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-	            String currentImageURL = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
-	                    + ".jpg";
-	            return currentImageURL;
-	        }
-	    }
-	    
 	    public void setImage(Image image) {
 	        this.image = image;
 	        FacesContext context = FacesContextHelper.getCurrentFacesContext();
