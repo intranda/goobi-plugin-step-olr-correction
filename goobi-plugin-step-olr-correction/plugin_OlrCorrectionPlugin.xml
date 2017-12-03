@@ -4,28 +4,13 @@
         <project>*</project>
         <!-- which images to use -->
         <useOrigFolder>true</useOrigFolder>
-        <!-- how to display the tumbnails -->
-        <numberOfImagesPerPage>10</numberOfImagesPerPage>
-        <thumbnailsize>200</thumbnailsize>
+        
         <!-- which image sizes to use for the big image -->
         <imagesize>800</imagesize>
         <imagesize>3000</imagesize>
-        <thumbnailFormat>jpg</thumbnailFormat>
-        <mainImageFormat>jpg</mainImageFormat>
-        <!-- allow deletion of images -->
-        <allowDeletion>true</allowDeletion>
-        <deletionCommand>/opt/digiverso/goobi/scripts/deleteImage.sh IMAGE_FOLDER IMAGE_FILE</deletionCommand>
-        <!-- allow rotation of images -->
-        <allowRotation>true</allowRotation>
-        <rotationCommands>
-            <left>/usr/local/bin/mogrify -rotate -90 IMAGE_FILE</left>
-            <right>/usr/local/bin/mogrify -rotate 90 IMAGE_FILE</right>
-        </rotationCommands>
-        <!-- allow renaming of images -->
-        <allowRenaming>true</allowRenaming>
-        <allowSelection>true</allowSelection>
-        <allowDownload>true</allowDownload>
-
+        <!-- which image format to generate -->
+        <imageFormat>jpg</imageFormat>
+        
         <!-- colors for different groups -->
         <class>
             <type>pagenum</type>

@@ -70,22 +70,10 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private static final String PLUGIN_NAME = "intranda_step_olr-correction";
 
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
-    //    private int THUMBNAIL_SIZE_IN_PIXEL = 175;
-    //    private String THUMBNAIL_FORMAT = "png";
-    private String MAINIMAGE_FORMAT = "jpg";
-    //    private boolean allowDeletion = false;
-    //    private boolean allowRotation = false;
-    //    private boolean allowRenaming = false;
-    //    private boolean allowSelection = false;
-    //    private boolean allowDownload = false;
-    //
-    //    private String rotationCommandLeft = "";
-    //    private String rotationCommandRight = "";
-    //    private String deletionCommand = "";
-    //    boolean askForConfirmation = true;
-
+    
+    private TocImageHelper tih = new TocImageHelper();
+    
     private int pageNo = 0;
-
     private int imageIndex = 0;
 
     private String imageFolderName = "";
@@ -94,7 +82,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private Map<String, String> colors;
 
     private Image image = null;
-    private List<String> imageSizes;
+   
 
     private ExecutorService executor;
 
@@ -111,39 +99,12 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 + ".png";
         try {
             if (scaledImageOut != null) {
-                float scale = scaleFile(imageFolderName + "/" + image.getImageName(), scaledImageOut, 1200);
+                float scale = tih.scaleFile(imageFolderName + "/" + image.getImageName(), scaledImageOut, 1200);
                 image.setScale(scale);
                 image.setImageUrl(currentImageUrl);
             }
         } catch (ContentLibException | IOException e) {
             log.error(e);
-        }
-    }
-
-    private float scaleFile(String inFileName, String outFileName, int size) throws IOException, ContentLibException {
-        ImageManager im = null;
-        PngInterpreter pi = null;
-        FileOutputStream outputFileStream = null;
-        try {
-            im = new ImageManager(new File(inFileName).toURI().toURL());
-            Dimension dim = new Dimension();
-            dim.setSize(size, size);
-            float originalHeight = im.getMyInterpreter().getHeight();
-            RenderedImage ri = im.scaleImageByPixel(dim, ImageManager.SCALE_TO_BOX, 0);
-            pi = new PngInterpreter(ri);
-            outputFileStream = new FileOutputStream(outFileName);
-            pi.writeToStream(null, outputFileStream);
-            return originalHeight / size;
-        } finally {
-            if (im != null) {
-                im.close();
-            }
-            if (pi != null) {
-                pi.close();
-            }
-            if (outputFileStream != null) {
-                outputFileStream.close();
-            }
         }
     }
 
@@ -163,26 +124,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 }
             }
         }
-
-        //        allowDeletion = myconfig.getBoolean("allowDeletion", false);
-        //        allowRotation = myconfig.getBoolean("allowRotation", false);
-        //        allowRenaming = myconfig.getBoolean("allowRenaming", false);
-        //        allowSelection = myconfig.getBoolean("allowSelection", false);
-        //        allowDownload = myconfig.getBoolean("allowDownload", false);
-        //
-        //        deletionCommand = myconfig.getString("deletionCommand", "-");
-        //        rotationCommandLeft = myconfig.getString("rotationCommands.left", "-");
-        //        rotationCommandRight = myconfig.getString("rotationCommands.right", "-");
-        //
-        //        NUMBER_OF_IMAGES_PER_PAGE = myconfig.getInt("numberOfImagesPerPage", 50);
-        //        THUMBNAIL_SIZE_IN_PIXEL = myconfig.getInt("thumbnailsize", 200);
-        //        THUMBNAIL_FORMAT = myconfig.getString("thumbnailFormat", "png");
-        MAINIMAGE_FORMAT = myconfig.getString("mainImageFormat", "jpg");
-        imageSizes = myconfig.getList("imagesize");
+        
+        tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
+        List<String> imageSizes = myconfig.getList("imagesize");
         if (imageSizes == null || imageSizes.isEmpty()) {
             imageSizes = new ArrayList<>();
             imageSizes.add("600");
         }
+        tih.setImageSizes(imageSizes);
+        
         executor = Executors.newFixedThreadPool(imageSizes.size());
         this.step = step;
         try {
@@ -191,6 +141,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             } else {
                 imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             }
+            tih.setImageFolderName(imageFolderName);
             Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
             Path path = Paths.get(imageFolderName);
@@ -253,126 +204,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             subList = allImages.subList(pageNo * NUMBER_OF_IMAGES_PER_PAGE, allImages.size());
         }
         return subList;
-    }
-
-    private void createImage(Image currentImage) {
-
-        if (currentImage.getSize() == null) {
-            currentImage.setSize(getActualImageSize(currentImage));
-        }
-
-        String contextPath = getContextPath();
-        for (String sizeString : imageSizes) {
-            try {
-                int size = Integer.parseInt(sizeString);
-                String imageUrl = createImageUrl(currentImage, size, MAINIMAGE_FORMAT, contextPath);
-                currentImage.addImageLevel(imageUrl, size);
-            } catch (NullPointerException | NumberFormatException e) {
-                log.error("Cannot build image with size " + sizeString);
-            }
-        }
-        Collections.sort(currentImage.getImageLevels());
-    }
-
-    private String getContextPath() {
-        FacesContext context = FacesContextHelper.getCurrentFacesContext();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String baseUrl = session.getServletContext().getContextPath();
-        return baseUrl;
-    }
-
-    private Dimension getActualImageSize(Image image) {
-        Dimension dim;
-        try {
-            String imagePath = imageFolderName + image.getImageName();
-            String dimString = new GetImageDimensionAction().getDimensions(imagePath);
-            int width = Integer.parseInt(dimString.replaceAll("::.*", ""));
-            int height = Integer.parseInt(dimString.replaceAll(".*::", ""));
-            dim = new Dimension(width, height);
-        } catch (NullPointerException | NumberFormatException | ContentLibImageException | URISyntaxException | IOException e) {
-            log.error("Could not retrieve actual image size", e);
-            dim = new Dimension(0, 0);
-        }
-        return dim;
-    }
-
-    private String createImageUrl(Image currentImage, Integer size, String format, String baseUrl) {
-        StringBuilder url = new StringBuilder(baseUrl);
-        url.append("/cs").append("?action=").append("image").append("&format=").append(format).append("&sourcepath=").append("file://"
-                + imageFolderName + currentImage.getImageName()).append("&width=").append(size).append("&height=").append(size);
-        return url.toString();
-    }
-
-    @SuppressWarnings("unused")
-    private Dimension scaleFile(String inFileName, String outFileName, List<String> sizes) throws IOException, ContentLibImageException {
-
-        final ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
-        Dimension originalImageSize = new Dimension(im.getMyInterpreter().getWidth(), im.getMyInterpreter().getHeight());
-        String outputFilePath = FilenameUtils.getFullPath(outFileName);
-        String outputFileBasename = FilenameUtils.getBaseName(outFileName);
-        String outputFileSuffix = FilenameUtils.getExtension(outFileName);
-        List<Future<File>> createdFiles = new ArrayList<>();
-        for (String sizeString : sizes) {
-            int size = Integer.parseInt(sizeString);
-            final Dimension dim = new Dimension();
-            dim.setSize(size, size);
-            final String filename = outputFilePath + outputFileBasename + "_" + size + "." + outputFileSuffix;
-            createdFiles.add(executor.submit(new Callable<File>() {
-
-                @Override
-                public File call() throws Exception {
-                    return scaleToSize(im, dim, filename, false);
-                }
-            }));
-        }
-        while (!oneImageFinished(createdFiles)) {
-
-        }
-        log.debug("First image finished generation");
-        return originalImageSize;
-
-    }
-
-    @SuppressWarnings("unused")
-    private boolean allImagesFinished(List<Future<File>> createdFiles) {
-        for (Future<File> future : createdFiles) {
-            try {
-                if (!future.isDone() || future.get() == null) {
-                    return false;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-            }
-        }
-        return true;
-    }
-
-    private boolean oneImageFinished(List<Future<File>> createdFiles) {
-        for (Future<File> future : createdFiles) {
-            try {
-                if (future.isDone() && future.get() != null) {
-                    return true;
-                }
-            } catch (InterruptedException | ExecutionException e) {
-            }
-        }
-        return false;
-    }
-
-    private File scaleToSize(ImageManager im, Dimension dim, String filename, boolean overwrite) throws ImageManipulatorException,
-            FileNotFoundException, ImageManagerException, IOException, ContentLibException {
-        File outputFile = new File(filename);
-        if (!overwrite && outputFile.isFile()) {
-            return outputFile;
-        }
-        try (FileOutputStream outputFileStream = new FileOutputStream(outputFile)) {
-            RenderedImage ri = im.scaleImageByPixel(dim, ImageManager.SCALE_TO_BOX, 0);
-            try (JpegInterpreter pi = new JpegInterpreter(ri)) {
-                pi.writeToStream(null, outputFileStream);
-                outputFileStream.close();
-                log.debug("Written file " + outputFile);
-                return outputFile;
-            }
-        }
     }
 
     @Override
@@ -538,7 +369,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             log.error("Must set image before querying image size");
             return 0;
         } else if (image.getSize() == null) {
-            createImage(image);
+            tih.createImage(image);
         }
         return image.getSize().width;
     }
@@ -548,27 +379,14 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             log.error("Must set image before querying image size");
             return 0;
         } else if (image.getSize() == null) {
-            createImage(image);
+            tih.createImage(image);
         }
         return image.getSize().height;
     }
 
-    @SuppressWarnings("unused")
-    private String getImageUrl(Image image, String size) {
-        FacesContext context = FacesContextHelper.getCurrentFacesContext();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String currentImageURL = session.getServletContext().getContextPath() + ConfigurationHelper.getTempImagesPath() + session.getId() + "_"
-                + image.getImageName() + "_large_" + size + ".jpg";
-        return currentImageURL;
-    }
+   
 
-    @SuppressWarnings("unused")
-    private String getImagePath(Image image) {
-        FacesContext context = FacesContextHelper.getCurrentFacesContext();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String path = ConfigurationHelper.getTempImagesPathAsCompleteDirectory() + session.getId() + "_" + image.getImageName() + "_large" + ".jpg";
-        return path;
-    }
+    
 
     public String cmdMoveFirst() {
         if (this.pageNo != 0) {
