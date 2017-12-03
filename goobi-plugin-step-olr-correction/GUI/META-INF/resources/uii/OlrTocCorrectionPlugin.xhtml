@@ -189,7 +189,7 @@
 					<div class="row">
 						<div class="col-sm-7">
 							<div class=" max-height scroll-y">
-							<x:dataList value="#{AktuelleSchritteForm.myPlugin.image.entryList}" var="entry" rowIndexVar="idx">
+							<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
 								<div class="row">
 									<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
 										<intranda:formInputText style="border-right:1px solid #ccc"
@@ -198,38 +198,38 @@
 											help="#{msgs.plugin_intranda_step_olr_toc_title}"
 											name="title" fieldStyle="form-control title-border-focus"
 											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
 											field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
 											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
 											name="authors" fieldStyle="form-control author-border-focus"
 											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
 											field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10"
 											help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
 											name="institutions" fieldStyle="form-control institution-border-focus"
 											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 										<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
 											label="#{msgs.plugin_intranda_step_olr_toc_page}"
 											field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
 											help="#{msgs.plugin_intranda_step_olr_toc_page}"
 											name="pageLabel" fieldStyle="form-control pagenum-border-focus"
 											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.image.scale}, #{idx});"/>
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 									</div>
 									<div class="col-sm-1 nopadding">
 										<h:commandLink
 											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
-											action="#{AktuelleSchritteForm.myPlugin.image.removeEntry}"
+											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
 											styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
 											onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
 											<i class="fa fa-trash-o"></i>
 											<f:setPropertyActionListener value="#{entry}"
-												target="#{AktuelleSchritteForm.myPlugin.image.currentEntry}"></f:setPropertyActionListener>
+												target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"></f:setPropertyActionListener>
 										</h:commandLink>
 									</div>
 
@@ -241,7 +241,7 @@
 									<!-- Create -->
 									<h:commandLink
 										styleClass="btn btn-blue pull-right font-size-s margin-top-10 margin-right-10"
-										action="#{AktuelleSchritteForm.myPlugin.image.createEntry}">
+										action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
 										<i class="fa fa-plus margin-right-5"></i>
 										<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
 									</h:commandLink>
@@ -264,13 +264,13 @@
 									<h:panelGroup styleClass="div-image" layout="block">
 										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
 										<div id="mainImage" class="margin-bottom-regular"
-											rendered="#{AktuelleSchritteForm.myPlugin.image != null}" />
+											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
 										<div class="big-image-caption margin-top-regular font-light">
 											<h:outputText
-												value="#{AktuelleSchritteForm.myPlugin.image.imageName}" />
+												value="#{AktuelleSchritteForm.myPlugin.tih.image.imageName}" />
 										</div>
 										<script type="text/javascript">
-                                    $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.imageHeight}/#{AktuelleSchritteForm.myPlugin.imageWidth});
+                                    $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
                                     
                                     var entryGroup = {
 	                                        name : "entry",
@@ -334,13 +334,13 @@
                             			    },
                             			    image: {
                                                 mimeType: "image/jpg",
-                                                tileSource : '#{AktuelleSchritteForm.myPlugin.image.imageUrl}',
+                                                tileSource : '#{AktuelleSchritteForm.myPlugin.tih.image.imageUrl}',
                                             } 
                             			};
                                     viewImage.close();
                                     viewImage.init(imageViewConfig).then(function() {
-	                                    entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.image.entriesAsJSON}');
-	                                    scaleFactor = #{AktuelleSchritteForm.myPlugin.image.scale};
+	                                    entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.tih.image.entriesAsJSON}');
+	                                    scaleFactor = #{AktuelleSchritteForm.myPlugin.tih.image.scale};
 	                                    if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
 	                                        drawAllRects(viewImage, entries, scaleFactor);
 	                                    } else {
@@ -372,7 +372,7 @@
 						</div>
 
 						<h:panelGroup layout="block"
-							rendered="#{AktuelleSchritteForm.myPlugin.sizeOfImageList == 0}"
+							rendered="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList == 0}"
 							styleClass="col-sm-12">
 							<h:outputText value="#{msgs.noImagesFound}" />
 						</h:panelGroup>

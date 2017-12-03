@@ -3,25 +3,22 @@ package de.intranda.goobi.plugins;
 import java.awt.Dimension;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import de.sub.goobi.config.ConfigurationHelper;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ContentLibException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ContentLibImageException;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
-import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 import de.unigoettingen.sub.commons.contentlib.imagelib.PngInterpreter;
 import de.unigoettingen.sub.commons.contentlib.servlet.controller.GetImageDimensionAction;
 import lombok.Getter;
@@ -37,6 +34,14 @@ public class TocImageHelper {
 	private String imageFormat = "jpg";
 	@Getter @Setter
 	private String imageFolderName = "";
+	@Getter
+	private int imageIndex = 0;
+	@Getter
+    private Image image = null;
+    @Getter
+    private List<Image> allImages = new ArrayList<Image>();
+    private int NUMBER_OF_IMAGES_PER_PAGE = 10;
+    private int pageNo = 0;
 	
 	public float scaleFile(String inFileName, String outFileName, int size) throws IOException, ContentLibException {
         ImageManager im = null;
@@ -111,6 +116,206 @@ public class TocImageHelper {
 	        url.append("/cs").append("?action=").append("image").append("&format=").append(format).append("&sourcepath=").append("file://"
 	                + imageFolderName + currentImage.getImageName()).append("&width=").append(size).append("&height=").append(size);
 	        return url.toString();
+	    }
+	    
+	    public void setImageMoveTo(String page) {
+	        try {
+	            int pageNumber = Integer.parseInt(page);
+	            if ((this.imageIndex != pageNumber - 1) && pageNumber > 0 && pageNumber <= getSizeOfImageList() + 1) {
+	                setImageIndex(pageNumber - 1);
+	            }
+	        } catch (NumberFormatException e) {
+	        }
+	    }
+
+
+	    public int getSizeOfImageList() {
+	        return allImages.size();
+	    }
+	    
+	    public String getImageMoveTo() {
+	        return this.imageIndex + 1 + "";
+	    }
+
+	    public int getImageWidth() {
+	        if (image == null) {
+	            log.error("Must set image before querying image size");
+	            return 0;
+	        } else if (image.getSize() == null) {
+	        		createImage(image);
+	        }
+	        return image.getSize().width;
+	    }
+
+	    public int getImageHeight() {
+	        if (image == null) {
+	            log.error("Must set image before querying image size");
+	            return 0;
+	        } else if (image.getSize() == null) {
+	            createImage(image);
+	        }
+	        return image.getSize().height;
+	    }
+	    
+	    public String getBild() {
+	        if (image == null) {
+	            return null;
+	        } else {
+	            FacesContext context = FacesContextHelper.getCurrentFacesContext();
+	            String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
+	            HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+	            String currentImageURL = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
+	                    + ".jpg";
+	            return currentImageURL;
+	        }
+	    }
+	    
+	    public void setImage(Image image) {
+	        this.image = image;
+	        FacesContext context = FacesContextHelper.getCurrentFacesContext();
+	        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+	        String scaledImageOut = ConfigurationHelper.getTempImagesPathAsCompleteDirectory() + session.getId() + "_" + image.getImageName() + "_large_"
+	                + ".png";
+	        String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
+	        String currentImageUrl = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
+	                + ".png";
+	        try {
+	            if (scaledImageOut != null) {
+	                float scale = scaleFile(imageFolderName + "/" + image.getImageName(), scaledImageOut, 1200);
+	                image.setScale(scale);
+	                image.setImageUrl(currentImageUrl);
+	            }
+	        } catch (ContentLibException | IOException e) {
+	            log.error(e);
+	        }
+	    }
+	    
+	    public void setImageIndex(int imageIndex) {
+	        this.imageIndex = imageIndex;
+	        if (this.imageIndex < 0) {
+	            this.imageIndex = 0;
+	        }
+	        if (this.imageIndex >= getSizeOfImageList()) {
+	            this.imageIndex = getSizeOfImageList() - 1;
+	        }
+	        if (this.imageIndex >= 0) {
+	            setImage(allImages.get(this.imageIndex));
+	        }
+	    }
+
+
+	    public static String getServletPathWithHostAsUrlFromJsfContext() {
+	        if (FacesContext.getCurrentInstance() != null) {
+	            HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+	            if (request != null) {
+	                return getServletPathWithHostAsUrlFromRequest(request);
+	            }
+	        }
+
+	        return "";
+	    }
+
+	    public static String getServletPathWithHostAsUrlFromRequest(HttpServletRequest request) {
+	        String scheme = request.getScheme(); // http
+	        String serverName = request.getServerName(); // hostname.com
+	        int serverPort = request.getServerPort(); // 80
+	        String contextPath = request.getContextPath(); // /mywebapp
+	        if (serverPort != 80) {
+	            return scheme + "://" + serverName + ":" + serverPort + contextPath;
+	        }
+	        return scheme + "://" + serverName + contextPath;
+	    }
+	    
+
+	    
+
+	    public List<Image> getPaginatorList() {
+	        List<Image> subList = new ArrayList<Image>();
+	        if (allImages.size() > (pageNo * NUMBER_OF_IMAGES_PER_PAGE) + NUMBER_OF_IMAGES_PER_PAGE) {
+	            subList = allImages.subList(pageNo * NUMBER_OF_IMAGES_PER_PAGE, (pageNo * NUMBER_OF_IMAGES_PER_PAGE) + NUMBER_OF_IMAGES_PER_PAGE);
+	        } else {
+	            subList = allImages.subList(pageNo * NUMBER_OF_IMAGES_PER_PAGE, allImages.size());
+	        }
+	        return subList;
+	    }
+	    
+	    public String cmdMoveFirst() {
+	        if (this.pageNo != 0) {
+	            this.pageNo = 0;
+	            getPaginatorList();
+	        }
+	        return "";
+	    }
+
+	    public String cmdMovePrevious() {
+	        if (!isFirstPage()) {
+	            this.pageNo--;
+	            getPaginatorList();
+	        }
+	        return "";
+	    }
+
+	    public String cmdMoveNext() {
+	        if (!isLastPage()) {
+	            this.pageNo++;
+	            getPaginatorList();
+	        }
+	        return "";
+	    }
+
+	    public String cmdMoveLast() {
+	        if (this.pageNo != getLastPageNumber()) {
+	            this.pageNo = getLastPageNumber();
+	            getPaginatorList();
+	        }
+	        return "";
+	    }
+
+	    public void setTxtMoveTo(String neueSeite) {
+	        try {
+	            int pageNumber = Integer.parseInt(neueSeite);
+	            if ((this.pageNo != pageNumber - 1) && pageNumber > 0 && pageNumber <= getLastPageNumber() + 1) {
+	                this.pageNo = pageNumber - 1;
+	                getPaginatorList();
+	            }
+	        } catch (NumberFormatException e) {
+	        }
+	    }
+
+	    public String getTxtMoveTo() {
+	        return this.pageNo + 1 + "";
+	    }
+
+	    public int getLastPageNumber() {
+	        int ret = new Double(Math.floor(this.allImages.size() / NUMBER_OF_IMAGES_PER_PAGE)).intValue();
+	        if (this.allImages.size() % NUMBER_OF_IMAGES_PER_PAGE == 0) {
+	            ret--;
+	        }
+	        return ret;
+	    }
+
+	    public boolean isFirstPage() {
+	        return this.pageNo == 0;
+	    }
+
+	    public boolean isLastPage() {
+	        return this.pageNo >= getLastPageNumber();
+	    }
+
+	    public boolean hasNextPage() {
+	        return this.allImages.size() > NUMBER_OF_IMAGES_PER_PAGE;
+	    }
+
+	    public boolean hasPreviousPage() {
+	        return this.pageNo > 0;
+	    }
+
+	    public Long getPageNumberCurrent() {
+	        return Long.valueOf(this.pageNo + 1);
+	    }
+
+	    public Long getPageNumberLast() {
+	        return Long.valueOf(getLastPageNumber() + 1);
 	    }
 	
 //	 @SuppressWarnings("unused")

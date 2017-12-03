@@ -16,25 +16,25 @@
 				<h:commandLink styleClass="btn font-size-s margin-sides-10" title="#{msgs.firstImage}">
 					<i class="fa fa-double-angle-left"></i>
 					<f:ajax execute="@form" render="@form :bigimage" />
-					<x:updateActionListener value="0" property="#{AktuelleSchritteForm.myPlugin.imageIndex}" />
+					<x:updateActionListener value="0" property="#{AktuelleSchritteForm.myPlugin.tih.imageIndex}" />
 				</h:commandLink>
 					
 				<h:commandLink styleClass="btn btn-primary font-size-s" title="#{msgs.lw_previousImage}">
 					<i class="fa fa-angle-left"></i>
 					<h:outputText value=" #{msgs.lw_previousImage}" />
 					<f:ajax execute="@form" render="@form :bigimage" />
-					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.imageIndex - 1}" property="#{AktuelleSchritteForm.myPlugin.imageIndex}" />
+					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.tih.imageIndex - 1}" property="#{AktuelleSchritteForm.myPlugin.tih.imageIndex}" />
 				</h:commandLink>
 				<div class="margin-sides-10">
                 
                 <x:outputText id="txtImageMoveTo1"
-                    value="#{msgs.seite} #{AktuelleSchritteForm.myPlugin.imageIndex +1} #{msgs.von}  #{AktuelleSchritteForm.myPlugin.sizeOfImageList}"
+                    value="#{msgs.seite} #{AktuelleSchritteForm.myPlugin.tih.imageIndex +1} #{msgs.von}  #{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList}"
                     onclick="document.getElementById(this.id).nextSibling.style.display='inline';
                     document.getElementById(this.id).style.display='none';  
                     document.getElementById(this.id).nextSibling.focus(); 
                     document.getElementById(this.id).nextSibling.select();" /> 
 <!--                 Seite direkt anspringen -->
-                <x:inputText value="#{AktuelleSchritteForm.myPlugin.imageMoveTo}" style="display:none;font-size:9px;width:30px"
+                <x:inputText value="#{AktuelleSchritteForm.myPlugin.tih.imageMoveTo}" style="display:none;font-size:9px;width:30px"
                     required="true" id="txtImageMoveTo2"
                     onblur="document.getElementById(this.id).style.display='none';document.getElementById(this.id).previousSibling.style.display='inline';"
                     onkeypress="copyValue(this,event);" />
@@ -44,13 +44,13 @@
 					<h:outputText value="#{msgs.lw_nextImage} " />
 					<i class="fa fa-angle-right"></i>
 					<f:ajax execute="@form" render="@form :bigimage" />
-					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.imageIndex + 1}" property="#{AktuelleSchritteForm.myPlugin.imageIndex}" />
+					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.tih.imageIndex + 1}" property="#{AktuelleSchritteForm.myPlugin.tih.imageIndex}" />
 				</h:commandLink>
 						
 				<h:commandLink styleClass="btn font-size-s margin-sides-10" title="#{msgs.lastImage}">
 					<i class="fa fa-double-angle-right"></i>
 					<f:ajax execute="@form" render="@form :bigimage" />
-					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.sizeOfImageList - 1}" property="#{AktuelleSchritteForm.myPlugin.imageIndex}" />
+					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList - 1}" property="#{AktuelleSchritteForm.myPlugin.tih.imageIndex}" />
 				</h:commandLink>
 				
 				<h:commandLink id="showAllButton"
