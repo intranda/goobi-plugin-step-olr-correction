@@ -1,5 +1,6 @@
 package de.intranda.goobi.plugins;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -21,5 +22,20 @@ public class Entry {
 
     public String getAsJSON() {
         return gson.toJson(this);
+    }
+    
+    public List<EntryAuthor> getAuthorList() {
+    		List<EntryAuthor> myAuthors = new ArrayList<EntryAuthor>();
+    		
+    		if (authors!=null) {
+	    		String[] authorArray = authors.split(",");
+	    		if (authorArray != null && authorArray.length > 0) {
+	            for (String author : authorArray) {
+	              EntryAuthor ea = new EntryAuthor(author);
+	              myAuthors.add(ea);
+	            }
+	        }
+    		}
+        return myAuthors;
     }
 }
