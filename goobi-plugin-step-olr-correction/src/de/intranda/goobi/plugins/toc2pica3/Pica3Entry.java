@@ -48,12 +48,16 @@ public class Pica3Entry {
         w.write(this.title);
         w.write('\n');
         w.write("4070 ");
-        w.write("$v");
-        w.write(volume);
+        if (this.volume!=null) {
+        		w.write("$v");
+            w.write(this.volume);
+        }
         w.write("$j");
         w.write(year);
-        w.write("$a");
-        w.write(this.heft);
+        if (this.heft!=null) {
+        		w.write("$a");
+        		w.write(this.heft);
+        }
         if (this.pageLabel != null) {
             w.write("$p");
             w.write(this.pageLabel);
@@ -64,11 +68,12 @@ public class Pica3Entry {
 
 
     private String getContentForField500(String inType) {
-    		if (inType.toLowerCase().equals("monograph")) {
-    			return "Aon";
-    		} else {
-    			return "unknown type";
-    		}
+//    		if (inType.toLowerCase().equals("monograph")) {
+//    			return "Aon";
+//    		} else {
+//    			return "unknown type";
+//    		}
+    		return "Aon";
     }
     
 }

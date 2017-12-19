@@ -70,6 +70,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	private String meta_PublicationYear;
 	private String meta_PublicationPlace;
 	private String meta_Identifier;
+	private String meta_CurrentNo;
 	
 	@Override
 	public void initialize(Step step, String returnPath) {
@@ -140,6 +141,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			meta_PublicationYear = getFirstMetadataField(ds, prefs, "PublicationYear");
 			meta_PublicationPlace = getFirstMetadataField(ds, prefs, "PlaceOfPublication");
 			meta_Identifier = getFirstMetadataField(ds, prefs, "CatalogIDSource");
+			meta_CurrentNo = getFirstMetadataField(ds, prefs, "CurrentNo");
 			
 		} catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
 			log.error(e);
@@ -274,7 +276,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 					}
 
 					// write the pica entry into pica file too
-					Pica3Entry pEntry = new Pica3Entry(meta_PublicationType, meta_PublicationYear, meta_Identifier, "myVolume", "myHeft",
+					Pica3Entry pEntry = new Pica3Entry(meta_PublicationType, meta_PublicationYear, meta_Identifier, meta_CurrentNo, null,
 					        entry.getAuthorList(), entry.getTitle(), entry.getPageLabel());
 					pEntry.write(picaWriter);
 
