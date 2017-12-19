@@ -36,12 +36,22 @@ import org.jdom2.output.XMLOutputter;
 import de.intranda.goobi.plugins.toc2pica3.Pica3Entry;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.NIOFileUtils;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.metadaten.MetadatenHelper;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import ugh.dl.DocStruct;
+import ugh.dl.ExportFileformat;
+import ugh.dl.Fileformat;
+import ugh.dl.MetadataType;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.WriteException;
 
 @Data
 @PluginImplementation
@@ -56,7 +66,11 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	private Map<String, String> colors;
 	private ExecutorService executor;
 	private String returnPath;
-
+	private String meta_PublicationType;
+	private String meta_PublicationYear;
+	private String meta_PublicationPlace;
+	private String meta_Identifier;
+	
 	@Override
 	public void initialize(Step step, String returnPath) {
 		this.returnPath = returnPath;
@@ -113,10 +127,33 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			for (HierarchicalConfiguration color : colors) {
 				this.colors.put(color.getString("type"), color.getString("color"));
 			}
-		} catch (SwapException | DAOException | IOException | InterruptedException e) {
+			
+			// read the metadata file to get publication type, year and other stuff out of it
+			Fileformat gdzfile = step.getProzess().readMetadataFile();
+			DocStruct ds = gdzfile.getDigitalDocument().getLogicalDocStruct();
+			if (ds.getType().isAnchor()) {
+				ds = ds.getAllChildren().get(0);
+			}
+			
+			Prefs prefs = step.getProzess().getRegelsatz().getPreferences();
+			meta_PublicationType = ds.getType().getName();
+			meta_PublicationYear = getFirstMetadataField(ds, prefs, "PublicationYear");
+			meta_PublicationPlace = getFirstMetadataField(ds, prefs, "PlaceOfPublication");
+			meta_Identifier = getFirstMetadataField(ds, prefs, "CatalogIDSource");
+			
+		} catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
 			log.error(e);
 		}
 	}
+	
+	private String getFirstMetadataField(DocStruct ds, Prefs prefs, String type) {
+		MetadataType mtype = prefs.getMetadataTypeByName(type);
+		if (mtype != null && ds.getAllMetadataByType(mtype).size()>0) {
+			return ds.getAllMetadataByType(mtype).get(0).getValue();
+		}
+		return null;
+	}
+	
 
 	private List<Entry> getEntries(String xmlFile) {
 		List<Entry> returnList = new LinkedList<>();
@@ -182,6 +219,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	@Override
 	public String finish() {
 		try {
+			
 			Path xmlPath = null;
 			Writer picaWriter = new FileWriter(
 			        new File(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + ".pica"));
@@ -236,7 +274,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 					}
 
 					// write the pica entry into pica file too
-					Pica3Entry pEntry = new Pica3Entry("myType", "myYear", "myId", "myVolume", "myHeft",
+					Pica3Entry pEntry = new Pica3Entry(meta_PublicationType, meta_PublicationYear, meta_Identifier, "myVolume", "myHeft",
 					        entry.getAuthorList(), entry.getTitle(), entry.getPageLabel());
 					pEntry.write(picaWriter);
 

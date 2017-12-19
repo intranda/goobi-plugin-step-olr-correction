@@ -28,7 +28,7 @@ public class Entry {
     		List<EntryAuthor> myAuthors = new ArrayList<EntryAuthor>();
     		
     		if (authors!=null) {
-	    		String[] authorArray = authors.split(",");
+	    		String[] authorArray = authors.split(",| and ");
 	    		if (authorArray != null && authorArray.length > 0) {
 	            for (String author : authorArray) {
 	              EntryAuthor ea = new EntryAuthor(author);

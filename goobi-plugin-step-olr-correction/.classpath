@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-io-2.5.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/gson-2.2.4.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/ugh-3.0.jar" sourcepath="/ugh_new"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

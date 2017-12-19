@@ -26,7 +26,7 @@ public class Pica3Entry {
             return;
         }
         w.write("0500 ");
-        w.write(this.type);
+        w.write(getContentForField500(this.type));
         w.write('\n');
         w.write("1100 ");
         w.write(this.year);
@@ -41,21 +41,21 @@ public class Pica3Entry {
                 w.write(' ');
                 w.write(author.getPicaName());
                 w.write('\n');
-                authorField++;
+//                authorField++;
             }
         }
         w.write("4000 ");
         w.write(this.title);
         w.write('\n');
         w.write("4070 ");
-        w.write("/v");
+        w.write("$v");
         w.write(volume);
-        w.write("/j");
+        w.write("$j");
         w.write(year);
-        w.write("/a");
+        w.write("$a");
         w.write(this.heft);
         if (this.pageLabel != null) {
-            w.write("/p");
+            w.write("$p");
             w.write(this.pageLabel);
         }
         w.write('\n');
@@ -63,4 +63,12 @@ public class Pica3Entry {
     }
 
 
+    private String getContentForField500(String inType) {
+    		if (inType.toLowerCase().equals("monograph")) {
+    			return "Aon";
+    		} else {
+    			return "unknown type";
+    		}
+    }
+    
 }
