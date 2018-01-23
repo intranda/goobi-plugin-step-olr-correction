@@ -1,6 +1,7 @@
 package de.intranda.goobi.plugins;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ftp.FTPSClient;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.PluginType;
@@ -67,6 +69,11 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	private ExecutorService executor;
 	private String returnPath;
 	private HashMap<String, String> metadata = new HashMap<>();
+	private boolean ftpUse = false;
+	private String ftpHost;
+	private String ftpLogin;
+	private String ftpPassword;
+	private String ftpFolder;
 	
 	@Override
 	public void initialize(Step step, String returnPath) {
@@ -86,6 +93,13 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			}
 		}
 
+		// get FTP data
+		this.ftpUse = myconfig.getBoolean("ftp-use", false);
+		this.ftpHost = myconfig.getString("ftp-host", "");
+		this.ftpFolder = myconfig.getString("ftp-folder", "");
+		this.ftpLogin = myconfig.getString("ftp-login", "");
+		this.ftpPassword = myconfig.getString("ftp-password", "");
+		
 		tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
 		List<String> imageSizes = myconfig.getList("imagesize");
 		if (imageSizes == null || imageSizes.isEmpty()) {
@@ -220,8 +234,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 		try {
 			
 			Path xmlPath = null;
-			Writer picaWriter = new FileWriter(
-			        new File(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + ".pica"));
+			File picaFile = new File(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + ".pica");
+			Writer picaWriter = new FileWriter(picaFile);
 			xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
 			XMLOutputter outp = new XMLOutputter();
@@ -275,15 +289,22 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 					// write the pica entry into pica file too
 					Pica3Entry pEntry = new Pica3Entry(entry, metadata);
 					pEntry.write(picaWriter);
-
+					
 				}
 				OutputStream os = new FileOutputStream(xmlFile);
 				outp.output(doc, os);
 				os.close();
+				
 			}
+			
 			// close the pica file
 			picaWriter.flush();
 			picaWriter.close();
+			
+			//if upload to ftp shall happen
+			if (ftpUse) {
+				uploadToFtp(picaFile);
+			}
 		} catch (Exception e) {
 			log.error("Error while writing the result files", e);
 		}
@@ -305,4 +326,35 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 		return "";
 	}
 
+	private void uploadToFtp(File file) {
+		FTPSClient client = new FTPSClient();
+//		FTPClient client = new FTPClient();
+		FileInputStream fis = null;
+
+		try {
+		    client.connect(ftpHost);
+		    client.enterLocalPassiveMode();
+		    client.login(ftpLogin, ftpPassword);
+		    if (ftpFolder != null && !ftpFolder.isEmpty()) {
+		    		client.changeWorkingDirectory(ftpFolder);
+		    }
+		    
+		    // Store file to server
+		    fis = new FileInputStream(file);
+		    client.setBufferSize(160000);
+		    client.storeFile(file.getName(), fis);
+		    client.logout();
+		} catch (IOException e) {
+		    log.error("Error while uploading pica file to ftp server", e);
+		} finally {
+		    try {
+		        if (fis != null) {
+		            fis.close();
+		        }
+		        client.disconnect();
+		    } catch (IOException e) {
+		        log.error("Error while finishing uploading pica file to ftp server", e);
+		    }
+		}
+	}
 }

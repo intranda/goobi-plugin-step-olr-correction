@@ -1,8 +1,13 @@
 package de.intranda.goobi.plugins.toc2pica3;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
+
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPSClient;
 
 import de.intranda.goobi.plugins.Entry;
 import de.intranda.goobi.plugins.EntryAuthor;
@@ -106,12 +111,5 @@ public class Pica3Entry {
 		w.write('\n');
 	}
 
-
-	public static void main(String[] args) {
-		String s = "1.2.a.b";
-//		s = s.replaceAll("([,.])|([^\\w\\s](?!\\s))", "$1 ");
-		s = s.replaceAll("(\\.)(\\w)", "$1 $2");
-		System.out.println(s);
-	}
 	
 }

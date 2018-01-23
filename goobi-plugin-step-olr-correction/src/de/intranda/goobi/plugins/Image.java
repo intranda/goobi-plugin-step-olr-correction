@@ -81,6 +81,11 @@ public class Image {
         entryList.remove(currentEntry);
     }
 
+    public void removeAllEntriesOfThisPage() {
+        entryList.clear();
+    }
+    
+    
     private static class EscapeStringSerializer implements JsonSerializer<String> {
         @Override
         public JsonElement serialize(String s, Type type, JsonSerializationContext jsonSerializationContext) {

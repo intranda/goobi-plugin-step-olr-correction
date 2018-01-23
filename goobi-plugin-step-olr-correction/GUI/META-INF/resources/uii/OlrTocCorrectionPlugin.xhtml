@@ -175,95 +175,90 @@
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rectDrawing.js"></script>
 
-		<h:form id="qaform" styleClass="form-horizontal form-bordered">
+		
 			<div class="box box-color lightgrey box-bordered">
+						<h:form>
 				<div class="box-title">
 					<h3>
 						<i class="fa fa-puzzle-piece" />
 						<h:outputText id="id9" value="#{msgs.details}" />
 					</h3>
 					<div class="actions">
-						<h:commandLink id="id10" action="#{NavigationForm.Reload}"
-							styleClass="btn btn-mini">
-							<i class="fa fa-refresh" />
-						</h:commandLink>
+							<h:commandLink id="id10" action="#{NavigationForm.Reload}"
+								styleClass="btn btn-mini">
+								<i class="fa fa-refresh font-white" />
+							</h:commandLink>
 					</div>
 				</div>
-
+						</h:form>
+				
+				
 				<div class="box-content nopadding">
 					<div class="row">
+						<h:form id="qaform" styleClass="form-horizontal form-bordered">
 						<div class="col-sm-7">
 							<div class=" max-height scroll-y">
-							<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
-								<div class="row">
-									<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
-										<intranda:formInputText style="border-right:1px solid #ccc"
-											label="#{msgs.plugin_intranda_step_olr_toc_title}"
-											field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_title}"
-											name="title" fieldStyle="form-control title-border-focus"
-											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										<intranda:formInputText style="border-right:1px solid #ccc"
-											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
-											field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
-											name="authors" fieldStyle="form-control author-border-focus"
-											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										<intranda:formInputText style="border-right:1px solid #ccc"
-											label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
-											field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
-											name="institutions" fieldStyle="form-control institution-border-focus"
-											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
-											label="#{msgs.plugin_intranda_step_olr_toc_page}"
-											field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_page}"
-											name="pageLabel" fieldStyle="form-control pagenum-border-focus"
-											displayAsRequired="false" required="false" forceId="false" 
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+							
+								<x:dataList id="entrylist" value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
+									<div class="row">
+										<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
+											<intranda:formInputText style="border-right:1px solid #ccc"
+												label="#{msgs.plugin_intranda_step_olr_toc_title}"
+												field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
+												help="#{msgs.plugin_intranda_step_olr_toc_title}"
+												name="title" fieldStyle="form-control title-border-focus"
+												displayAsRequired="false" required="false" forceId="false" 
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+											<intranda:formInputText style="border-right:1px solid #ccc"
+												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
+												field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
+												help="#{msgs.plugin_intranda_step_olr_toc_authors}"
+												name="authors" fieldStyle="form-control author-border-focus"
+												displayAsRequired="false" required="false" forceId="false" 
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+											<intranda:formInputText style="border-right:1px solid #ccc"
+												label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
+												field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10"
+												help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
+												name="institutions" fieldStyle="form-control institution-border-focus"
+												displayAsRequired="false" required="false" forceId="false" 
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+											<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
+												label="#{msgs.plugin_intranda_step_olr_toc_page}"
+												field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
+												help="#{msgs.plugin_intranda_step_olr_toc_page}"
+												name="pageLabel" fieldStyle="form-control pagenum-border-focus"
+												displayAsRequired="false" required="false" forceId="false" 
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+										</div>
+										<div class="col-sm-1 nopadding">
+											<h:commandLink
+												title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
+												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
+												<i class="fa fa-trash-o"></i>
+												<f:setPropertyActionListener value="#{entry}"
+													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
+												<f:ajax execute="@form" render="@form bigimage" />
+											</h:commandLink>
+										</div>
+	
 									</div>
-									<div class="col-sm-1 nopadding">
-										<h:commandLink
-											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
-											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-											styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
-											onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
-											<i class="fa fa-trash-o"></i>
-											<f:setPropertyActionListener value="#{entry}"
-												target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"></f:setPropertyActionListener>
-										</h:commandLink>
-									</div>
-
-								</div>
-							</x:dataList>
-							</div>
-							<div class="row">
-								<div class="col-sm-11">
-									<!-- Create -->
-									<h:commandLink
-										styleClass="btn btn-blue pull-right font-size-s margin-top-10 margin-right-10"
-										action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
-										<i class="fa fa-plus margin-right-5"></i>
-										<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
-									</h:commandLink>
-								</div>
+								</x:dataList>
+							
 							</div>
 						</div>
 						<div class="col-sm-5" style="padding:10px;right:30px;">
 							
 							<h:panelGroup id="bigimage">
-							
-								<div class="row">
-									<f:subview id="first_image">
-										<ui:include
-											src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-									</f:subview>
-								</div>
-
+								
+									<div class="row">
+										<f:subview id="first_image">
+											<ui:include
+												src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+										</f:subview>
+									</div>
+								
 								<!-- big image -->
 								<div class="row margin-top-most margin-bottom-most">
 									<h:panelGroup styleClass="div-image" layout="block">
@@ -367,12 +362,14 @@
 								</div>
 								<!-- // big image -->
 
-								<div class="row">
-									<f:subview id="second_image">
-										<ui:include
-											src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-									</f:subview>
-								</div>
+								
+									<div class="row">
+										<f:subview id="second_image">
+											<ui:include
+												src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+										</f:subview>
+									</div>
+								
 							</h:panelGroup>
 						</div>
 
@@ -381,15 +378,28 @@
 							styleClass="col-sm-12">
 							<h:outputText value="#{msgs.noImagesFound}" />
 						</h:panelGroup>
+						</h:form>
 					</div>
 
 					<div class="form-actions">
+						<h:form>
+						<!-- Remove all entries of this page -->
+						<h:commandLink
+							title="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"
+							action="#{AktuelleSchritteForm.myPlugin.tih.image.removeAllEntriesOfThisPage}"
+							styleClass="btn btn-red font-size-s margin-right-10"
+							onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
+							<i class="fa fa-trash-o margin-right-5"></i>
+							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"/>
+						</h:commandLink>
 
-						<!-- Cancel -->
-						<h:commandLink styleClass="btn font-size-s" id="cancel"
-							action="#{AktuelleSchritteForm.myPlugin.cancel}">
-							<h:outputText
-								value="#{msgs.plugin_intranda_step_olr_toc_pluginLeave}" />
+						<!-- Create new entry -->
+						<h:commandLink
+							title="#{msgs.plugin_intranda_step_olr_toc_createEntry}"
+							styleClass="btn btn-blue font-size-s"
+							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
+							<i class="fa fa-plus margin-right-5"></i>
+							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
 						</h:commandLink>
 
 						<!-- Save -->
@@ -399,11 +409,19 @@
 							<h:outputText
 								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
 						</h:commandLink>
+
+						<!-- Cancel -->
+						<h:commandLink styleClass="btn font-size-s pull-right margin-right-10" id="cancel"
+							action="#{AktuelleSchritteForm.myPlugin.cancel}">
+							<h:outputText
+								value="#{msgs.plugin_intranda_step_olr_toc_pluginLeave}" />
+						</h:commandLink>
+						</h:form>
 					</div>
 
 				</div>
 			</div>
-		</h:form>
+		
 
 
 		<script type="text/javascript">

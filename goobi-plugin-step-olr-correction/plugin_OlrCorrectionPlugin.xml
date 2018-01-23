@@ -32,6 +32,13 @@
             <type>entry</type>
             <color>grey</color>
         </class>
+        
+        <ftp-use>true</ftp-use>
+        <ftp-host>ftp.gbv.de</ftp-host>
+        <ftp-login>PP8236</ftp-login>
+        <ftp-password>K6ZUrKKa</ftp-password>
+        <ftp-folder>Intranda</ftp-folder>
+        
     </config>
 </config_plugin>
 
