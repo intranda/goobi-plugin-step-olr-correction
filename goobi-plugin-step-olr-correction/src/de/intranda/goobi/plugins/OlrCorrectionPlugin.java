@@ -66,11 +66,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	private Map<String, String> colors;
 	private ExecutorService executor;
 	private String returnPath;
-	private String meta_PublicationType;
-	private String meta_PublicationYear;
-	private String meta_PublicationPlace;
-	private String meta_Identifier;
-	private String meta_CurrentNo;
+	private HashMap<String, String> metadata = new HashMap<>();
 	
 	@Override
 	public void initialize(Step step, String returnPath) {
@@ -137,23 +133,24 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			}
 			
 			Prefs prefs = step.getProzess().getRegelsatz().getPreferences();
-			meta_PublicationType = ds.getType().getName();
-			meta_PublicationYear = getFirstMetadataField(ds, prefs, "PublicationYear");
-			meta_PublicationPlace = getFirstMetadataField(ds, prefs, "PlaceOfPublication");
-			meta_Identifier = getFirstMetadataField(ds, prefs, "CatalogIDSource");
-			meta_CurrentNo = getFirstMetadataField(ds, prefs, "CurrentNo");
+			metadata.put("type", ds.getType().getName());
+			addMetadataField("title", ds, prefs, "TitleDocMain");
+			addMetadataField("year", ds, prefs, "PublicationYear");
+			addMetadataField("place", ds, prefs, "PlaceOfPublication");
+			addMetadataField("id", ds, prefs, "CatalogIDSource");
+			addMetadataField("number", ds, prefs, "CurrentNo");
+			addMetadataField("language", ds, prefs, "DocLanguage");
 			
 		} catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
 			log.error(e);
 		}
 	}
 	
-	private String getFirstMetadataField(DocStruct ds, Prefs prefs, String type) {
+	private void addMetadataField(String label, DocStruct ds, Prefs prefs, String type) {
 		MetadataType mtype = prefs.getMetadataTypeByName(type);
 		if (mtype != null && ds.getAllMetadataByType(mtype).size()>0) {
-			return ds.getAllMetadataByType(mtype).get(0).getValue();
+			metadata.put(label, ds.getAllMetadataByType(mtype).get(0).getValue());
 		}
-		return null;
 	}
 	
 
@@ -276,8 +273,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 					}
 
 					// write the pica entry into pica file too
-					Pica3Entry pEntry = new Pica3Entry(meta_PublicationType, meta_PublicationYear, meta_Identifier, meta_CurrentNo, null,
-					        entry.getAuthorList(), entry.getTitle(), entry.getPageLabel());
+					Pica3Entry pEntry = new Pica3Entry(entry, metadata);
 					pEntry.write(picaWriter);
 
 				}

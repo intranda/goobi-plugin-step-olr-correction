@@ -7,7 +7,8 @@ public class EntryAuthor {
 	private String fullName;
 	
 	public EntryAuthor(String fullName) {
-		this.fullName = fullName;
+//		this.fullName = fullName;
+		this.fullName = fullName.replaceAll("(\\.)(\\w)", "$1 $2");
 	}
 	
 	public String getPicaName() {

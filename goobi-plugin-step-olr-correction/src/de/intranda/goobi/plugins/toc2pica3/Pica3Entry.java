@@ -2,8 +2,9 @@ package de.intranda.goobi.plugins.toc2pica3;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
+import java.util.HashMap;
 
+import de.intranda.goobi.plugins.Entry;
 import de.intranda.goobi.plugins.EntryAuthor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,69 +12,106 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Pica3Entry {
-    private String type;
-    private String year;
-    private String id;
-    private String volume;
-    private String heft;
+	private Entry entry;
+	private HashMap<String, String> metadata;
 
-    private List<EntryAuthor> authors;
-    private String title;
-    private String pageLabel;
+	public void write(Writer w) throws IOException {
+		if (entry.getTitle() == null || 
+				entry.getAuthors() == null ||
+				entry.getAuthors().length() == 0) {
+			return;
+		}
+		w.write("0500 ");
+		w.write("Asx");
+		w.write('\n');
 
-    public void write(Writer w) throws IOException {
-        if (this.title == null) {
-            return;
-        }
-        w.write("0500 ");
-        w.write(getContentForField500(this.type));
-        w.write('\n');
-        w.write("1100 ");
-        w.write(this.year);
-        w.write('\n');
-        w.write("2185 ");
-        w.write(this.id);
-        w.write('\n');
-        if (this.authors.size() > 0) {
-            int authorField = 3011;
-            for (EntryAuthor author : this.authors) {
-                w.write(Integer.toString(authorField));
-                w.write(' ');
-                w.write(author.getPicaName());
-                w.write('\n');
-//                authorField++;
-            }
-        }
-        w.write("4000 ");
-        w.write(this.title);
-        w.write('\n');
-        w.write("4070 ");
-        if (this.volume!=null) {
-        		w.write("$v");
-            w.write(this.volume);
-        }
-        w.write("$j");
-        w.write(year);
-        if (this.heft!=null) {
-        		w.write("$a");
-        		w.write(this.heft);
-        }
-        if (this.pageLabel != null) {
-            w.write("$p");
-            w.write(this.pageLabel);
-        }
-        w.write('\n');
-        w.write('\n');
-    }
+		w.write("0501 ");
+		w.write("Text$btxt");
+		w.write('\n');
+
+		w.write("0502 ");
+		w.write("ohne Hilfsmittel zu benutzen$bn");
+		w.write('\n');
+
+		w.write("0503 ");
+		w.write("Band$bnc");
+		w.write('\n');
+
+		w.write("1100 ");
+		w.write(metadata.get("year"));
+		w.write('\n');
+
+		if (metadata.containsKey("language")) {
+			w.write("1500 ");
+			w.write(metadata.get("language"));
+			w.write('\n');
+		}
+
+		w.write("1505 ");
+		w.write("$erda");
+		w.write('\n');
+
+		// laut GBV mit rein, laut TIB raus
+		// w.write("2199 ");
+		// w.write(metadata.get("id"));
+		// w.write('\n');
+
+		// laut GBV mit rein, laut TIB raus
+		// w.write("2240 ");
+		// w.write(metadata.get("id"));
+		// w.write('\n');
+
+		if (entry.getAuthorList().size() > 0) {
+			int authorField = 3000;
+			for (EntryAuthor author : entry.getAuthorList()) {
+				w.write(Integer.toString(authorField));
+				w.write(' ');
+				w.write(author.getPicaName());
+				w.write("$BVerfasserIn$4aut");
+				w.write('\n');
+				authorField = 3010;
+			}
+		}
+
+		// laut GBV mit rein, laut TIB raus
+		// w.write("3290 ");
+		// w.write("");
+		// w.write('\n');
+
+		w.write("4000 ");
+		w.write(entry.getTitle());
+		w.write("$h");
+		w.write(entry.getAuthors());
+		w.write('\n');
+
+		if (entry.getPageLabel() != null) {
+			w.write("4070 ");
+			w.write("/p" + entry.getPageLabel());
+			w.write('\n');
+		}
+
+		w.write("4241 ");
+		//w.write("Enthalten in!" + metadata.get("id") + "!" + metadata.get("title"));
+		w.write("Enthalten in!" + metadata.get("id") + "!");
+		w.write('\n');
+
+		w.write("7001 ");
+		w.write("xa");
+		w.write('\n');
+
+		w.write("8600 ");
+		w.write("aufkon");
+		w.write('\n');
+
+		w.write('\n');
+	}
 
 
-    private String getContentForField500(String inType) {
-//    		if (inType.toLowerCase().equals("monograph")) {
-//    			return "Aon";
-//    		} else {
-//    			return "unknown type";
-//    		}
-    		return "Aon";
-    }
-    
+	public static void main(String[] args) {
+		String s = "1.2.a.b";
+//		s = s.replaceAll("([,.])|([^\\w\\s](?!\\s))", "$1 ");
+		s = s.replaceAll("(\\.)(\\w)", "$1 $2");
+		System.out.println(s);
+	}
+	
 }
