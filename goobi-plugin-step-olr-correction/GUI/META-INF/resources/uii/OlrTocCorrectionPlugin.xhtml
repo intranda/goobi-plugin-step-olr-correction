@@ -410,6 +410,13 @@
 								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
 						</h:commandLink>
 
+						<!-- Pica preview -->
+						<h:commandLink styleClass="btn font-size-s pull-right margin-right-10" id="picaPreview"
+							action="#{AktuelleSchritteForm.myPlugin.showPicaPreview}">
+							<h:outputText
+								value="#{msgs.plugin_intranda_step_olr_toc_showPicaPreview}" />
+						</h:commandLink>
+						
 						<!-- Cancel -->
 						<h:commandLink styleClass="btn font-size-s pull-right margin-right-10" id="cancel"
 							action="#{AktuelleSchritteForm.myPlugin.cancel}">
@@ -421,8 +428,19 @@
 
 				</div>
 			</div>
-		
+			
+			<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" style="margin-top:20px;display:block;">
+				
+				<h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/>
 
+				<!-- Close PICA preview -->
+				<h:form>
+					<h:commandLink styleClass="btn font-size-s margin-top-10" id="picaPreview"
+						action="#{AktuelleSchritteForm.myPlugin.closePicaPreview}">
+						<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_closePicaPreview}" />
+					</h:commandLink>
+				</h:form>
+			</h:panelGroup>
 
 		<script type="text/javascript">
 

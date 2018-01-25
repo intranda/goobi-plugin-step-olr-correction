@@ -42,10 +42,12 @@ public class Pica3Entry {
 		w.write("Band$bnc");
 		w.write('\n');
 
-		w.write("1100 ");
-		w.write(metadata.get("year"));
-		w.write('\n');
-
+		if (metadata.containsKey("year")) {
+			w.write("1100 ");
+			w.write(metadata.get("year"));
+			w.write('\n');
+		}
+		
 		if (metadata.containsKey("language")) {
 			w.write("1500 ");
 			w.write(metadata.get("language"));

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import org.jdom2.output.XMLOutputter;
 
 import de.intranda.goobi.plugins.toc2pica3.Pica3Entry;
 import de.sub.goobi.config.ConfigPlugins;
+import de.sub.goobi.forms.HelperForm;
 import de.sub.goobi.helper.FacesContextHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.NIOFileUtils;
@@ -74,9 +76,11 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	private String ftpLogin;
 	private String ftpPassword;
 	private String ftpFolder;
-	
+	private String picaPreview;
+
 	@Override
 	public void initialize(Step step, String returnPath) {
+		picaPreview = null;
 		this.returnPath = returnPath;
 		String projectName = step.getProzess().getProjekt().getTitel();
 		HierarchicalConfiguration myconfig = null;
@@ -99,7 +103,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 		this.ftpFolder = myconfig.getString("ftp-folder", "");
 		this.ftpLogin = myconfig.getString("ftp-login", "");
 		this.ftpPassword = myconfig.getString("ftp-password", "");
-		
+
 		tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
 		List<String> imageSizes = myconfig.getList("imagesize");
 		if (imageSizes == null || imageSizes.isEmpty()) {
@@ -138,14 +142,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			for (HierarchicalConfiguration color : colors) {
 				this.colors.put(color.getString("type"), color.getString("color"));
 			}
-			
-			// read the metadata file to get publication type, year and other stuff out of it
+
+			// read the metadata file to get publication type, year and other
+			// stuff out of it
 			Fileformat gdzfile = step.getProzess().readMetadataFile();
 			DocStruct ds = gdzfile.getDigitalDocument().getLogicalDocStruct();
 			if (ds.getType().isAnchor()) {
 				ds = ds.getAllChildren().get(0);
 			}
-			
+
 			Prefs prefs = step.getProzess().getRegelsatz().getPreferences();
 			metadata.put("type", ds.getType().getName());
 			addMetadataField("title", ds, prefs, "TitleDocMain");
@@ -154,19 +159,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 			addMetadataField("id", ds, prefs, "CatalogIDSource");
 			addMetadataField("number", ds, prefs, "CurrentNo");
 			addMetadataField("language", ds, prefs, "DocLanguage");
-			
-		} catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
+
+		} catch (SwapException | DAOException | IOException | InterruptedException | ReadException
+		        | PreferencesException | WriteException e) {
 			log.error(e);
 		}
 	}
-	
+
 	private void addMetadataField(String label, DocStruct ds, Prefs prefs, String type) {
 		MetadataType mtype = prefs.getMetadataTypeByName(type);
-		if (mtype != null && ds.getAllMetadataByType(mtype).size()>0) {
+		if (mtype != null && ds.getAllMetadataByType(mtype).size() > 0) {
 			metadata.put(label, ds.getAllMetadataByType(mtype).get(0).getValue());
 		}
 	}
-	
 
 	private List<Entry> getEntries(String xmlFile) {
 		List<Entry> returnList = new LinkedList<>();
@@ -232,7 +237,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 	@Override
 	public String finish() {
 		try {
-			
+
 			Path xmlPath = null;
 			File picaFile = new File(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + ".pica");
 			Writer picaWriter = new FileWriter(picaFile);
@@ -289,19 +294,19 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 					// write the pica entry into pica file too
 					Pica3Entry pEntry = new Pica3Entry(entry, metadata);
 					pEntry.write(picaWriter);
-					
+
 				}
 				OutputStream os = new FileOutputStream(xmlFile);
 				outp.output(doc, os);
 				os.close();
-				
+
 			}
-			
+
 			// close the pica file
 			picaWriter.flush();
 			picaWriter.close();
-			
-			//if upload to ftp shall happen
+
+			// if upload to ftp shall happen
 			if (ftpUse) {
 				uploadToFtp(picaFile);
 			}
@@ -316,6 +321,26 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 		return null;
 	}
 
+	public void showPicaPreview() {
+		StringWriter sw = new StringWriter();
+		try {
+			for (Image image : tih.getAllImages()) {
+				for (Entry entry : image.getEntryList()) {
+					Pica3Entry pEntry = new Pica3Entry(entry, metadata);
+					pEntry.write(sw);
+				}
+			}
+		} catch (IOException e) {
+			Helper.setFehlerMeldung("Problem while generating the PICA preview", e);
+		}
+		picaPreview = sw.toString().replaceAll("\n", "<br/>");
+	}
+
+	
+	public void closePicaPreview() {
+		picaPreview = null;
+	}
+
 	private String getTheme() {
 		FacesContext context = FacesContextHelper.getCurrentFacesContext();
 		String completePath = context.getExternalContext().getRequestServletPath();
@@ -328,33 +353,33 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
 	private void uploadToFtp(File file) {
 		FTPSClient client = new FTPSClient();
-//		FTPClient client = new FTPClient();
+		// FTPClient client = new FTPClient();
 		FileInputStream fis = null;
 
 		try {
-		    client.connect(ftpHost);
-		    client.enterLocalPassiveMode();
-		    client.login(ftpLogin, ftpPassword);
-		    if (ftpFolder != null && !ftpFolder.isEmpty()) {
-		    		client.changeWorkingDirectory(ftpFolder);
-		    }
-		    
-		    // Store file to server
-		    fis = new FileInputStream(file);
-		    client.setBufferSize(160000);
-		    client.storeFile(file.getName(), fis);
-		    client.logout();
+			client.connect(ftpHost);
+			client.enterLocalPassiveMode();
+			client.login(ftpLogin, ftpPassword);
+			if (ftpFolder != null && !ftpFolder.isEmpty()) {
+				client.changeWorkingDirectory(ftpFolder);
+			}
+
+			// Store file to server
+			fis = new FileInputStream(file);
+			client.setBufferSize(160000);
+			client.storeFile(file.getName(), fis);
+			client.logout();
 		} catch (IOException e) {
-		    log.error("Error while uploading pica file to ftp server", e);
+			log.error("Error while uploading pica file to ftp server", e);
 		} finally {
-		    try {
-		        if (fis != null) {
-		            fis.close();
-		        }
-		        client.disconnect();
-		    } catch (IOException e) {
-		        log.error("Error while finishing uploading pica file to ftp server", e);
-		    }
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+				client.disconnect();
+			} catch (IOException e) {
+				log.error("Error while finishing uploading pica file to ftp server", e);
+			}
 		}
 	}
 }
