@@ -9,7 +9,6 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/ics.jar"/>
-	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/lombok-1.12.4.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jspf.core-1.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/jdom-2.0.5.jar"/>
@@ -17,6 +16,7 @@
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/gson-2.2.4.jar"/>
 	<classpathentry kind="var" path="TOMCAT_HOME/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/ugh-3.0.jar" sourcepath="/ugh_new"/>
-	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-net-3.2.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/commons-net-3.6.jar"/>
+	<classpathentry kind="lib" path="/Goobi/webapp/WEB-INF/lib/lombok.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
