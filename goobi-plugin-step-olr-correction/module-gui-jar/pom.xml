@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.intranda.goobi.plugins</groupId>
-	<artifactId>goobi-plugin-step-olr-correction-gui-jar</artifactId>
+	<artifactId>goobi-plugin-step-olr-correction-gui</artifactId>
 	<version>1.0.0</version>
 	<parent>
 		<groupId>de.intranda.goobi.plugins</groupId>
-		<artifactId>goobi-plugin-step-olr-correction</artifactId>
+		<artifactId>goobi-plugin-step-olr-correction-dep</artifactId>
 		<version>1.0.0</version>
 	</parent>
 	<repositories>
