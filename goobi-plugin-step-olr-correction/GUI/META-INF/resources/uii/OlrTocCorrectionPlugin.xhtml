@@ -197,9 +197,9 @@
 					<div class="row">
 						<h:form id="qaform" styleClass="form-horizontal form-bordered">
 						<div class="col-sm-7">
-							<div class=" max-height scroll-y">
+							<h:panelGroup id="entrylist" layout="block" class=" max-height scroll-y">
 							
-								<x:dataList id="entrylist" value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
+								<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
 									<div class="row">
 										<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
 											<intranda:formInputText style="border-right:1px solid #ccc"
@@ -239,14 +239,14 @@
 												<i class="fa fa-trash-o"></i>
 												<f:setPropertyActionListener value="#{entry}"
 													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
-												<f:ajax execute="@form" render="@form bigimage" />
+												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
 											</h:commandLink>
 										</div>
 	
 									</div>
 								</x:dataList>
 							
-							</div>
+							</h:panelGroup>
 						</div>
 						<div class="col-sm-5" style="padding:10px;right:30px;">
 							
@@ -400,6 +400,7 @@
 							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
 							<i class="fa fa-plus margin-right-5"></i>
 							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
+							<f:ajax render=":qaform:entrylist"/>
 						</h:commandLink>
 
 						<!-- Save -->
