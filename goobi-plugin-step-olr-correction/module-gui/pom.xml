@@ -5,6 +5,10 @@
 	<groupId>de.intranda.goobi.plugins.step</groupId>
 	<artifactId>olr-correction-gui</artifactId>
 	<version>1.0.0</version>
+	<properties>
+		<jar.name>plugin_intranda_step_olr-correction-GUI</jar.name>
+		<dest.folder>/opt/digiverso/goobi/plugins/GUI/</dest.folder>
+	</properties>
 	<parent>
 		<groupId>de.intranda.goobi.plugins.step</groupId>
 		<artifactId>olr-correction</artifactId>
@@ -17,6 +21,7 @@
 		</repository>
 	</repositories>
 	<build>
+		<finalName>${jar.name}</finalName>
 		<resources>
 			<resource>
 				<directory>../GUI</directory>
@@ -44,20 +49,13 @@
 									<artifactId>${project.artifactId}</artifactId>
 									<version>${project.version}</version>
 									<type>${project.packaging}</type>
+									<destFileName>${jar.name}.jar</destFileName>
 								</artifactItem>
 							</artifactItems>
-							<outputDirectory>/opt/digiverso/goobi/plugins/GUI/</outputDirectory>
+							<outputDirectory>${dest.folder}</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<finalName>plugin_intranda_step_olr_correction-GUI.jar</finalName>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
