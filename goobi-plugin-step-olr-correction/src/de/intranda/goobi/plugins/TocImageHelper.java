@@ -102,7 +102,7 @@ public class TocImageHelper {
     private Dimension getActualImageSize(Image image) {
         Dimension dim;
         try {
-            String imagePath = imageFolderName + image.getImageName();
+            String imagePath = "file://" + imageFolderName + image.getImageName();
             String dimString = new GetImageDimensionAction().getDimensions(imagePath);
             int width = Integer.parseInt(dimString.replaceAll("::.*", ""));
             int height = Integer.parseInt(dimString.replaceAll(".*::", ""));
