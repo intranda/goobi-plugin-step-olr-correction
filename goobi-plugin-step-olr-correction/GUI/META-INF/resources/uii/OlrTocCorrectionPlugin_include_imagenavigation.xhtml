@@ -53,11 +53,8 @@
 					<x:updateActionListener value="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList - 1}" property="#{AktuelleSchritteForm.myPlugin.tih.imageIndex}" />
 				</h:commandLink>
 				
-				<h:commandLink id="showAllButton"
-					onclick="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'drawCurrentSelected()':'drawAllRects(viewImage, entries, scaleFactor)'}"
-					action="#{NavigationForm.Reload}"
-					title="#{msgs.plugin_intranda_step_olr_toc_showAllEntries}"
-					styleClass="image-navigation btn pull-right #{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'btn-blue':''}">
+				<h:commandLink styleClass="pull-right btn font-size-s margin-sides-10" title="#{msgs.plugin_intranda_step_olr_toc_showAllEntries}" id="showAllButton" action="#{NavigationForm.Reload}"
+					onclick="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'drawCurrentSelected()':'drawAllRects(viewImage, entries, scaleFactor)'}">
 					<i class="fa fa-eye"></i>
 					<f:setPropertyActionListener
 						value="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'':'on'}"
@@ -65,6 +62,23 @@
 					<f:passThroughAttribute name="data-toggle" value="tooltip" />
 					<f:ajax execute="@this" render="@this"/>
 				</h:commandLink>
+				
+				<h:outputText styleClass="pull-right font-light margin-right-10" style="line-height: 27px;"
+					value="#{AktuelleSchritteForm.myPlugin.tih.image.imageName}" />
+				
+									
+<!-- 				<h:commandLink id="showAllButton" -->
+<!-- 					onclick="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'drawCurrentSelected()':'drawAllRects(viewImage, entries, scaleFactor)'}" -->
+<!-- 					action="#{NavigationForm.Reload}" -->
+<!-- 					title="#{msgs.plugin_intranda_step_olr_toc_showAllEntries}" -->
+<!-- 					styleClass="image-navigation btn font-size-s pull-right #{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'btn-blue':''}"> -->
+<!-- 					<i class="fa fa-eye"></i> -->
+<!-- 					<f:setPropertyActionListener -->
+<!-- 						value="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'':'on'}" -->
+<!-- 						target="#{NavigationForm.uiStatus.olr_showAllEntries}" /> -->
+<!-- 					<f:passThroughAttribute name="data-toggle" value="tooltip" /> -->
+<!-- 					<f:ajax execute="@this" render="@this"/> -->
+<!-- 				</h:commandLink> -->
 				
 		</div>
 		

@@ -150,6 +150,14 @@
 	max-height: 1106px;
 	height: 1106px;
 }
+.image-navigation {
+	padding-bottom: 0;
+	border: 0;
+}
+
+#bottomControls {
+	padding-top: 0;
+}
 </style>
 
 		<script type="text/javascript"
@@ -193,7 +201,7 @@
 						</h:form>
 				
 				
-				<div class="box-content nopadding">
+				<div class="box-content nopadding" id="allContent">
 					<div class="row">
 						<h:form id="qaform" styleClass="form-horizontal form-bordered">
 						<div class="col-sm-7">
@@ -248,29 +256,33 @@
 							
 							</h:panelGroup>
 						</div>
-						<div class="col-sm-5" style="padding:10px;right:30px;">
+						<div class="col-sm-5" style="right:30px;">
 							
 							<h:panelGroup id="bigimage">
 								
-									<div class="row">
+									<div class="row" id="topImageNav">
 										<f:subview id="first_image">
 											<ui:include
 												src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
 										</f:subview>
+
 									</div>
 								
 								<!-- big image -->
 								<div class="row margin-top-most margin-bottom-most">
 									<h:panelGroup styleClass="div-image" layout="block">
 										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
-										<div id="mainImage" class="margin-bottom-regular"
+										<div id="mainImage" class="" style="border: 1px solid grey;"
 											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
-										<div class="big-image-caption margin-top-regular font-light">
-											<h:outputText
-												value="#{AktuelleSchritteForm.myPlugin.tih.image.imageName}" />
-										</div>
 										<script type="text/javascript">
-                                    $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
+										var myHeight = $(window).height() - $('#breadcrumb').outerHeight() - $('#header').outerHeight() - $('#navigation').outerHeight() - $('#bottomControls').outerHeight() - $('.box-title').outerHeight() -100;
+										$('.max-height').height(myHeight);
+										$('.max-height').css("max-height", myHeight+20 + "px");
+										$('.max-height').css("height", myHeight+20 + "px");
+										myHeight = myHeight - $('#topImageNav').height();
+										$('#mainImage').height(myHeight);
+										console.log(myHeight);
+//                                     $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
                                     
                                     var entryGroup = {
 	                                        name : "entry",
@@ -325,7 +337,7 @@
 	                                    }; 
                                     var imageViewConfig = {
                             			    global: {
-                            			        zoomSpeed: 0,
+                            			        zoomSpeed: 1.2,
                             			        divId : 'mainImage',
                             			        zoomSlider : 'zoomSlider',
                             			        maxZoomLevel: 10,
@@ -363,12 +375,6 @@
 								<!-- // big image -->
 
 								
-									<div class="row">
-										<f:subview id="second_image">
-											<ui:include
-												src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-										</f:subview>
-									</div>
 								
 							</h:panelGroup>
 						</div>
@@ -381,7 +387,7 @@
 						</h:form>
 					</div>
 
-					<div class="form-actions">
+					<div class="form-actions" id="bottomControls">
 						<h:form>
 						<!-- Remove all entries of this page -->
 						<h:commandLink
