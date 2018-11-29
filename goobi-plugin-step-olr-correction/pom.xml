@@ -6,6 +6,11 @@
 	<artifactId>olr-correction</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
+
+	<modules>
+		<module>module-main</module>
+		<module>module-gui</module>
+	</modules>
 	<distributionManagement>
 		<repository>
 			<id>intranda</id>
