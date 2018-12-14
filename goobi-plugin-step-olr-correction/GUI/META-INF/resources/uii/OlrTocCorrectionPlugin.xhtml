@@ -210,33 +210,37 @@
 								<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
 									<div class="row">
 										<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
-											<intranda:formInputText style="border-right:1px solid #ccc"
+											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
 												label="#{msgs.plugin_intranda_step_olr_toc_title}"
 												field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
 												help="#{msgs.plugin_intranda_step_olr_toc_title}"
 												name="title" fieldStyle="form-control title-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
+												execute="@form"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-											<intranda:formInputText style="border-right:1px solid #ccc"
+											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
 												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
 												field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
 												help="#{msgs.plugin_intranda_step_olr_toc_authors}"
 												name="authors" fieldStyle="form-control author-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
+												execute="@form"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-											<intranda:formInputText style="border-right:1px solid #ccc"
-												label="#{msgs.plugin_intranda_step_olr_toc_institutions}"
-												field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10"
-												help="#{msgs.plugin_intranda_step_olr_toc_institutions}"
-												name="institutions" fieldStyle="form-control institution-border-focus"
-												displayAsRequired="false" required="false" forceId="false" 
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-											<intranda:formInputText style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
+<!-- 											<intranda:formInputTextAjax style="border-right:1px solid #ccc" -->
+<!-- 												label="#{msgs.plugin_intranda_step_olr_toc_institutions}" -->
+<!-- 												field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10" -->
+<!-- 												help="#{msgs.plugin_intranda_step_olr_toc_institutions}" -->
+<!-- 												name="institutions" fieldStyle="form-control institution-border-focus" -->
+<!-- 												displayAsRequired="false" required="false" forceId="false"  -->
+<!-- 												execute="@form" -->
+<!-- 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/> -->
+											<intranda:formInputTextAjax style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
 												label="#{msgs.plugin_intranda_step_olr_toc_page}"
 												field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
 												help="#{msgs.plugin_intranda_step_olr_toc_page}"
 												name="pageLabel" fieldStyle="form-control pagenum-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
+												execute="@form"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 										</div>
 										<div class="col-sm-1 nopadding">

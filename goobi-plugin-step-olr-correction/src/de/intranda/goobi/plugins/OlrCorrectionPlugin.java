@@ -234,7 +234,9 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             outp.setFormat(Format.getPrettyFormat());
 
             for (Image image : tih.getAllImages()) {
-                String xmlFile = xmlPath.toString() + File.separator + image.getImageName().replace("png", "xml");
+                String imageName = image.getImageName();
+                String xmlName = imageName.substring(0, imageName.lastIndexOf('.')) + ".xml";
+                String xmlFile = xmlPath.toString() + File.separator + xmlName;
                 Document doc = new Document();
                 Element root = new Element("toc");
                 doc.setRootElement(root);
