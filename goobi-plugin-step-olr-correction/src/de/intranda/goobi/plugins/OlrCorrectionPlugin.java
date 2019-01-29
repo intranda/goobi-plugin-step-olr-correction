@@ -76,7 +76,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         HierarchicalConfiguration myconfig = null;
 
         // get the correct configuration for the right project
-        List<HierarchicalConfiguration> configs = ConfigPlugins.getPluginConfig(this).configurationsAt("config");
+        List<HierarchicalConfiguration> configs = ConfigPlugins.getPluginConfig(this.getTitle()).configurationsAt("config");
         for (HierarchicalConfiguration hc : configs) {
             List<HierarchicalConfiguration> projects = hc.configurationsAt("project");
             for (HierarchicalConfiguration project : projects) {

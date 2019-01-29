@@ -41,6 +41,11 @@ public class Pica3Entry {
 		w.write("0503 ");
 		w.write("Band$bnc");
 		w.write('\n');
+		
+		w.write("006Y ");
+		w.write("$0ConTIB");
+		w.write('\n');
+		
 
 		if (metadata.containsKey("year")) {
 			w.write("1100 ");
@@ -93,7 +98,12 @@ public class Pica3Entry {
 
 		if (entry.getPageLabel() != null) {
 			w.write("4070 ");
-			w.write("/p" + entry.getPageLabel());
+			// add a year if it is there
+			if (metadata.containsKey("year")) {
+				w.write("$j" + metadata.get("year"));
+			}
+			// now add the pages
+			w.write("$p" + entry.getPageLabel());
 			w.write('\n');
 		}
 
@@ -107,7 +117,7 @@ public class Pica3Entry {
 		w.write('\n');
 
 		w.write("8600 ");
-		w.write("aufkon");
+		w.write("ConTIB");
 		w.write('\n');
 
 		w.write('\n');
