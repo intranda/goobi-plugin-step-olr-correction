@@ -43,10 +43,13 @@ public class Pica3Entry {
 		w.write('\n');
 		
 		w.write("006Y ");
-		w.write("$0ConTIB");
+		w.write("$0ConTIB_");
+		w.write(metadata.get("id"));
+		w.write("_");
+		w.write(entry.getEntryId());
 		w.write('\n');
 		
-
+		// only if the year exists write it there
 		if (metadata.containsKey("year")) {
 			w.write("1100 ");
 			w.write(metadata.get("year"));

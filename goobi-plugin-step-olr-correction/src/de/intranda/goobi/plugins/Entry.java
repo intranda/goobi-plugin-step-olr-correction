@@ -38,4 +38,12 @@ public class Entry {
     		}
         return myAuthors;
     }
+    
+    public String getEntryId() {
+    	String id = pageLabel;
+    	if (boxes != null && boxes.size()>0) {
+    		id += "-" + boxes.get(0).getX() + "-" + boxes.get(0).getY();
+    	}
+    	return id;
+    }
 }
