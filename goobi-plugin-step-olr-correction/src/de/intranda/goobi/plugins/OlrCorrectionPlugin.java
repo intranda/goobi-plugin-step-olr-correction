@@ -133,6 +133,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             // read the metadata file to get publication type, year and other
             // stuff out of it
             Fileformat gdzfile = step.getProzess().readMetadataFile();
+            DocStruct dsParent = gdzfile.getDigitalDocument().getLogicalDocStruct();
             DocStruct ds = gdzfile.getDigitalDocument().getLogicalDocStruct();
             if (ds.getType().isAnchor()) {
                 ds = ds.getAllChildren().get(0);
@@ -140,12 +141,12 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
             Prefs prefs = step.getProzess().getRegelsatz().getPreferences();
             metadata.put("type", ds.getType().getName());
-            addMetadataField("title", ds, prefs, "TitleDocMain");
-            addMetadataField("year", ds, prefs, "PublicationYear");
-            addMetadataField("place", ds, prefs, "PlaceOfPublication");
-            addMetadataField("id", ds, prefs, "CatalogIDSource");
-            addMetadataField("number", ds, prefs, "CurrentNo");
-            addMetadataField("language", ds, prefs, "DocLanguage");
+            addMetadataField("title", ds, dsParent, prefs, "TitleDocMain");
+            addMetadataField("year", ds, dsParent, prefs, "PublicationYear");
+            addMetadataField("place", ds, dsParent, prefs, "PlaceOfPublication");
+            addMetadataField("id", ds, dsParent, prefs, "CatalogIDDigital");
+            addMetadataField("number", ds, dsParent, prefs, "CurrentNo");
+            addMetadataField("language", ds, dsParent, prefs, "DocLanguage");
 
         } catch (SwapException | DAOException | IOException | InterruptedException | ReadException
                 | PreferencesException | WriteException e) {
@@ -153,10 +154,12 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         }
     }
 
-    private void addMetadataField(String label, DocStruct ds, Prefs prefs, String type) {
+    private void addMetadataField(String label, DocStruct ds, DocStruct dsParent, Prefs prefs, String type) {
         MetadataType mtype = prefs.getMetadataTypeByName(type);
         if (mtype != null && ds.getAllMetadataByType(mtype).size() > 0) {
             metadata.put(label, ds.getAllMetadataByType(mtype).get(0).getValue());
+        } else if (mtype != null && dsParent.getAllMetadataByType(mtype).size() > 0) {
+        	metadata.put(label, dsParent.getAllMetadataByType(mtype).get(0).getValue());
         }
     }
 
@@ -282,7 +285,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
                     // write the pica entry into pica file too
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata);
-                    pEntry.write(picaWriter);
+                    pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
 
                 }
                 OutputStream os = new FileOutputStream(xmlFile);
@@ -312,7 +315,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             for (Image image : tih.getAllImages()) {
                 for (Entry entry : image.getEntryList()) {
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata);
-                    pEntry.write(sw);
+                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
                 }
             }
         } catch (IOException e) {

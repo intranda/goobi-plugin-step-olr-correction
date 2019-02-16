@@ -1,13 +1,8 @@
 package de.intranda.goobi.plugins.toc2pica3;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
-
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPSClient;
 
 import de.intranda.goobi.plugins.Entry;
 import de.intranda.goobi.plugins.EntryAuthor;
@@ -20,7 +15,7 @@ public class Pica3Entry {
 	private Entry entry;
 	private HashMap<String, String> metadata;
 
-	public void write(Writer w) throws IOException {
+	public void write(Writer w, String entryCounter) throws IOException {
 		if (entry.getTitle() == null || 
 				entry.getAuthors() == null ||
 				entry.getAuthors().length() == 0) {
@@ -42,23 +37,23 @@ public class Pica3Entry {
 		w.write("Band$bnc");
 		w.write('\n');
 		
-		w.write("006Y ");
+		w.write("2199 ");
 		w.write("$0ConTIB_");
 		w.write(metadata.get("id"));
 		w.write("_");
-		w.write(entry.getEntryId());
+		w.write(entryCounter);
 		w.write('\n');
 		
 		// only if the year exists write it there
 		if (metadata.containsKey("year")) {
 			w.write("1100 ");
-			w.write(metadata.get("year"));
+			w.write(metadata.get("year").trim());
 			w.write('\n');
 		}
 		
 		if (metadata.containsKey("language")) {
 			w.write("1500 ");
-			w.write(metadata.get("language"));
+			w.write(metadata.get("language").trim());
 			w.write('\n');
 		}
 
@@ -81,7 +76,7 @@ public class Pica3Entry {
 			for (EntryAuthor author : entry.getAuthorList()) {
 				w.write(Integer.toString(authorField));
 				w.write(' ');
-				w.write(author.getPicaName());
+				w.write(author.getPicaName().trim());
 				w.write("$BVerfasserIn$4aut");
 				w.write('\n');
 				authorField = 3010;
@@ -94,19 +89,19 @@ public class Pica3Entry {
 		// w.write('\n');
 
 		w.write("4000 ");
-		w.write(entry.getTitle());
+		w.write(entry.getTitle().trim());
 		w.write("$h");
-		w.write(entry.getAuthors());
+		w.write(entry.getAuthors().trim());
 		w.write('\n');
 
 		if (entry.getPageLabel() != null) {
 			w.write("4070 ");
 			// add a year if it is there
 			if (metadata.containsKey("year")) {
-				w.write("$j" + metadata.get("year"));
+				w.write("$j" + metadata.get("year").trim());
 			}
 			// now add the pages
-			w.write("$p" + entry.getPageLabel());
+			w.write("$p" + entry.getPageLabel().trim());
 			w.write('\n');
 		}
 
