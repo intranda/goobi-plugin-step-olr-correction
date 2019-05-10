@@ -38,7 +38,7 @@ public class Pica3Entry {
 		w.write('\n');
 		
 		w.write("2199 ");
-		w.write("$0ConTIB_");
+		w.write("ConTIB_");
 		w.write(metadata.get("id"));
 		w.write("_");
 		w.write(entryCounter);
