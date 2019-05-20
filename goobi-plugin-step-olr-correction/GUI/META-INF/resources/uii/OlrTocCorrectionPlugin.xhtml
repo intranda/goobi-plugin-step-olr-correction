@@ -246,9 +246,11 @@
 										<div class="col-sm-1 nopadding">
 											<h:commandLink
 												title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
+												id="deleteButton"
 												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
 												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
 												<i class="fa fa-trash-o"></i>
+												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
 												<f:setPropertyActionListener value="#{entry}"
 													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
 												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
@@ -360,7 +362,7 @@
 	                                    if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
 	                                        drawAllRects(viewImage, entries, scaleFactor);
 	                                    } else {
-	                                    	$('#tocEntry'+0).find('input').first().focus();
+// 	                                    	$('#tocEntry'+0).find('input').first().focus();
 	                                    }
 	                                    $( '#mainImage' ).click( function( event ) {
 	                                        if(event.target.nodeName !== "CANVAS") {
@@ -458,17 +460,54 @@
 	window.onload = function() {
     	loadImages();
     }
+	console.log("CORRECT VERSION")
 	
+	function restoreScrollAndFocus() {
+	    if(window.savedOLR) {
+	        console.log(window.savedOLR)
+	        document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
+	        var entry = document.getElementById(window.savedOLR.entryId);
+	        console.log(entry);
+	        $(entry).find("input").first().focus();
+	    } 
+	}
+	
+	function saveScrollAndFocus(btn) {
+	    var delId = "tocEntry" + btn.dataset.entryid;
+	    var entry = document.querySelector(".active-entry");
+	    if(entry) {
+	    	var entryId = entry.id;
+	    	if(entryId > delId) {
+	    	    var num = parseInt(entryId.replace("tocEntry", ""))
+	    	    entryId = "tocEntry" + (num-1)
+	    	}
+	    }
+	    var entryList = document.getElementById("qaform:entrylist");
+	    if(entryList) {
+	    	var scrollTop = entryList.scrollTop;
+	    }
+		if(entry ){
+		    if(entryList){
+	    		window.savedOLR = {entryId: entryId, scrollTop: scrollTop}
+		    }
+		}
+	}
   
 
 
 jsf.ajax.addOnEvent(function(data) {
-    var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
-      
+      var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
       switch (ajaxstatus) {
+          case "begin":
+              if(data.source.id.indexOf("deleteButton")>=0) {
+                  console.log("would now save stuff");
+                  saveScrollAndFocus(data.source);
+              }
           case "success": // This is called when ajax response is successfully processed.
               loadImages();
-            
+              if(data.source.id.indexOf("deleteButton")>=0) {
+                  restoreScrollAndFocus();
+              }
               break;
       }
 	
