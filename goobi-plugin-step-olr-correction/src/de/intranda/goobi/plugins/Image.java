@@ -30,11 +30,13 @@ public class Image {
     private boolean selected = false;
     private Entry currentEntry;
     private float scale;
+    private String ocrText;
     private String imageUrl;
 
     private List<Entry> entryList = new LinkedList<>();
 
-    public Image(String imageName, int order, String thumbnailUrl, String tooltip) {
+    public Image(String imageName, int order, String thumbnailUrl, String tooltip, String ocrText) {
+        this.ocrText = ocrText;
         this.imageName = imageName;
         this.order = order;
         //        this.thumbnailUrl = thumbnailUrl;
@@ -84,8 +86,7 @@ public class Image {
     public void removeAllEntriesOfThisPage() {
         entryList.clear();
     }
-    
-    
+
     private static class EscapeStringSerializer implements JsonSerializer<String> {
         @Override
         public JsonElement serialize(String s, Type type, JsonSerializationContext jsonSerializationContext) {

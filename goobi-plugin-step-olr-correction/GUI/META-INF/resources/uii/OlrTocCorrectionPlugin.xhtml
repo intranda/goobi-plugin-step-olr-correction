@@ -168,18 +168,8 @@
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rx.lite.min.js"></script>
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/q.min.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.controls.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.zoomSlider.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.overlays.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.tileSourceResolver.js"></script>
-		<script type="text/javascript"
-			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/viewImage.measures.js"></script>
+			<script type="text/javascript"
+			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/imageView.min.js"></script>
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rectDrawing.js"></script>
 
@@ -275,8 +265,8 @@
 									</div>
 								
 								<!-- big image -->
-								<div class="row margin-top-most margin-bottom-most">
-									<h:panelGroup styleClass="div-image" layout="block">
+								<h:panelGroup layout="block" class="row margin-top-most margin-bottom-most" id="imageOrOcr">
+									<h:panelGroup styleClass="div-image" layout="block" rendered="#{not AktuelleSchritteForm.myPlugin.showOCR}">
 										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
 										<div id="mainImage" class="" style="border: 1px solid grey;"
 											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
@@ -347,6 +337,9 @@
                             			        divId : 'mainImage',
                             			        zoomSlider : 'zoomSlider',
                             			        maxZoomLevel: 10,
+                            			        persistZoom: true,
+                            			        persistRotation: true,
+                            			        persistenceId: "#{AktuelleSchritteForm.myPlugin.step.processId}",
                             			        overlayGroups: [entryGroup, authorGroup, pagenumGroup, institutionGroup, titleGroup,
                             			            entryBorderGroup, authorBorderGroup, pagenumBorderGroup, institutionBorderGroup, titleBorderGroup] 
                             			    },
@@ -355,8 +348,9 @@
                                                 tileSource : '#{AktuelleSchritteForm.myPlugin.tih.image.imageUrl}',
                                             } 
                             			};
+                                    viewImage = new ImageView.Image(imageViewConfig);
                                     viewImage.close();
-                                    viewImage.init(imageViewConfig).then(function() {
+                                    viewImage.load().then(function() {
 	                                    entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.tih.image.entriesAsJSON}');
 	                                    scaleFactor = #{AktuelleSchritteForm.myPlugin.tih.image.scale};
 	                                    if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
@@ -377,7 +371,10 @@
                                     });
                                     </script>
 									</h:panelGroup>
-								</div>
+									<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.showOCR}">
+										<h:outputText value="#{AktuelleSchritteForm.myPlugin.tih.image.ocrText}" escape="false"/>
+									</h:panelGroup>
+								</h:panelGroup>
 								<!-- // big image -->
 
 								

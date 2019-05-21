@@ -37,6 +37,7 @@ import org.jdom2.output.XMLOutputter;
 import de.intranda.goobi.plugins.toc2pica3.Pica3Entry;
 import de.sub.goobi.config.ConfigPlugins;
 import de.sub.goobi.helper.FacesContextHelper;
+import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.StorageProvider;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -67,6 +68,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private String returnPath;
     private HashMap<String, String> metadata = new HashMap<>();
     private String picaPreview;
+    private boolean showOCR;
 
     @Override
     public void initialize(Step step, String returnPath) {
@@ -116,7 +118,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
                 for (String imagename : imageNameList) {
                     System.out.println("imagename: " + imagename);
-                    Image currentImage = new Image(imagename, order++, "", imagename);
+                    String text = FilesystemHelper.getOcrFileContent(this.step.getProzess(), imagename.substring(0, imagename.lastIndexOf('.')));
+                    Image currentImage = new Image(imagename, order++, "", imagename, text);
                     tih.getAllImages().add(currentImage);
                     String xmlFile = xmlPath.toString() + File.separator + imagename.substring(0, imagename.lastIndexOf('.')) + ".xml";
                     List<Entry> entries = getEntries(xmlFile);
@@ -159,7 +162,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         if (mtype != null && ds.getAllMetadataByType(mtype).size() > 0) {
             metadata.put(label, ds.getAllMetadataByType(mtype).get(0).getValue());
         } else if (mtype != null && dsParent.getAllMetadataByType(mtype).size() > 0) {
-        	metadata.put(label, dsParent.getAllMetadataByType(mtype).get(0).getValue());
+            metadata.put(label, dsParent.getAllMetadataByType(mtype).get(0).getValue());
         }
     }
 
