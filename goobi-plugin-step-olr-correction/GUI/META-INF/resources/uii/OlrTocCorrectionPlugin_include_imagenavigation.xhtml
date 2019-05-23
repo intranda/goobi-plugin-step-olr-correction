@@ -62,7 +62,7 @@
 					<f:ajax execute="@this" render="@this"/>
 				</h:commandLink>
 				
-				<h:commandLink styleClass="pull-right btn font-size-s margin-sides-10" title="#{AktuelleSchritteForm.myPlugin.showOCR ? 'Bild anzeigen' : 'Volltext anzeigen'}" id="showOcrButton" >
+				<h:commandLink styleClass="pull-right btn font-size-s margin-sides-10" title="#{AktuelleSchritteForm.myPlugin.showOCR ? 'Bild anzeigen' : 'Volltext anzeigen'}" id="showOcrButton" onclick="viewImage.close()">
 					<i class="fa #{AktuelleSchritteForm.myPlugin.showOCR ? 'fa-picture-o' : 'fa-file-text-o'}"></i>
 					<f:setPropertyActionListener
 						value="#{not AktuelleSchritteForm.myPlugin.showOCR}"

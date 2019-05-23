@@ -23,27 +23,27 @@ public class Entry {
     public String getAsJSON() {
         return gson.toJson(this);
     }
-    
+
     public List<EntryAuthor> getAuthorList() {
-    		List<EntryAuthor> myAuthors = new ArrayList<EntryAuthor>();
-    		
-    		if (authors!=null) {
-	    		String[] authorArray = authors.split(",| and ");
-	    		if (authorArray != null && authorArray.length > 0) {
-	            for (String author : authorArray) {
-	              EntryAuthor ea = new EntryAuthor(author);
-	              myAuthors.add(ea);
-	            }
-	        }
-    		}
+        List<EntryAuthor> myAuthors = new ArrayList<EntryAuthor>();
+
+        if (authors != null) {
+            String[] authorArray = authors.split(",| and ");
+            if (authorArray != null && authorArray.length > 0) {
+                for (String author : authorArray) {
+                    EntryAuthor ea = new EntryAuthor(author);
+                    myAuthors.add(ea);
+                }
+            }
+        }
         return myAuthors;
     }
-    
+
     public String getEntryId() {
-    	String id = pageLabel;
-    	if (boxes != null && boxes.size()>0) {
-    		id += "-" + boxes.get(0).getX() + "-" + boxes.get(0).getY();
-    	}
-    	return id;
+        String id = pageLabel;
+        if (boxes != null && boxes.size() > 0) {
+            id += "-" + boxes.get(0).getX() + "-" + boxes.get(0).getY();
+        }
+        return id;
     }
 }

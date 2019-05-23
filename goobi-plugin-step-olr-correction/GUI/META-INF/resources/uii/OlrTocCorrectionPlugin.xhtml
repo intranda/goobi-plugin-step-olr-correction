@@ -405,10 +405,20 @@
 						<!-- Create new entry -->
 						<h:commandLink
 							title="#{msgs.plugin_intranda_step_olr_toc_createEntry}"
-							styleClass="btn btn-blue font-size-s"
+							styleClass="btn btn-blue font-size-s margin-right-10"
 							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
 							<i class="fa fa-plus margin-right-5"></i>
 							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
+							<f:ajax render=":qaform:entrylist"/>
+						</h:commandLink>
+						
+						<!-- Create page numbers -->
+						<h:commandLink
+							title="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"
+							styleClass="btn btn-blue font-size-s"
+							action="#{AktuelleSchritteForm.myPlugin.generateEndNumbers}">
+							<i class="fa fa-sort-numeric-asc margin-right-5"></i>
+							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"/>
 							<f:ajax render=":qaform:entrylist"/>
 						</h:commandLink>
 

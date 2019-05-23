@@ -11,10 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,6 +52,7 @@ import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
+import ugh.dl.RomanNumeral;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
@@ -310,6 +314,62 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     @Override
     public HashMap<String, StepReturnValue> validate() {
         return null;
+    }
+
+    public void generateEndNumbers() {
+        for (int i = 0; i < tih.getAllImages().size(); i++) {
+            Image image = tih.getAllImages().get(i);
+            List<Entry> entries = new ArrayList<Entry>(image.getEntryList());
+            Collections.sort(entries, Comparator.comparing(Entry::getPageLabel));
+            for (int k = 0; k < entries.size(); k++) {
+                Entry currEntry = entries.get(k);
+                Optional<String> nextEntryPageLabel = Optional.empty();
+                if (k < entries.size() - 1) {
+                    //get next entry from this image
+                    String label = entries.get(k + 1).getPageLabel();
+                    int minusIndex = label.indexOf('-');
+                    if (minusIndex > 0) {
+                        label = label.substring(0, minusIndex);
+                    }
+                    nextEntryPageLabel = Optional.of(label);
+                } else if (i < tih.getAllImages().size() - 1) {
+                    //get next entry from next page
+                    Image nextImage = tih.getAllImages().get(i + 1);
+                    List<Entry> nextEntries = new ArrayList<Entry>(nextImage.getEntryList());
+                    Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
+                    String label = nextEntries.get(0).getPageLabel();
+                    int minusIndex = label.indexOf('-');
+                    if (minusIndex > 0) {
+                        label = label.substring(0, minusIndex);
+                    }
+                    nextEntryPageLabel = Optional.of(label);
+                }
+                String currentLabel = currEntry.getPageLabel();
+                int minusIndex = currentLabel.indexOf('-');
+                if (minusIndex > 0) {
+                    currentLabel = currentLabel.substring(0, minusIndex);
+                }
+                if (nextEntryPageLabel.isPresent()) {
+                    // check for roman numeral
+                    try {
+                        RomanNumeral roman = new RomanNumeral(nextEntryPageLabel.get());
+                        roman = new RomanNumeral(roman.intValue() + 1);
+                        currEntry.setPageLabel(currentLabel + "-" + roman.getNumber());
+                    } catch (NumberFormatException e) {
+                        // didn't work as roman numeral, try normal numbers
+                        try {
+                            int nextInt = Integer.parseInt(nextEntryPageLabel.get());
+                            nextInt--;
+                            currEntry.setPageLabel(currentLabel + "-" + nextInt);
+                        } catch (NumberFormatException e1) {
+
+                        }
+                    }
+                } else {
+                    currEntry.setPageLabel(currentLabel + "-");
+                }
+            }
+        }
     }
 
     public void showPicaPreview() {
