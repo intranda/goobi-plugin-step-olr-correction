@@ -327,22 +327,26 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 if (k < entries.size() - 1) {
                     //get next entry from this image
                     String label = entries.get(k + 1).getPageLabel();
-                    int minusIndex = label.indexOf('-');
-                    if (minusIndex > 0) {
-                        label = label.substring(0, minusIndex);
+                    if (label != null) {
+                        int minusIndex = label.indexOf('-');
+                        if (minusIndex > 0) {
+                            label = label.substring(0, minusIndex);
+                        }
+                        nextEntryPageLabel = Optional.of(label);
                     }
-                    nextEntryPageLabel = Optional.of(label);
                 } else if (i < tih.getAllImages().size() - 1) {
                     //get next entry from next page
                     Image nextImage = tih.getAllImages().get(i + 1);
                     List<Entry> nextEntries = new ArrayList<Entry>(nextImage.getEntryList());
                     Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
                     String label = nextEntries.get(0).getPageLabel();
-                    int minusIndex = label.indexOf('-');
-                    if (minusIndex > 0) {
-                        label = label.substring(0, minusIndex);
+                    if (label != null) {
+                        int minusIndex = label.indexOf('-');
+                        if (minusIndex > 0) {
+                            label = label.substring(0, minusIndex);
+                        }
+                        nextEntryPageLabel = Optional.of(label);
                     }
-                    nextEntryPageLabel = Optional.of(label);
                 }
                 String currentLabel = currEntry.getPageLabel();
                 int minusIndex = currentLabel.indexOf('-');
