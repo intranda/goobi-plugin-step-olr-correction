@@ -30,13 +30,6 @@
 			<version>3.0.5</version>
 		</dependency>
 		<dependency>
-			<groupId>jdk.tools</groupId>
-			<artifactId>jdk.tools</artifactId>
-			<version>${java.version}</version>
-			<scope>system</scope>
-			<systemPath>/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-0.fc28.x86_64/lib/tools.jar</systemPath>
-		</dependency>
-		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.6</version>
