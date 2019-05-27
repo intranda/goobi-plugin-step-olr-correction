@@ -182,6 +182,9 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 String institutions = xmlEntry.getChildText("institutions");
                 String title = xmlEntry.getChildText("title");
                 String pageLabel = xmlEntry.getChildText("pageLabel");
+                if (pageLabel == null) {
+                    pageLabel = "";
+                }
                 List<Box> boxes = new ArrayList<>();
                 Element coords = xmlEntry.getChild("coordinates");
                 for (Element boxEl : coords.getChildren("box")) {

@@ -16,7 +16,7 @@ public class Entry {
     private String institutions;
     private String authors;
     private String title;
-    private String pageLabel;
+    private String pageLabel = "";
 
     private List<Box> boxes;
 
