@@ -238,7 +238,8 @@
 												title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
 												id="deleteButton"
 												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
+												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
+												onclick="viewImage.close()">
 												<i class="fa fa-trash-o"></i>
 												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
 												<f:setPropertyActionListener value="#{entry}"
@@ -359,7 +360,7 @@
 // 	                                    	$('#tocEntry'+0).find('input').first().focus();
 	                                    }
 	                                    $( '#mainImage' ).click( function( event ) {
-	                                        if(event.target.nodeName !== "CANVAS") {
+	                                        if(event.target.nodeName !== "CANVAS" || event.ctrlKey) {
 	                                            return;
 	                                        }
 	                                        var pixel = new OpenSeadragon.Point( event.offsetX, event.offsetY );
