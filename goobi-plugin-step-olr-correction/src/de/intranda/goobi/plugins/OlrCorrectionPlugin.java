@@ -18,8 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.faces.context.FacesContext;
 
@@ -68,11 +66,12 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private TocImageHelper tih = new TocImageHelper();
     private String imageFolderName = "";
     private Map<String, String> colors;
-    private ExecutorService executor;
     private String returnPath;
     private HashMap<String, String> metadata = new HashMap<>();
     private String picaPreview;
     private boolean showOCR;
+    private boolean inserting;
+    private int movingEntryIdx;
 
     @Override
     public void initialize(Step step, String returnPath) {
@@ -101,7 +100,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         }
         tih.setImageSizes(imageSizes);
 
-        executor = Executors.newFixedThreadPool(imageSizes.size());
         this.step = step;
         try {
             if (myconfig.getBoolean("useOrigFolder", false)) {
@@ -161,6 +159,22 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         }
     }
 
+    public void abortMove() {
+        tih.getImage().getEntryList().get(this.movingEntryIdx).setMoving(false);
+        this.inserting = false;
+        this.movingEntryIdx = -1;
+    }
+
+    public void moveEntry(int toIdx) {
+        if (toIdx > this.movingEntryIdx) {
+            toIdx--;
+        }
+        Entry swapEntry = tih.getImage().getEntryList().remove(this.movingEntryIdx);
+        swapEntry.setMoving(false);
+        tih.getImage().getEntryList().add(toIdx, swapEntry);
+        this.abortMove();
+    }
+
     private void addMetadataField(String label, DocStruct ds, DocStruct dsParent, Prefs prefs, String type) {
         MetadataType mtype = prefs.getMetadataTypeByName(type);
         if (mtype != null && ds.getAllMetadataByType(mtype).size() > 0) {
@@ -190,7 +204,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 for (Element boxEl : coords.getChildren("box")) {
                     boxes.add(new Box(boxEl));
                 }
-                Entry entry = new Entry(institutions, authors, title, pageLabel, boxes);
+                Entry entry = new Entry(institutions, authors, title, pageLabel, boxes, false);
                 returnList.add(entry);
             }
         } catch (JDOMException | IOException e) {

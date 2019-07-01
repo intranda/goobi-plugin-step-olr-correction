@@ -20,6 +20,8 @@ public class Entry {
 
     private List<Box> boxes;
 
+    private boolean moving = false;
+
     public String getAsJSON() {
         return gson.toJson(this);
     }

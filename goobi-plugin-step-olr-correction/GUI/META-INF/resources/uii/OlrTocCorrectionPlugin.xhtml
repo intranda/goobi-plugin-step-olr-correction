@@ -136,6 +136,18 @@
 	background-color: #e6e6e6;
 }
 
+.toc-entry.moving .form-group {
+	border-right: 3px solid black !important;
+}
+
+.toc-entry.moving .form-group:first-child {
+	border-top: 3px solid black;
+}
+
+.toc-entry.moving .form-group:last-child {
+	border-bottom: 3px solid black !important;
+}
+
 .scroll-y {
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -157,6 +169,21 @@
 
 #bottomControls {
 	padding-top: 0;
+}
+
+.dropArea {
+	height: 50px;
+	width: 100%;
+	background-color: #ddd;
+	display: block;
+	font-size: 32px;
+	color: black !important;
+	text-align: center;
+	border-right: 1px solid #ddd;
+}
+
+.dropArea:hover {
+	background-color: #ccc;
 }
 </style>
 
@@ -196,10 +223,20 @@
 						<h:form id="qaform" styleClass="form-horizontal form-bordered">
 						<div class="col-sm-7">
 							<h:panelGroup id="entrylist" layout="block" class=" max-height scroll-y">
-							
+								<h:panelGroup id="dropZero" layout="block" styleClass="row" 
+									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != 0}">
+									<div class="col-sm-11">
+										<h:commandLink id="pasteButton"
+											action="#{AktuelleSchritteForm.myPlugin.moveEntry(0)}" 
+											styleClass="dropArea">
+											<f:ajax render=":qaform:entrylist" />
+											<i class="fa fa-paste"></i>
+										</h:commandLink>
+									</div>
+								</h:panelGroup>
 								<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
 									<div class="row">
-										<div class="col-sm-11 toc-entry" id="tocEntry#{idx}">
+										<div class="col-sm-11 toc-entry #{entry.moving ? 'moving' : ''}" id="tocEntry#{idx}">
 											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
 												label="#{msgs.plugin_intranda_step_olr_toc_title}"
 												field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
@@ -246,9 +283,48 @@
 													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
 												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
 											</h:commandLink>
+											<h:commandLink
+												title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
+												id="moveButton"
+												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
+												rendered="#{not AktuelleSchritteForm.myPlugin.inserting}"
+												onclick="viewImage.close()">
+												<i class="fa fa-scissors"></i>
+												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
+												<f:setPropertyActionListener value="true"
+													target="#{AktuelleSchritteForm.myPlugin.inserting}"/>
+												<f:setPropertyActionListener value="true"
+													target="#{entry.moving}"/>
+												<f:setPropertyActionListener value="#{idx}"
+													target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
+												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+											</h:commandLink>
+											<h:commandLink
+												id="abortButton"
+												title="#{msgs.plugin_intranda_step_olr_toc_abortMove}"
+												rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx == idx}"
+												action="#{AktuelleSchritteForm.myPlugin.abortMove}"
+												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
+												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
+												<i class="fa fa-ban"></i>
+												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+											</h:commandLink>
 										</div>
 	
 									</div>
+									<h:panelGroup id="dropZero" layout="block" styleClass="row" 
+									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
+										<div class="col-sm-11">
+											<h:commandLink id="pasteButton"
+												action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx+1)}" 
+												styleClass="dropArea">
+												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
+												<f:ajax render=":qaform:entrylist  :qaform:bigimage" />
+												<i class="fa fa-paste"></i>
+											</h:commandLink>
+										</div>
+									</h:panelGroup>
 								</x:dataList>
 							
 							</h:panelGroup>
@@ -472,15 +548,25 @@
 	
 	function restoreScrollAndFocus() {
 	    if(window.savedOLR) {
-	        console.log(window.savedOLR)
+	        console.log("savedOlr:",window.savedOLR)
 	        document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
 	        var entry = document.getElementById(window.savedOLR.entryId);
 	        console.log(entry);
-	        $(entry).find("input").first().focus();
+	        if(window.savedOLR.entryId) {
+	        	$(entry).find("input").first().focus();
+        	}
 	    } 
 	}
 	
 	function saveScrollAndFocus(btn) {
+		var add = parseInt(btn.dataset.entryid)
+		if(btn.id.indexOf("moveButton") >= 0) {
+			add = add * 50;
+		} else if(btn.id.indexOf("pasteButton") >= 0 || btn.id.indexOf("abortButton") >= 0) {
+			add = add * -50;
+		} else {
+			add = 0;
+		}
 	    var delId = "tocEntry" + btn.dataset.entryid;
 	    var entry = document.querySelector(".active-entry");
 	    if(entry) {
@@ -493,27 +579,33 @@
 	    var entryList = document.getElementById("qaform:entrylist");
 	    if(entryList) {
 	    	var scrollTop = entryList.scrollTop;
+	    } else {
+	    	console.log("found no entryList for some reason...")
 	    }
-		if(entry ){
-		    if(entryList){
-	    		window.savedOLR = {entryId: entryId, scrollTop: scrollTop}
-		    }
-		}
+	    if(entryList){
+    		window.savedOLR = {entryId: entryId, scrollTop: scrollTop+add}
+	    }
 	}
   
 
 
 jsf.ajax.addOnEvent(function(data) {
       var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+      var id = data.source.id;
+      var restore = id.indexOf("deleteButton")>=0 
+      				|| id.indexOf("pasteButton")>=0
+      				|| id.indexOf("abortButton")>=0
+      				|| id.indexOf("moveButton")>=0;
       switch (ajaxstatus) {
           case "begin":
-              if(data.source.id.indexOf("deleteButton")>=0) {
+              if(restore) {
                   console.log("would now save stuff");
                   saveScrollAndFocus(data.source);
               }
           case "success": // This is called when ajax response is successfully processed.
               loadImages();
-              if(data.source.id.indexOf("deleteButton")>=0) {
+              if(restore) {
+            	  console.log("restoring...")
                   restoreScrollAndFocus();
               }
               break;

@@ -76,7 +76,7 @@ public class Image {
     }
 
     public void createEntry() {
-        entryList.add(new Entry("", "", "", "", new ArrayList<Box>()));
+        entryList.add(new Entry("", "", "", "", new ArrayList<Box>(), false));
     }
 
     public void removeEntry() {
