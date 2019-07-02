@@ -11,8 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -337,7 +335,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         for (int i = 0; i < tih.getAllImages().size(); i++) {
             Image image = tih.getAllImages().get(i);
             List<Entry> entries = new ArrayList<Entry>(image.getEntryList());
-            Collections.sort(entries, Comparator.comparing(Entry::getPageLabel));
+            //            Collections.sort(entries, Comparator.comparing(Entry::getPageLabel));
             for (int k = 0; k < entries.size(); k++) {
                 Entry currEntry = entries.get(k);
                 Optional<String> nextEntryPageLabel = Optional.empty();
@@ -355,7 +353,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     //get next entry from next page
                     Image nextImage = tih.getAllImages().get(i + 1);
                     List<Entry> nextEntries = new ArrayList<Entry>(nextImage.getEntryList());
-                    Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
+                    //                    Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
                     String label = nextEntries.get(0).getPageLabel();
                     if (label != null) {
                         int minusIndex = label.indexOf('-');

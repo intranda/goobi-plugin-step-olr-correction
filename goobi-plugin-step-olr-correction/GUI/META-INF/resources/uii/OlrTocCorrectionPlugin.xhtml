@@ -283,6 +283,7 @@
 													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
 												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
 											</h:commandLink>
+											<br />
 											<h:commandLink
 												title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
 												id="moveButton"
@@ -548,13 +549,13 @@
 	
 	function restoreScrollAndFocus() {
 	    if(window.savedOLR) {
-	        console.log("savedOlr:",window.savedOLR)
-	        document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
-	        var entry = document.getElementById(window.savedOLR.entryId);
-	        console.log(entry);
 	        if(window.savedOLR.entryId) {
+		        var entry = document.getElementById(window.savedOLR.entryId);
+		        console.log(entry);
 	        	$(entry).find("input").first().focus();
         	}
+	        console.log("savedOlr:",window.savedOLR)
+	        document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
 	    } 
 	}
 	
