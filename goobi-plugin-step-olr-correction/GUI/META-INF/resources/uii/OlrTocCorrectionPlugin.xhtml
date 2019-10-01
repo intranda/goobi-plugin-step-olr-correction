@@ -243,7 +243,7 @@
 												help="#{msgs.plugin_intranda_step_olr_toc_title}"
 												name="title" fieldStyle="form-control title-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
-												execute="@form"
+												execute="@this"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
 												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
@@ -251,7 +251,7 @@
 												help="#{msgs.plugin_intranda_step_olr_toc_authors}"
 												name="authors" fieldStyle="form-control author-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
-												execute="@form"
+												execute="@this"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 <!-- 											<intranda:formInputTextAjax style="border-right:1px solid #ccc" -->
 <!-- 												label="#{msgs.plugin_intranda_step_olr_toc_institutions}" -->
@@ -267,7 +267,7 @@
 												help="#{msgs.plugin_intranda_step_olr_toc_page}"
 												name="pageLabel" fieldStyle="form-control pagenum-border-focus"
 												displayAsRequired="false" required="false" forceId="false" 
-												execute="@form"
+												execute="@this"
 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
 										</div>
 										<div class="col-sm-1 nopadding">
