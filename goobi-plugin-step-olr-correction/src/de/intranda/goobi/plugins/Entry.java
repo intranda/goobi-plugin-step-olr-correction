@@ -32,7 +32,7 @@ public class Entry {
 
         if (authors != null) {
             String[] authorArray = authors.split(",");
-            if (authorArray.length == 1 || Arrays.stream(authorArray).anyMatch(author -> author.contains("and"))) {
+            if (authorArray.length == 1 || Arrays.stream(authorArray).anyMatch(author -> author.contains(" and "))) {
                 authorArray = authors.split(" and ");
             }
             if (authorArray.length == 1 || Arrays.stream(authorArray).anyMatch(author -> author.contains(";"))) {
