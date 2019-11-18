@@ -1,6 +1,7 @@
 package de.intranda.goobi.plugins;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -30,7 +31,13 @@ public class Entry {
         List<EntryAuthor> myAuthors = new ArrayList<EntryAuthor>();
 
         if (authors != null) {
-            String[] authorArray = authors.split(",| and ");
+            String[] authorArray = authors.split(",");
+            if (authorArray.length == 1 || Arrays.stream(authorArray).anyMatch(author -> author.contains("and"))) {
+                authorArray = authors.split(" and ");
+            }
+            if (authorArray.length == 1 || Arrays.stream(authorArray).anyMatch(author -> author.contains(";"))) {
+                authorArray = authors.split(";");
+            }
             if (authorArray != null && authorArray.length > 0) {
                 for (String author : authorArray) {
                     EntryAuthor ea = new EntryAuthor(author);
