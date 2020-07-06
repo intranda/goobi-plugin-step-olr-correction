@@ -322,6 +322,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
         } catch (Exception e) {
             log.error("Error while writing the result files", e);
+            Helper.setFehlerMeldung("Fehler beim Speichern der Daten");
+            return "";
         }
         return "/" + getTheme() + returnPath;
     }
