@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,7 +92,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         }
 
         tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
-        List<String> imageSizes = myconfig.getList("imagesize");
+        List<String> imageSizes = Arrays.asList(myconfig.getStringArray("imagesize"));
         if (imageSizes == null || imageSizes.isEmpty()) {
             imageSizes = new ArrayList<>();
             imageSizes.add("600");
@@ -336,7 +337,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     public void generateEndNumbers() {
         for (int i = 0; i < tih.getAllImages().size(); i++) {
             Image image = tih.getAllImages().get(i);
-            List<Entry> entries = new ArrayList<Entry>(image.getEntryList());
+            List<Entry> entries = new ArrayList<>(image.getEntryList());
             //            Collections.sort(entries, Comparator.comparing(Entry::getPageLabel));
             for (int k = 0; k < entries.size(); k++) {
                 Entry currEntry = entries.get(k);
@@ -354,7 +355,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 } else if (i < tih.getAllImages().size() - 1) {
                     //get next entry from next page
                     Image nextImage = tih.getAllImages().get(i + 1);
-                    List<Entry> nextEntries = new ArrayList<Entry>(nextImage.getEntryList());
+                    List<Entry> nextEntries = new ArrayList<>(nextImage.getEntryList());
                     //                    Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
                     String label = nextEntries.get(0).getPageLabel();
                     if (label != null) {
