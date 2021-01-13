@@ -250,7 +250,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     @Override
     public String finish() {
         try {
-
+            this.showOCR = false;
             Path xmlPath = null;
             File picaFile = new File(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + ".pica");
             Writer picaWriter = new FileWriter(picaFile);
