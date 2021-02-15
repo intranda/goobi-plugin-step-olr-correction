@@ -168,7 +168,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         if (toIdx > this.movingEntryIdx) {
             toIdx--;
         }
-        Entry swapEntry = tih.getImage().getEntryList().remove(this.movingEntryIdx);
+        List<Entry> currentEntries = tih.getImage().getEntryList();
+        if (this.movingEntryIdx >= currentEntries.size()) {
+            //this should not happen normally, but we abort moving in this 
+            tih.getImage().getEntryList().forEach(e -> e.setMoving(false));
+            this.inserting = false;
+            this.movingEntryIdx = -1;
+            return;
+        }
+        Entry swapEntry = currentEntries.remove(this.movingEntryIdx);
         swapEntry.setMoving(false);
         tih.getImage().getEntryList().add(toIdx, swapEntry);
         this.abortMove();
@@ -357,13 +365,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     Image nextImage = tih.getAllImages().get(i + 1);
                     List<Entry> nextEntries = new ArrayList<>(nextImage.getEntryList());
                     //                    Collections.sort(nextEntries, Comparator.comparing(Entry::getPageLabel));
-                    String label = nextEntries.get(0).getPageLabel();
-                    if (label != null) {
-                        int minusIndex = label.indexOf('-');
-                        if (minusIndex > 0) {
-                            label = label.substring(0, minusIndex);
+                    if (!nextEntries.isEmpty()) {
+                        String label = nextEntries.get(0).getPageLabel();
+                        if (label != null) {
+                            int minusIndex = label.indexOf('-');
+                            if (minusIndex > 0) {
+                                label = label.substring(0, minusIndex);
+                            }
+                            nextEntryPageLabel = Optional.of(label);
                         }
-                        nextEntryPageLabel = Optional.of(label);
                     }
                 }
                 String currentLabel = currEntry.getPageLabel();
