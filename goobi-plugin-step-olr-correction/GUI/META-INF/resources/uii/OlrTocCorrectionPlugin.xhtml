@@ -349,13 +349,16 @@
 										<div id="mainImage" class="" style="border: 1px solid grey;"
 											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
 										<script type="text/javascript">
-										var myHeight = $(window).height() - $('#breadcrumb').outerHeight() - $('#header').outerHeight() - $('#navigation').outerHeight() - $('#bottomControls').outerHeight() - $('.box-title').outerHeight() -100;
-										$('.max-height').height(myHeight);
-										$('.max-height').css("max-height", myHeight+20 + "px");
-										$('.max-height').css("height", myHeight+20 + "px");
-										myHeight = myHeight - $('#topImageNav').height();
-										$('#mainImage').height(myHeight);
-										console.log(myHeight);
+										function setHeights() {
+											var myHeight = $(window).height() - $('#breadcrumb').outerHeight() - $('#header').outerHeight() - $('#navigation').outerHeight() - $('#bottomControls').outerHeight() - $('.box-title').outerHeight() -100;
+											$('.max-height').height(myHeight);
+											$('.max-height').css("max-height", myHeight+20 + "px");
+											$('.max-height').css("height", myHeight+20 + "px");
+											myHeight = myHeight - $('#topImageNav').height();
+											$('#mainImage').height(myHeight);
+											console.log(myHeight);
+										}
+										setHeights();
 //                                     $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
                                     
                                     var entryGroup = {
@@ -484,7 +487,8 @@
 						<h:commandLink
 							title="#{msgs.plugin_intranda_step_olr_toc_createEntry}"
 							styleClass="btn btn-blue font-size-s margin-right-10"
-							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}">
+							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}"
+                            id="addEntryButton">
 							<i class="fa fa-plus margin-right-5"></i>
 							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
 							<f:ajax render=":qaform:entrylist"/>
@@ -547,7 +551,7 @@
     }
 	console.log("CORRECT VERSION")
 	
-	function restoreScrollAndFocus() {
+	function restoreScrollAndFocus(scrolldown) {
 	    if(window.savedOLR) {
 	        if(window.savedOLR.entryId) {
 		        var entry = document.getElementById(window.savedOLR.entryId);
@@ -555,7 +559,11 @@
 	        	$(entry).find("input").first().focus();
         	}
 	        console.log("savedOlr:",window.savedOLR)
-	        document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
+	        if(scrolldown) {
+	        	document.getElementById("qaform:entrylist").scrollTop = 999999999;
+	        } else {
+	        	document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
+	        }
 	    } 
 	}
 	
@@ -596,7 +604,10 @@ jsf.ajax.addOnEvent(function(data) {
       var restore = id.indexOf("deleteButton")>=0 
       				|| id.indexOf("pasteButton")>=0
       				|| id.indexOf("abortButton")>=0
-      				|| id.indexOf("moveButton")>=0;
+      				|| id.indexOf("moveButton")>=0
+      				|| id.indexOf("addEntryButton") >= 0;
+     var scrollDown = id.indexOf("addEntryButton") >= 0;
+	 console.log(id, restore)
       switch (ajaxstatus) {
           case "begin":
               if(restore) {
@@ -605,9 +616,10 @@ jsf.ajax.addOnEvent(function(data) {
               }
           case "success": // This is called when ajax response is successfully processed.
               loadImages();
+              setHeights();
               if(restore) {
             	  console.log("restoring...")
-                  restoreScrollAndFocus();
+                  restoreScrollAndFocus(scrollDown);
               }
               break;
       }
