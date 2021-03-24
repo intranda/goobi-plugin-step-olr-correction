@@ -5,6 +5,9 @@
         <!-- which images to use -->
         <useOrigFolder>true</useOrigFolder>
         
+         <!-- Are the files originally digital rather than scanned? -->
+        <bornDigital>true</bornDigital>      
+        
         <!-- which image sizes to use for the big image -->
         <imagesize>800</imagesize>
         <imagesize>3000</imagesize>

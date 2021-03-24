@@ -14,26 +14,46 @@ import lombok.Data;
 public class Pica3Entry {
     private Entry entry;
     private HashMap<String, String> metadata;
+    private Boolean bornDigital;
 
     public void write(Writer w, String entryCounter) throws IOException {
         if (entry.getTitle() == null || entry.getAuthors() == null || entry.getAuthors().length() == 0) {
             return;
         }
-        w.write("0500 ");
-        w.write("Asx");
-        w.write('\n');
 
-        w.write("0501 ");
-        w.write("Text$btxt");
-        w.write('\n');
+        if (bornDigital) {
+            w.write("0500 ");
+            w.write("Osx");
+            w.write('\n');
 
-        w.write("0502 ");
-        w.write("ohne Hilfsmittel zu benutzen$bn");
-        w.write('\n');
+            w.write("0501 ");
+            w.write("Text$btxt");
+            w.write('\n');
 
-        w.write("0503 ");
-        w.write("Band$bnc");
-        w.write('\n');
+            w.write("0502 ");
+            w.write("Computermedien$bc");
+            w.write('\n');
+
+            w.write("0503 ");
+            w.write("Online-Ressource$bcr");
+            w.write('\n');
+        } else {
+            w.write("0500 ");
+            w.write("Asx");
+            w.write('\n');
+
+            w.write("0501 ");
+            w.write("Text$btxt");
+            w.write('\n');
+
+            w.write("0502 ");
+            w.write("ohne Hilfsmittel zu benutzen$bn");
+            w.write('\n');
+
+            w.write("0503 ");
+            w.write("Band$bnc");
+            w.write('\n');
+        }
 
         w.write("2199 ");
         w.write("ConTIB_");
@@ -115,6 +135,23 @@ public class Pica3Entry {
         w.write("8600 ");
         w.write("ConTIB");
         w.write('\n');
+
+        //
+        if (metadata.containsKey("_urn")) {
+            w.write("4950 ");
+            w.write(metadata.get("_urn"));
+            w.write('\n');
+        }
+        if (metadata.containsKey("AccessLicense")) {
+            w.write("4980 ");
+            w.write(metadata.get("AccessLicense"));
+            w.write('\n');
+        }
+        if (metadata.containsKey("AccessStatus")) {
+            w.write("4985 ");
+            w.write(metadata.get("AccessStatus"));
+            w.write('\n');
+        }
 
         w.write('\n');
     }

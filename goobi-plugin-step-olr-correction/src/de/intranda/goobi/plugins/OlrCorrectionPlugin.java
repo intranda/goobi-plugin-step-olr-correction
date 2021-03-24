@@ -70,6 +70,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private String picaPreview;
     private boolean showOCR;
     private boolean inserting;
+    private boolean bornDigital = false;
     private int movingEntryIdx;
 
     @Override
@@ -101,6 +102,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
         this.step = step;
         try {
+            this.bornDigital = myconfig.getBoolean("bornDigital", false);
+            
             if (myconfig.getBoolean("useOrigFolder", false)) {
                 imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             } else {
@@ -151,6 +154,10 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             addMetadataField("id", ds, dsParent, prefs, "CatalogIDDigital");
             addMetadataField("number", ds, dsParent, prefs, "CurrentNo");
             addMetadataField("language", ds, dsParent, prefs, "DocLanguage");
+            
+            addMetadataField("_urn", ds, dsParent, prefs, "_urn");
+            addMetadataField("AccessLicense", ds, dsParent, prefs, "AccessLicense");
+            addMetadataField("AccessStatus", ds, dsParent, prefs, "AccessStatus");
 
         } catch (SwapException | DAOException | IOException | InterruptedException | ReadException
                 | PreferencesException | WriteException e) {
@@ -315,7 +322,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     }
 
                     // write the pica entry into pica file too
-                    Pica3Entry pEntry = new Pica3Entry(entry, metadata);
+                    Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
                     pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
 
                 }
@@ -409,7 +416,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         try {
             for (Image image : tih.getAllImages()) {
                 for (Entry entry : image.getEntryList()) {
-                    Pica3Entry pEntry = new Pica3Entry(entry, metadata);
+                    Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
                     pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
                 }
             }
