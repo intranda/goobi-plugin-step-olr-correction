@@ -21,6 +21,7 @@ import java.util.Optional;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
@@ -77,21 +78,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     public void initialize(Step step, String returnPath) {
         picaPreview = null;
         this.returnPath = returnPath;
-        String projectName = step.getProzess().getProjekt().getTitel();
-        HierarchicalConfiguration myconfig = null;
-
-        // get the correct configuration for the right project
-        List<HierarchicalConfiguration> configs = ConfigPlugins.getPluginConfig(this.getTitle()).configurationsAt("config");
-        for (HierarchicalConfiguration hc : configs) {
-            List<HierarchicalConfiguration> projects = hc.configurationsAt("project");
-            for (HierarchicalConfiguration project : projects) {
-                if (myconfig == null || project.getString("").equals("*")
-                        || project.getString("").equals(projectName)) {
-                    myconfig = hc;
-                }
-            }
-        }
-
+        SubnodeConfiguration myconfig =  ConfigPlugins.getProjectAndStepConfig(PLUGIN_NAME, step);             
+        
         tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
         List<String> imageSizes = Arrays.asList(myconfig.getStringArray("imagesize"));
         if (imageSizes == null || imageSizes.isEmpty()) {
