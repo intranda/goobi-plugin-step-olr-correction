@@ -2,6 +2,7 @@
     <config>
         <!-- which projects to use for (can be more then one, otherwise use *) -->
         <project>*</project>
+        <step>*</step>
         <!-- which images to use -->
         <useOrigFolder>true</useOrigFolder>
         
