@@ -97,19 +97,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             } else {
                 imageFolderName = step.getProzess().getImagesTifDirectory(false);
             }
-            System.out.println("iamgeFolderName: " + imageFolderName);
             tih.setImageFolderName(imageFolderName);
             Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
             Path path = Paths.get(imageFolderName);
-            System.out.println("xmlPath: " + xmlPath);
             if (Files.exists(path) && Files.exists(xmlPath)) {
-                System.out.println("both paths exist");
                 List<String> imageNameList = StorageProvider.getInstance().list(imageFolderName);
                 int order = 1;
 
                 for (String imagename : imageNameList) {
-                    System.out.println("imagename: " + imagename);
                     String text = FilesystemHelper.getOcrFileContent(this.step.getProzess(), imagename.substring(0, imagename.lastIndexOf('.')));
                     Image currentImage = new Image(imagename, order++, "", imagename, text);
                     tih.getAllImages().add(currentImage);
