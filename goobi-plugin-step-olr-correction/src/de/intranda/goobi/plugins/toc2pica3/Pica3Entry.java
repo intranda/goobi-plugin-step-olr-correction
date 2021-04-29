@@ -10,16 +10,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class Pica3Entry {
+
+    //used for separating metadata inthe hashmap with multiple values
+    public static String strSplitter = "~SPLIT~";
+
     private Entry entry;
     private HashMap<String, String> metadata;
     private Boolean bornDigital;
 
-    public void write(Writer w, String entryCounter) throws IOException {
+    private Writer w;
+
+    public Pica3Entry(Entry entry, HashMap<String, String> metadata, boolean bornDigital) {
+        this.entry = entry;
+        this.metadata = metadata;
+        this.bornDigital = bornDigital;
+    }
+
+    public void write(Writer w, String entryCounter, int iPageCounter) throws IOException {
         if (entry.getTitle() == null || entry.getAuthors() == null || entry.getAuthors().length() == 0) {
             return;
         }
+
+        this.w = w;
 
         if (bornDigital) {
             w.write("0500 ");
@@ -63,17 +76,14 @@ public class Pica3Entry {
         w.write('\n');
 
         // only if the year exists write it there
-        if (metadata.containsKey("year")) {
-            w.write("1100 ");
-            w.write(metadata.get("year").trim());
-            w.write('\n');
-        }
+        writeMetadata("year", 1100);
+        //        if (metadata.containsKey("year")) {
+        //            w.write("1100 ");
+        //            w.write(metadata.get("year").trim());
+        //            w.write('\n');
+        //        }
 
-        if (metadata.containsKey("language")) {
-            w.write("1500 ");
-            w.write(metadata.get("language").trim());
-            w.write('\n');
-        }
+        writeMetadata("language", 1500);
 
         w.write("1505 ");
         w.write("$erda");
@@ -119,7 +129,14 @@ public class Pica3Entry {
                 w.write("$j" + metadata.get("year").trim());
             }
             // now add the pages
-            w.write("$p" + entry.getPageLabel().trim());
+            String strPage = entry.getPageLabel().trim();
+            if (!strPage.isEmpty()) {
+                if (bornDigital) {
+                    w.write("$i" + iPageCounter + "$p" + strPage);
+                } else {
+                    w.write("$p" + strPage);
+                }
+            }
             w.write('\n');
         }
 
@@ -132,28 +149,71 @@ public class Pica3Entry {
         w.write("xa");
         w.write('\n');
 
-        w.write("8600 ");
-        w.write("ConTIB");
-        w.write('\n');
-
-        //
-        if (metadata.containsKey("_urn")) {
-            w.write("4950 ");
-            w.write(metadata.get("_urn"));
-            w.write('\n');
-        }
-        if (metadata.containsKey("AccessLicense")) {
-            w.write("4980 ");
-            w.write(metadata.get("AccessLicense"));
-            w.write('\n');
-        }
-        if (metadata.containsKey("AccessStatus")) {
-            w.write("4985 ");
-            w.write(metadata.get("AccessStatus"));
-            w.write('\n');
+        //instructions from TIB:
+        Boolean boWriteUrn = true;
+        if (metadata.containsKey("_selectionCode1") && metadata.containsKey("_selectionCode2")) {
+            String strCode1 = metadata.get("_selectionCode1").replace(" ", "").toLowerCase();
+            String strCode2 = metadata.get("_selectionCode2").replace(" ", "").toLowerCase();
+            
+            if (strCode1.contentEquals("gbv") && strCode2.contentEquals("hybr")) {
+                boWriteUrn = false;
+            }
         }
 
+        if (boWriteUrn) {
+            writeMetadata("_urn", 4950);
+        }
+
+        writeMetadata("AccessLicense", 4980);
+
+
+        if (bornDigital) {
+            w.write("8600 ");
+            w.write("ConTIBo");
+            w.write('\n');
+        } else {
+            w.write("8600 ");
+            w.write("ConTIB");
+            w.write('\n');
+        }
+        
+        
+        //        if (metadata.containsKey("_urn")) {
+        //            w.write("4950 ");
+        //            w.write(metadata.get("_urn"));
+        //            w.write('\n');
+        //        }
+        //        if (metadata.containsKey("AccessLicense")) {
+        //            w.write("4980 ");
+        //            w.write(metadata.get("AccessLicense"));
+        //            w.write('\n');
+        //        }
+        //        if (metadata.containsKey("AccessStatus")) {
+        //            w.write("4985 ");
+        //            w.write(metadata.get("AccessStatus"));
+        //            w.write('\n');
+        //        }
+
         w.write('\n');
+    }
+
+    private void writeMetadata(String key, int picaId) throws IOException {
+        if (metadata.containsKey(key)) {
+
+            String strData = metadata.get(key).trim();
+            if (!strData.contains(strSplitter)) {
+                w.write(picaId + " ");
+                w.write(metadata.get(key).trim());
+                w.write('\n');
+            } else {
+                String[] strDatas = strData.split(strSplitter);
+                for (int i = 0; i < strDatas.length; i++) {
+                    w.write(picaId + " ");
+                    w.write(strDatas[i].trim());
+                    w.write('\n');
+                }
+            }
+        }
     }
 
 }

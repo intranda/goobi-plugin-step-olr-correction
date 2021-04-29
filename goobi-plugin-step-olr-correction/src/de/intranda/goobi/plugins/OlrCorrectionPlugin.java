@@ -48,6 +48,7 @@ import lombok.extern.log4j.Log4j;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.dl.RomanNumeral;
@@ -78,8 +79,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     public void initialize(Step step, String returnPath) {
         picaPreview = null;
         this.returnPath = returnPath;
-        SubnodeConfiguration myconfig =  ConfigPlugins.getProjectAndStepConfig(PLUGIN_NAME, step);             
-        
+        SubnodeConfiguration myconfig = ConfigPlugins.getProjectAndStepConfig(PLUGIN_NAME, step);
+
         tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
         List<String> imageSizes = Arrays.asList(myconfig.getStringArray("imagesize"));
         if (imageSizes == null || imageSizes.isEmpty()) {
@@ -91,7 +92,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         this.step = step;
         try {
             this.bornDigital = myconfig.getBoolean("bornDigital", false);
-            
+
             if (myconfig.getBoolean("useOrigFolder", false)) {
                 imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             } else {
@@ -138,13 +139,14 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             addMetadataField("id", ds, dsParent, prefs, "CatalogIDDigital");
             addMetadataField("number", ds, dsParent, prefs, "CurrentNo");
             addMetadataField("language", ds, dsParent, prefs, "DocLanguage");
-            
+
             addMetadataField("_urn", ds, dsParent, prefs, "_urn");
             addMetadataField("AccessLicense", ds, dsParent, prefs, "AccessLicense");
             addMetadataField("AccessStatus", ds, dsParent, prefs, "AccessStatus");
-
-        } catch (SwapException | DAOException | IOException | InterruptedException | ReadException
-                | PreferencesException | WriteException e) {
+            addMetadataField("_selectionCode1", ds, dsParent, prefs, "_selectionCode1");
+            addMetadataField("_selectionCode2", ds, dsParent, prefs, "_selectionCode2");
+            
+        } catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
             log.error(e);
         }
     }
@@ -176,9 +178,24 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     private void addMetadataField(String label, DocStruct ds, DocStruct dsParent, Prefs prefs, String type) {
         MetadataType mtype = prefs.getMetadataTypeByName(type);
         if (mtype != null && ds.getAllMetadataByType(mtype).size() > 0) {
-            metadata.put(label, ds.getAllMetadataByType(mtype).get(0).getValue());
+            addAllMetadata(label, mtype, ds);
         } else if (mtype != null && dsParent.getAllMetadataByType(mtype).size() > 0) {
-            metadata.put(label, dsParent.getAllMetadataByType(mtype).get(0).getValue());
+            addAllMetadata(label, mtype, dsParent);
+        }
+    }
+
+    private void addAllMetadata(String label, MetadataType mtype, DocStruct ds) {
+
+        List<? extends Metadata> metaList = ds.getAllMetadataByType(mtype);
+
+        if (metaList.size() < 2) {
+            metadata.put(label, metaList.get(0).getValue());
+        } else {
+            String strData = metaList.get(0).getValue();
+            for (int i = 1; i < metaList.size(); i++) {
+                strData = strData + Pica3Entry.strSplitter + metaList.get(i).getValue();
+            }
+            metadata.put(label, strData);
         }
     }
 
@@ -307,7 +324,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
                     // write the pica entry into pica file too
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
-                    pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
+                    pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1), (tih.getAllImages().indexOf(image) + 1));
 
                 }
                 OutputStream os = new FileOutputStream(xmlFile);
@@ -401,7 +418,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             for (Image image : tih.getAllImages()) {
                 for (Entry entry : image.getEntryList()) {
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
-                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1));
+                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1), (tih.getAllImages().indexOf(image) + 1));
                 }
             }
         } catch (IOException e) {
