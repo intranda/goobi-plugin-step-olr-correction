@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
+import org.goobi.beans.Processproperty;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.PluginType;
@@ -92,7 +93,15 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         this.step = step;
         try {
             this.bornDigital = myconfig.getBoolean("bornDigital", false);
-
+            
+            List<Processproperty> lstProps =  step.getProzess().getEigenschaften();
+            for (Processproperty prop : lstProps) {
+                if (prop.getTitel().contentEquals("bornDigital")) {
+                    this.bornDigital = Boolean.parseBoolean(prop.getWert());
+                    break;
+                }
+            }
+            
             if (myconfig.getBoolean("useOrigFolder", false)) {
                 imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             } else {
