@@ -93,15 +93,9 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         this.step = step;
         try {
             this.bornDigital = myconfig.getBoolean("bornDigital", false);
-            
-            List<Processproperty> lstProps =  step.getProzess().getEigenschaften();
-            for (Processproperty prop : lstProps) {
-                if (prop.getTitel().contentEquals("bornDigital")) {
-                    this.bornDigital = Boolean.parseBoolean(prop.getWert());
-                    break;
-                }
-            }
-            
+
+            setupBornDigital();
+
             if (myconfig.getBoolean("useOrigFolder", false)) {
                 imageFolderName = step.getProzess().getImagesOrigDirectory(false);
             } else {
@@ -154,9 +148,23 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             addMetadataField("AccessStatus", ds, dsParent, prefs, "AccessStatus");
             addMetadataField("_selectionCode1", ds, dsParent, prefs, "_selectionCode1");
             addMetadataField("_selectionCode2", ds, dsParent, prefs, "_selectionCode2");
-            
+
         } catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
             log.error(e);
+        }
+    }
+
+    private void setupBornDigital() {
+        List<Processproperty> lstProps = this.step.getProzess().getEigenschaften();
+        for (Processproperty prop : lstProps) {
+            if (prop.getTitel().contentEquals("bornDigital")) {
+                this.bornDigital = Boolean.parseBoolean(prop.getWert());
+
+                if (!this.bornDigital) {
+                    log.debug(this.step.getProzess().getTitel() + " has bornDigital=" + prop.getWert());
+                }
+                break;
+            }
         }
     }
 
@@ -332,8 +340,13 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     }
 
                     // write the pica entry into pica file too
+                    if (!bornDigital) {
+                        setupBornDigital();
+                    }
+                    
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
-                    pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1), (tih.getAllImages().indexOf(image) + 1));
+                    pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1),
+                            (tih.getAllImages().indexOf(image) + 1));
 
                 }
                 OutputStream os = new FileOutputStream(xmlFile);
@@ -422,12 +435,18 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     }
 
     public void showPicaPreview() {
+
+        if (!bornDigital) {
+            setupBornDigital();
+        }
+
         StringWriter sw = new StringWriter();
         try {
             for (Image image : tih.getAllImages()) {
                 for (Entry entry : image.getEntryList()) {
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
-                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1), (tih.getAllImages().indexOf(image) + 1));
+                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1),
+                            (tih.getAllImages().indexOf(image) + 1));
                 }
             }
         } catch (IOException e) {
