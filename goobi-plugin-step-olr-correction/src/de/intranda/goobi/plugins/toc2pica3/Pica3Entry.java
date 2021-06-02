@@ -9,7 +9,7 @@ import de.intranda.goobi.plugins.EntryAuthor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
+//@Data
 public class Pica3Entry {
 
     //used for separating metadata inthe hashmap with multiple values
@@ -25,9 +25,10 @@ public class Pica3Entry {
         this.entry = entry;
         this.metadata = metadata;
         this.bornDigital = bornDigital;
+
     }
 
-    public void write(Writer w, String entryCounter, int iPageCounter) throws IOException {
+    public void write(Writer w, String entryCounter, int iIndexNumber) throws IOException {
         if (entry.getTitle() == null || entry.getAuthors() == null || entry.getAuthors().length() == 0) {
             return;
         }
@@ -130,13 +131,15 @@ public class Pica3Entry {
             }
             // now add the pages
             String strPage = entry.getPageLabel().trim();
-            if (!strPage.isEmpty()) {
-                if (bornDigital) {
-                    w.write("$i" + iPageCounter + "$p" + strPage);
-                } else {
-                    w.write("$p" + strPage);
-                }
+
+            if (bornDigital) {
+                w.write("$i" + iIndexNumber);
             }
+
+            if (!strPage.isEmpty()) {
+                w.write("$p" + strPage);
+            }
+            
             w.write('\n');
         }
 
@@ -154,18 +157,17 @@ public class Pica3Entry {
         if (metadata.containsKey("_selectionCode1") && metadata.containsKey("_selectionCode2")) {
             String strCode1 = metadata.get("_selectionCode1").replace(" ", "").toLowerCase();
             String strCode2 = metadata.get("_selectionCode2").replace(" ", "").toLowerCase();
-            
+
             if (strCode1.contentEquals("gbv") && strCode2.contentEquals("hybr")) {
                 boWriteUrn = false;
             }
         }
 
         if (boWriteUrn) {
-            writeMetadata("_urn", 4950);
+            writeMetadata("_urn", 7133); //orig: 4950, requested output: 7133
         }
 
         writeMetadata("AccessLicense", 4980);
-
 
         if (bornDigital) {
             w.write("8600 ");
@@ -176,8 +178,7 @@ public class Pica3Entry {
             w.write("ConTIB");
             w.write('\n');
         }
-        
-        
+
         //        if (metadata.containsKey("_urn")) {
         //            w.write("4950 ");
         //            w.write(metadata.get("_urn"));

@@ -160,7 +160,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             if (prop.getTitel().contentEquals("bornDigital")) {
                 this.bornDigital = Boolean.parseBoolean(prop.getWert());
 
-                if (!this.bornDigital) {
+                if (!bornDigital) {
                     log.debug(this.step.getProzess().getTitel() + " has bornDigital=" + prop.getWert());
                 }
                 break;
@@ -292,6 +292,8 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             XMLOutputter outp = new XMLOutputter();
             outp.setFormat(Format.getPrettyFormat());
 
+            int iterator = 1;
+            
             for (Image image : tih.getAllImages()) {
                 String imageName = image.getImageName();
                 String xmlName = imageName.substring(0, imageName.lastIndexOf('.')) + ".xml";
@@ -343,11 +345,12 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                     if (!bornDigital) {
                         setupBornDigital();
                     }
-                    
+
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
                     pEntry.write(picaWriter, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1),
-                            (tih.getAllImages().indexOf(image) + 1));
-
+                            iterator);
+                    //(tih.getAllImages().indexOf(image) + 1));
+                    iterator++;
                 }
                 OutputStream os = new FileOutputStream(xmlFile);
                 outp.output(doc, os);
@@ -439,14 +442,17 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         if (!bornDigital) {
             setupBornDigital();
         }
-
+        int iterator = 1;
         StringWriter sw = new StringWriter();
         try {
             for (Image image : tih.getAllImages()) {
                 for (Entry entry : image.getEntryList()) {
+
                     Pica3Entry pEntry = new Pica3Entry(entry, metadata, bornDigital);
-                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1),
-                            (tih.getAllImages().indexOf(image) + 1));
+                    pEntry.write(sw, (tih.getAllImages().indexOf(image) + 1) + "-" + (image.getEntryList().indexOf(entry) + 1), iterator);
+                    //(tih.getAllImages().indexOf(image) + 1));
+
+                    iterator++;
                 }
             }
         } catch (IOException e) {
