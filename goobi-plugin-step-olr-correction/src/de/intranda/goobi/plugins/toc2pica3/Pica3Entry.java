@@ -69,13 +69,6 @@ public class Pica3Entry {
             w.write('\n');
         }
 
-        w.write("2199 ");
-        w.write("ConTIB_");
-        w.write(metadata.get("id"));
-        w.write("_");
-        w.write(entryCounter);
-        w.write('\n');
-
         // only if the year exists write it there
         writeMetadata("year", 1100);
         //        if (metadata.containsKey("year")) {
@@ -99,6 +92,19 @@ public class Pica3Entry {
         // w.write("2240 ");
         // w.write(metadata.get("id"));
         // w.write('\n');
+
+        w.write("2199 ");
+
+        if (bornDigital) {
+            w.write("ConTIBo_");
+        } else {
+            w.write("ConTIB_");
+        }
+
+        w.write(metadata.get("id"));
+        w.write("_");
+        w.write(entryCounter);
+        w.write('\n');
 
         if (entry.getAuthorList().size() > 0) {
             int authorField = 3000;
@@ -139,17 +145,13 @@ public class Pica3Entry {
             if (!strPage.isEmpty()) {
                 w.write("$p" + strPage);
             }
-            
+
             w.write('\n');
         }
 
         w.write("4241 ");
         //w.write("Enthalten in!" + metadata.get("id") + "!" + metadata.get("title"));
         w.write("Enthalten in!" + metadata.get("id") + "!");
-        w.write('\n');
-
-        w.write("E001 ");
-        w.write("xa");
         w.write('\n');
 
         //instructions from TIB:
@@ -163,11 +165,11 @@ public class Pica3Entry {
             }
         }
 
+        writeAccessLicense();
+
         if (boWriteUrn) {
             writeMetadata("_urn", 7133); //orig: 4950, requested output: 7133
         }
-
-        writeMetadata("AccessLicense", 4980);
 
         if (bornDigital) {
             w.write("8600 ");
@@ -178,6 +180,10 @@ public class Pica3Entry {
             w.write("ConTIB");
             w.write('\n');
         }
+
+        w.write("E001 ");
+        w.write("xa");
+        w.write('\n');
 
         //        if (metadata.containsKey("_urn")) {
         //            w.write("4950 ");
@@ -196,6 +202,31 @@ public class Pica3Entry {
         //        }
 
         w.write('\n');
+    }
+
+    private void writeAccessLicense() throws IOException {
+        String strAccess = "";
+
+        if (metadata.containsKey("AccessLicenseB")) {
+            strAccess += "[" + metadata.get("AccessLicenseB").trim() + "]";
+        }
+        if (metadata.containsKey("AccessLicense")) {
+            strAccess += metadata.get("AccessLicense").trim();
+        }
+        if (metadata.containsKey("AccessLicenseC")) {
+            strAccess += "$c" + metadata.get("AccessLicenseC").trim();
+        }
+        if (metadata.containsKey("AccessLicenseG")) {
+            strAccess += "$g" + metadata.get("AccessLicenseG").trim();
+        }
+        if (metadata.containsKey("AccessLicenseU")) {
+            strAccess += "$u" + metadata.get("AccessLicenseU").trim();
+        }
+
+        w.write(4980 + " ");
+        w.write(strAccess);
+        w.write('\n');
+
     }
 
     private void writeMetadata(String key, int picaId) throws IOException {

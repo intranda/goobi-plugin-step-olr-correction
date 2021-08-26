@@ -145,6 +145,10 @@ public class OlrCorrectionPlugin implements IStepPlugin {
 
             addMetadataField("_urn", ds, dsParent, prefs, "_urn");
             addMetadataField("AccessLicense", ds, dsParent, prefs, "AccessLicense");
+            addMetadataField("AccessLicenseB", ds, dsParent, prefs, "AccessLicenseB");
+            addMetadataField("AccessLicenseC", ds, dsParent, prefs, "AccessLicenseC");
+            addMetadataField("AccessLicenseG", ds, dsParent, prefs, "AccessLicenseG");
+            addMetadataField("AccessLicenseU", ds, dsParent, prefs, "AccessLicenseU");
             addMetadataField("AccessStatus", ds, dsParent, prefs, "AccessStatus");
             addMetadataField("_selectionCode1", ds, dsParent, prefs, "_selectionCode1");
             addMetadataField("_selectionCode2", ds, dsParent, prefs, "_selectionCode2");
