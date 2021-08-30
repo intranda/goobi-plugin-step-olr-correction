@@ -167,6 +167,10 @@ public class Pica3Entry {
 
         writeAccessLicense();
 
+        w.write("E001 ");
+        w.write("xa");
+        w.write('\n');
+        
         if (boWriteUrn) {
             writeMetadata("_urn", 7133); //orig: 4950, requested output: 7133
         }
@@ -181,9 +185,6 @@ public class Pica3Entry {
             w.write('\n');
         }
 
-        w.write("E001 ");
-        w.write("xa");
-        w.write('\n');
 
         //        if (metadata.containsKey("_urn")) {
         //            w.write("4950 ");
