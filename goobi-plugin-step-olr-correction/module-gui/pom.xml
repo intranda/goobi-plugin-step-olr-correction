@@ -10,7 +10,7 @@
   <parent>
     <groupId>de.intranda.goobi.plugins.step</groupId>
     <artifactId>olr-correction</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.0</version>
   </parent>
   <repositories>
     <repository>
