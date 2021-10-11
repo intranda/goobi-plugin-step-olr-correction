@@ -24,7 +24,7 @@ pipeline {
 
     stage('build') {
       steps {
-        sh 'mvn -f goobi-plugin-step-olr-correction/pom.xml clean package'
+        sh 'mvn -f plugin/pom.xml clean package'
         recordIssues enabledForFailure: true, aggregatingResults: true, tools: [java(), javaDoc()]
       }
     }
