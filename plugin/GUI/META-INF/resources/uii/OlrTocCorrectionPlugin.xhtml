@@ -621,7 +621,9 @@ jsf.ajax.addOnEvent(function(data) {
               setHeights();
               if(restore) {
             	  console.log("restoring...")
-                  restoreScrollAndFocus(scrollDown);
+				  setTimeout(() => {
+                      restoreScrollAndFocus(scrollDown);
+				  }, 500);
               }
               break;
       }
