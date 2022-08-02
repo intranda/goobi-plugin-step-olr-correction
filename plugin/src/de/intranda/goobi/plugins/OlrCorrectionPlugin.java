@@ -55,7 +55,6 @@ import ugh.dl.Prefs;
 import ugh.dl.RomanNumeral;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 
 @Data
 @PluginImplementation
@@ -153,7 +152,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             addMetadataField("_selectionCode1", ds, dsParent, prefs, "_selectionCode1");
             addMetadataField("_selectionCode2", ds, dsParent, prefs, "_selectionCode2");
 
-        } catch (SwapException | DAOException | IOException | InterruptedException | ReadException | PreferencesException | WriteException e) {
+        } catch (SwapException | DAOException | IOException  | ReadException | PreferencesException e) {
             log.error(e);
         }
     }
@@ -184,7 +183,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         }
         List<Entry> currentEntries = tih.getImage().getEntryList();
         if (this.movingEntryIdx >= currentEntries.size()) {
-            //this should not happen normally, but we abort moving in this 
+            //this should not happen normally, but we abort moving in this
             tih.getImage().getEntryList().forEach(e -> e.setMoving(false));
             this.inserting = false;
             this.movingEntryIdx = -1;
@@ -297,7 +296,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
             outp.setFormat(Format.getPrettyFormat());
 
             int iterator = 1;
-            
+
             for (Image image : tih.getAllImages()) {
                 String imageName = image.getImageName();
                 String xmlName = imageName.substring(0, imageName.lastIndexOf('.')) + ".xml";
