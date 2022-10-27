@@ -1,3 +1,22 @@
+/**
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information.
+ *          - https://goobi.io
+ *          - https://www.intranda.com
+ *          - https://github.com/intranda/goobi-workflow
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
+ * Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
+ */
+
 package de.intranda.goobi.plugins;
 
 import java.awt.Dimension;
@@ -42,7 +61,7 @@ public class TocImageHelper {
     @Getter
     private Image image = null;
     @Getter
-    private List<Image> allImages = new ArrayList<Image>();
+    private List<Image> allImages = new ArrayList<>();
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
     private int pageNo = 0;
 
@@ -116,8 +135,18 @@ public class TocImageHelper {
 
     private String createImageUrl(Image currentImage, Integer size, String format, String baseUrl) {
         StringBuilder url = new StringBuilder(baseUrl);
-        url.append("/cs").append("?action=").append("image").append("&format=").append(format).append("&sourcepath=").append("file://"
-                + imageFolderName + currentImage.getImageName()).append("&width=").append(size).append("&height=").append(size);
+        url.append("/cs")
+                .append("?action=")
+                .append("image")
+                .append("&format=")
+                .append(format)
+                .append("&sourcepath=")
+                .append("file://"
+                        + imageFolderName + currentImage.getImageName())
+                .append("&width=")
+                .append(size)
+                .append("&height=")
+                .append(size);
         return url.toString();
     }
 
@@ -215,7 +244,7 @@ public class TocImageHelper {
     }
 
     public List<Image> getPaginatorList() {
-        List<Image> subList = new ArrayList<Image>();
+        List<Image> subList = new ArrayList<>();
         if (allImages.size() > (pageNo * NUMBER_OF_IMAGES_PER_PAGE) + NUMBER_OF_IMAGES_PER_PAGE) {
             subList = allImages.subList(pageNo * NUMBER_OF_IMAGES_PER_PAGE, (pageNo * NUMBER_OF_IMAGES_PER_PAGE) + NUMBER_OF_IMAGES_PER_PAGE);
         } else {
@@ -272,7 +301,7 @@ public class TocImageHelper {
     }
 
     public int getLastPageNumber() {
-        int ret = new Double(Math.floor(this.allImages.size() / NUMBER_OF_IMAGES_PER_PAGE)).intValue();
+        int ret = Double.valueOf(Math.floor(this.allImages.size() / NUMBER_OF_IMAGES_PER_PAGE)).intValue();
         if (this.allImages.size() % NUMBER_OF_IMAGES_PER_PAGE == 0) {
             ret--;
         }
