@@ -1,45 +1,89 @@
-Goobi workflow Plugin: goobi-plugin-step-olr-correction
-===========================================================================
+---
+description: >-
+  This is technical documentation for the plugin for correcting Table Of Contents data and outputting a PICA file.
+---
 
-<img src="https://goobi.io/wp-content/uploads/logo_goobi_plugin.png" align="right" style="margin:0 0 20px 20px;" alt="Plugin for Goobi workflow" width="175" height="109">
+# Plugin for correcting Table Of Contents data and outputting a PICA file
 
-This is a Step plugin for Goobi workflow that is used by the TIB Hanover to manually refine and correct the results from https://gitea.intranda.com/ocr/olr-toc-distribution. After correction, it can also be used to create the entries into the catalogue.
+## Introduction
 
-This is a plugin for Goobi workflow, the open source workflow tracking software for digitisation projects. More information about Goobi workflow is available under https://goobi.io. If you want to get in touch with the user community simply go to https://community.goobi.io.
+This documentation describes the installation, configuration and use of the plugin.
 
+| Details |  |
+| :--- | :--- |
+| Identifier | plugin_intranda_step_olr-correction |
+| Source code | [https://github.com/intranda/plugin_intranda_step_olr-correction](https://github.com/intranda/plugin_intranda_step_olr-correction) |
+| Licence | GPL 2.0 or newer |
+| Compatibility | Goobi workflow 21.06.5 |
+| Documentation date | 10.04.2021 |
 
-Plugin details
----------------------------------------------------------------------------
+### Installation
 
-More information about the functionality of this plugin and the complete documentation can be found in the central documentation area at https://docs.goobi.io
+The program consists of these files:
 
-Detail                      | Description
---------------------------- | -------------------------------
-**Plugin identifier**       | intranda_step_olr_correction
-**Plugin type**             | Step Plugin
-**Licence**                 | GPL 2.0 or newer
-**Documentation (German)**  | - no documentation available - 
-**Documentation (English)** | - no documentation available -
+```
+plugin_intranda_step_olr-correction.jar
+plugin_intranda_step_olr-correction.xml
+```
 
+The file `plugin_intranda_step_olr-correction.jar` contains the program logic, and should be copied to this path: `/opt/digiverso/goobi/plugins/step`.
 
-Goobi details
----------------------------------------------------------------------------
-Goobi workflow is an open source web application to manage small and large digitisation projects mostly in cultural heritage institutions all around the world. More information about Goobi can be found here:
-
-Detail              | Description
-------------------- | --------------------------
-**Goobi web site**  | https://www.goobi.io
-**Twitter**         | https://twitter.com/goobi
-**Goobi community** | https://community.goobi.io
+The file `plugin_intranda_step_olr-correction.xml` is the config file, and should be copied to the folder `/opt/digiverso/goobi/config/`.
 
 
-Development
----------------------------------------------------------------------------
-This plugin was developed by intranda. If you have any issues, feedback, question or if you are looking for more information about Goobi workflow, Goobi viewer and all our other developments that are used in digitisation projects please get in touch with us.  
+## Configuration
 
-Contact           | Details
------------------ | ----------------------------------------------------
-**Company name**  | intranda GmbH
-**Address**       | Bertha-von-Suttner-Str. 9, 37085 Göttingen, Germany
-**Web site**      | https://www.intranda.com
-**Twitter**       | https://twitter.com/intranda
+The configuration is done via the configuration file `plugin_intranda_step_olr-correction.xml` and can be adapted during operation. It is structured as follows:
+
+```xml
+<config_plugin>
+    <config>
+        <!-- which projects to use for (can be more then one, otherwise use *) -->
+        <project>*</project>
+        <step>*</step>
+        <!-- which images to use -->
+        <useOrigFolder>true</useOrigFolder>
+        
+         <!-- Are the files originally digital rather than scanned? -->
+        <bornDigital>true</bornDigital>      
+        
+        <!-- which image sizes to use for the big image -->
+        <imagesize>800</imagesize>
+        <imagesize>3000</imagesize>
+        <!-- which image format to generate -->
+        <imageFormat>jpg</imageFormat>
+        
+        <!-- colors for different groups -->
+        <class>
+            <type>pagenum</type>
+            <color>#00FFFA</color>
+        </class>
+        <class>
+            <type>title</type>
+            <color>#FF5D15</color>
+        </class>
+        <class>
+            <type>author</type>
+            <color>blue</color>
+        </class>
+        <class>
+            <type>institution</type>
+            <color>#2F8C3C</color>
+        </class>
+        <class>
+            <type>entry</type>
+            <color>grey</color>
+        </class>        
+    </config>
+</config_plugin>
+```
+
+| Value  |  Description |
+|---|---|
+|   `bornDigital` |If this is true, the files are assumed to be born digital and not scanned files.   |   
+
+
+
+### Operation of the plugin
+
+For the current goobi process, any previously determined TOC is displayed graphically, and can be corrected. There is the option to output a PICA file.
