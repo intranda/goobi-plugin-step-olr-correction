@@ -1,8 +1,8 @@
 ---
-title: Olr correction
+title: Correction of tables of contents after an OLR
 identifier: plugin_intranda_step_olr-correction
-description: Step Plugin for olr correction
-published: false
+description: Step plug-in for the correction of recognised tables of contents and the generation of PICA data records
+published: true
 ---
 
 ## Introduction
