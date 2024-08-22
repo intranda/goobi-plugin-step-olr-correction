@@ -1,8 +1,8 @@
 ---
-title: Olr Korrektion
+title: Korrektur von Inhaltverzeichnissen nach einer OLR
 identifier: plugin_intranda_step_olr-correction
-description: Step Plugin für Olr Korrektion
-published: false
+description: Step-Plugin für die Korrektur von erkannten Inhaltsverzeichnissen und die Generierung von PICA-Datensätzen
+published: true
 ---
 
 ## Einführung
@@ -33,4 +33,4 @@ Die Konfiguration des Plugins erfolgt in der Datei `plugin_intranda_step_olr-cor
 
 Parameter               | Erläuterung
 ------------------------|------------------------------------
-`bornDigital`| Wenn dies zutrifft, wird davon ausgegangen, dass die Dateien digital erstellt wurden und nicht gescannte Dateien sind. |
+`bornDigital`| Wenn dies zutrifft, wird davon ausgegangen, dass die Dateien digital erstellt wurden und es sich nicht um gescannte Seiten handelt. |
