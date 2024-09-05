@@ -15,8 +15,8 @@ Detail                      | Description
 **Plugin identifier**       | plugin_intranda_step_olr-correction
 **Plugin type**             | step
 **Licence**                 | GPL 2.0 or newer
-**Documentation (German)**  | https://docs.goobi.io/workflow-plugins/v/eng/step/goobi-plugin-step-olr-correction
-**Documentation (English)** | https://docs.goobi.io/workflow-plugins/v/ger/step/goobi-plugin-step-olr-correction
+**Documentation (German)**  | https://docs.goobi.io/workflow-plugins/v/ger/step/goobi-plugin-step-olr-correction
+**Documentation (English)** | https://docs.goobi.io/workflow-plugins/v/eng/step/goobi-plugin-step-olr-correction
 
 ## Goobi details
 
