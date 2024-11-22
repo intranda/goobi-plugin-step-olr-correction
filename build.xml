@@ -3,7 +3,7 @@
 		<exec executable="mvn">
 			<arg value="package"/>
 		</exec>
-		<copy file="module-main/target/plugin_intranda_step_olr-correction.jar" todir="/opt/digiverso/goobi/plugins/step/"/>
-		<copy file="module-gui/target/plugin_intranda_step_olr-correction-GUI.jar" todir="/opt/digiverso/goobi/plugins/GUI/"/>
+		<copy file="module-base/target/plugin-step-olr-correction-base.jar" todir="/opt/digiverso/goobi/plugins/step/"/>
+		<copy file="module-gui/target/plugin-step-olr-correction-gui.jar" todir="/opt/digiverso/goobi/plugins/GUI/"/>
 	</target>
 </project>

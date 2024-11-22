@@ -5,26 +5,29 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:o="http://omnifaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
-	template="/uii/template/template.html"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	template="/uii/templatePG/templatePG.html"
 	xmlns:x="http://myfaces.apache.org/tomahawk"
-	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites">
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+    xmlns:section="http://goobi.io/section"
+    xmlns:button="http://goobi.io/button">
 
 	<ui:param name="myPageTitle"
 		value="#{msgs.plugin}: #{msgs[('plugin_').concat(AktuelleSchritteForm.myPlugin.title)]}" />
 
 	<ui:define name="breadcrumb">
         <intranda:breadcrumb label="#{msgs.startseite}" action="index" navId="a0" />
-        
+
         <c:if test="#{LoginForm.hasRole('Workflow_Processes') and NavigationForm.uiStatus.pluginSimulation == true}">
 			<intranda:breadcrumb id="processAll" label="#{ProzessverwaltungForm.modusAnzeige=='aktuell'?msgs.aktuelleProzesse:msgs.prozessvorlagen}" action="process_all" navId="a1" />
 			<intranda:breadcrumb id="processEdit" label="#{ProzessverwaltungForm.modusAnzeige=='aktuell'?msgs.prozessDetails:msgs.process_templateDetails}" action="process_edit" />
 		</c:if>
-        
+
         <c:if test="#{NavigationForm.uiStatus.pluginSimulation != true}">
 		    <intranda:breadcrumb label="#{msgs.aktuelleSchritte}" action="#{AktuelleSchritteForm.paginator.returnToPreviousPage}" />
     	   		<intranda:breadcrumb label="#{AktuelleSchritteForm.mySchritt.prozess.titel}" action="#{AktuelleSchritteForm.myPlugin.cancel}" />
 		</c:if>
-        
+
         <intranda:breadcrumb label="#{myPageTitle}" noSeparator="#{true}" />
     </ui:define>
 
@@ -34,158 +37,156 @@
 	<ui:define name="content">
 
 		<style>
-.big-image-caption {
-	text-align: center;
-}
+			.big-image-caption {
+				text-align: center;
+			}
 
-.div-image img {
-	float: right;
-	border: solid 1px;
-	border-color: lightgrey;
-}
+			.div-image img {
+				float: right;
+				border: solid 1px;
+				border-color: lightgrey;
+			}
 
-.img-active {
-	background-color: #368ee0;
-	color: white;
-}
+			.img-active {
+				background-color: #368ee0;
+				color: white;
+			}
 
-.image-navigation {
-	margin-bottom: 5px;
-}
+			.image-navigation {
+				margin-bottom: 5px;
+			}
 
-#image-control-wrapper {
-	margin-left: 6px;
-}
+			#image-control-wrapper {
+				margin-left: 6px;
+			}
 
-#mainImage {
-	widht: 100%;
-}
+			#mainImage {
+				width: 100%;
+			}
 
-.pagenum {
-	opacity: 0.2;
-	background: #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
-}
+			.pagenum {
+				opacity: 0.2;
+				background: #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+			}
 
-.title {
-	opacity: 0.2;
-	background-color: #{AktuelleSchritteForm.myPlugin.colors['title']};
-}
+			.title {
+				opacity: 0.2;
+				background-color: #{AktuelleSchritteForm.myPlugin.colors['title']};
+			}
 
-.author {
-	opacity: 0.2;
-	background-color: #{AktuelleSchritteForm.myPlugin.colors['author']};
-}
+			.author {
+				opacity: 0.2;
+				background-color: #{AktuelleSchritteForm.myPlugin.colors['author']};
+			}
 
-.institution {
-	opacity: 0.2;
-	background-color: #{AktuelleSchritteForm.myPlugin.colors['institution']};
-}
+			.institution {
+				opacity: 0.2;
+				background-color: #{AktuelleSchritteForm.myPlugin.colors['institution']};
+			}
 
-.entry {
-	opacity: 0.2;
-	background-color: #{AktuelleSchritteForm.myPlugin.colors['entry']};
-}
+			.entry {
+				opacity: 0.2;
+				background-color: #{AktuelleSchritteForm.myPlugin.colors['entry']};
+			}
 
-.pagenum-border {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
-}
+			.pagenum-border {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+			}
 
-.title-border {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
-}
+			.title-border {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
+			}
 
-.author-border {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
-}
+			.author-border {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
+			}
 
-.institution-border {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
-}
+			.institution-border {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
+			}
 
-.entry-border {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['entry']};
-}
+			.entry-border {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['entry']};
+			}
 
+			.active-entry .pagenum-border-focus {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
+			}
 
+			.active-entry .title-border-focus {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
+			}
 
-.active-entry .pagenum-border-focus {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['pagenum']};
-}
+			.active-entry .author-border-focus {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
+			}
 
-.active-entry .title-border-focus {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['title']};
-}
+			.active-entry .institution-border-focus {
+				border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
+			}
 
-.active-entry .author-border-focus {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['author']};
-}
+			.active-entry .control-label label {
+				font-weight: bold;
+			}
 
-.active-entry .institution-border-focus {
-	border: 1px solid #{AktuelleSchritteForm.myPlugin.colors['institution']};
-}
+			.toc-entry.active-entry .form-group .col-sm-9 {
+				background-color: #f6f6f6;
+			}
 
-.active-entry .control-label label {
-	font-weight: bold;
-}
+			.toc-entry.active-entry .form-group {
+				background-color: #e6e6e6;
+			}
 
-.toc-entry.active-entry .form-group .col-sm-9 {
-	background-color: #f6f6f6;
-}
+			.toc-entry.moving .form-group {
+				border-right: 3px solid black !important;
+			}
 
-.toc-entry.active-entry .form-group {
-	background-color: #e6e6e6;
-}
+			.toc-entry.moving .form-group:first-child {
+				border-top: 3px solid black;
+			}
 
-.toc-entry.moving .form-group {
-	border-right: 3px solid black !important;
-}
+			.toc-entry.moving .form-group:last-child {
+				border-bottom: 3px solid black !important;
+			}
 
-.toc-entry.moving .form-group:first-child {
-	border-top: 3px solid black;
-}
+			.scroll-y {
+				overflow-y: auto;
+				overflow-x: hidden;
+				direction: rtl;
+			}
 
-.toc-entry.moving .form-group:last-child {
-	border-bottom: 3px solid black !important;
-}
+			.scroll-y div {
+				direction: ltr;
+			}
 
-.scroll-y {
-	overflow-y: auto;
-	overflow-x: hidden;
-	direction: rtl;
-}
+			.max-height {
+				max-height: 1106px;
+				height: 1106px;
+			}
+			.image-navigation {
+				padding-bottom: 0;
+				border: 0;
+			}
 
-.scroll-y div {
- 	direction: ltr; 
-}
+			#bottomControls {
+				padding-top: 0;
+			}
 
-.max-height {
-	max-height: 1106px;
-	height: 1106px;
-}
-.image-navigation {
-	padding-bottom: 0;
-	border: 0;
-}
+			.dropArea {
+				height: 50px;
+				width: 100%;
+				background-color: #ddd;
+				display: block;
+				font-size: 32px;
+				color: black !important;
+				text-align: center;
+				border-right: 1px solid #ddd;
+			}
 
-#bottomControls {
-	padding-top: 0;
-}
-
-.dropArea {
-	height: 50px;
-	width: 100%;
-	background-color: #ddd;
-	display: block;
-	font-size: 32px;
-	color: black !important;
-	text-align: center;
-	border-right: 1px solid #ddd;
-}
-
-.dropArea:hover {
-	background-color: #ccc;
-}
-</style>
+			.dropArea:hover {
+				background-color: #ccc;
+			}
+		</style>
 
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/openseadragon/openseadragon.min.js"></script>
@@ -200,465 +201,491 @@
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/rectDrawing.js"></script>
 
-		
-			<div class="box box-color lightgrey box-bordered">
-						<h:form>
-				<div class="box-title">
-					<h3>
-						<i class="fa fa-puzzle-piece" />
-						<h:outputText id="id9" value="#{msgs.details}" />
-					</h3>
-					<div class="actions">
-							<h:commandLink id="id10" action="#{NavigationForm.Reload}"
-								styleClass="btn btn-mini">
-								<i class="fa fa-refresh font-white" />
-							</h:commandLink>
-					</div>
-				</div>
-						</h:form>
-				
-				
-				<div class="box-content nopadding" id="allContent">
-					<div class="row">
-						<h:form id="qaform" styleClass="form-horizontal form-bordered">
-						<div class="col-sm-7">
-							<h:panelGroup id="entrylist" layout="block" class=" max-height scroll-y">
-								<h:panelGroup id="dropZero" layout="block" styleClass="row" 
-									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != 0}">
+		<section:section type="neutral">
+			<section:header
+				icon="puzzle-piece"
+				title="#{msgs.plugin}: #{msgs[('plugin_').concat(AktuelleSchritteForm.myPlugin.title)]}">
+				<section:header-actions>
+					<h:commandLink
+						id="id10"
+						action="#{NavigationForm.Reload}"
+						styleClass="btn d-flex align-items-center btn--title-action"
+						title="#{msgs.reload}"
+						pt:data-bs-trigger="tooltip">
+						<span
+							aria-hidden="true"
+							class="fa fa-refresh" />
+					</h:commandLink>
+				</section:header-actions>
+			</section:header>
+			<section:body padding="true">
+				<h:panelGroup
+					layout="block"
+					rendered="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList == 0}"
+					styleClass="alert alert-info">
+					<h:outputText value="#{msgs.noImagesFound}" />
+				</h:panelGroup>
+				<h:form
+					id="qaform"
+					styleClass="row"
+					rendered="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList gt 0}">
+					<div class="col-12 col-sm-7">
+						<h:panelGroup
+							id="entrylist"
+							layout="block"
+							class="max-height scroll-y">
+							<h:panelGroup
+								id="dropZero"
+								layout="block"
+								styleClass="row"
+								rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != 0}">
+								<div class="col-sm-11">
+									<h:commandLink
+										id="pasteButton"
+										action="#{AktuelleSchritteForm.myPlugin.moveEntry(0)}"
+										styleClass="dropArea">
+										<f:ajax render=":qaform:entrylist" />
+										<span
+											aria-hidden="true"
+											class="fa fa-paste" />
+									</h:commandLink>
+								</div>
+							</h:panelGroup>
+							<c:forEach
+								items="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}"
+								var="entry"
+								varStatus="idx">
+								<div class="row">
+									<div
+										class="col-12 col-sm-11 toc-entry #{entry.moving ? 'moving' : ''}"
+										id="tocEntry#{idx}">
+										<intranda:formInputTextAjax
+											label="#{msgs.plugin_intranda_step_olr_toc_title}"
+											field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
+											help="#{msgs.plugin_intranda_step_olr_toc_title}"
+											name="title" fieldStyle="form-control title-border-focus"
+											displayAsRequired="false" required="false" forceId="false"
+											execute="@this"
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+										<intranda:formInputTextAjax
+											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
+											field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
+											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
+											name="authors" fieldStyle="form-control author-border-focus"
+											displayAsRequired="false" required="false" forceId="false"
+											execute="@this"
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+										<intranda:formInputTextAjax
+											label="#{msgs.plugin_intranda_step_olr_toc_page}"
+											field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
+											help="#{msgs.plugin_intranda_step_olr_toc_page}"
+											name="pageLabel" fieldStyle="form-control pagenum-border-focus"
+											displayAsRequired="false" required="false" forceId="false"
+											execute="@this"
+											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
+									</div>
+									<div class="col-12 col-sm-1 nopadding">
+										<h:commandLink
+											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
+											id="deleteButton"
+											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+											styleClass="btn btn-blank"
+											onclick="viewImage.close()">
+											<span
+												aria-hidden="true"
+												class="fa fa-trash-o" />
+											<f:passThroughAttribute
+												name="data-entryid"
+												value="#{idx}" />
+											<f:setPropertyActionListener
+												value="#{entry}"
+												target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
+											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+										</h:commandLink>
+										<br />
+										<h:commandLink
+											title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
+											id="moveButton"
+											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+											styleClass="btn btn-blank"
+											rendered="#{not AktuelleSchritteForm.myPlugin.inserting}"
+											onclick="viewImage.close()">
+											<span
+												aria-hidden="true"
+												class="fa fa-scissors" />
+											<f:passThroughAttribute
+												name="data-entryid"
+												value="#{idx}" />
+											<f:setPropertyActionListener
+												value="true"
+												target="#{AktuelleSchritteForm.myPlugin.inserting}"/>
+											<f:setPropertyActionListener
+												value="true"
+												target="#{entry.moving}"/>
+											<f:setPropertyActionListener
+												value="#{idx}"
+												target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
+											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+										</h:commandLink>
+										<h:commandLink
+											id="abortButton"
+											title="#{msgs.plugin_intranda_step_olr_toc_abortMove}"
+											rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx == idx}"
+											action="#{AktuelleSchritteForm.myPlugin.abortMove}"
+											styleClass="btn margin-top-regular">
+											<f:passThroughAttribute
+												name="data-entryid"
+												value="#{idx}" />
+											<span
+												aria-hidden="true"
+												class="fa fa-ban" />
+											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+										</h:commandLink>
+									</div>
+
+								</div>
+								<h:panelGroup id="dropZero" layout="block" styleClass="row"
+								rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
 									<div class="col-sm-11">
-										<h:commandLink id="pasteButton"
-											action="#{AktuelleSchritteForm.myPlugin.moveEntry(0)}" 
+										<h:commandLink
+											id="pasteButton"
+											action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx+1)}"
 											styleClass="dropArea">
-											<f:ajax render=":qaform:entrylist" />
-											<i class="fa fa-paste"></i>
+											<f:passThroughAttribute
+												name="data-entryid"
+												value="#{idx}" />
+											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+											<span
+												aria-hidden="true"
+												class="fa fa-paste" />
 										</h:commandLink>
 									</div>
 								</h:panelGroup>
-								<x:dataList value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}" var="entry" rowIndexVar="idx">
-									<div class="row">
-										<div class="col-sm-11 toc-entry #{entry.moving ? 'moving' : ''}" id="tocEntry#{idx}">
-											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
-												label="#{msgs.plugin_intranda_step_olr_toc_title}"
-												field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
-												help="#{msgs.plugin_intranda_step_olr_toc_title}"
-												name="title" fieldStyle="form-control title-border-focus"
-												displayAsRequired="false" required="false" forceId="false" 
-												execute="@this"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-											<intranda:formInputTextAjax style="border-right:1px solid #ccc"
-												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
-												field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
-												help="#{msgs.plugin_intranda_step_olr_toc_authors}"
-												name="authors" fieldStyle="form-control author-border-focus"
-												displayAsRequired="false" required="false" forceId="false" 
-												execute="@this"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-<!-- 											<intranda:formInputTextAjax style="border-right:1px solid #ccc" -->
-<!-- 												label="#{msgs.plugin_intranda_step_olr_toc_institutions}" -->
-<!-- 												field="#{entry.institutions}" classLeft="col-sm-2" classRight="col-sm-10" -->
-<!-- 												help="#{msgs.plugin_intranda_step_olr_toc_institutions}" -->
-<!-- 												name="institutions" fieldStyle="form-control institution-border-focus" -->
-<!-- 												displayAsRequired="false" required="false" forceId="false"  -->
-<!-- 												execute="@form" -->
-<!-- 												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/> -->
-											<intranda:formInputTextAjax style="border-right:1px solid #ccc; border-bottom:2px solid #ccc"
-												label="#{msgs.plugin_intranda_step_olr_toc_page}"
-												field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
-												help="#{msgs.plugin_intranda_step_olr_toc_page}"
-												name="pageLabel" fieldStyle="form-control pagenum-border-focus"
-												displayAsRequired="false" required="false" forceId="false" 
-												execute="@this"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										</div>
-										<div class="col-sm-1 nopadding">
-											<h:commandLink
-												title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
-												id="deleteButton"
-												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
-												onclick="viewImage.close()">
-												<i class="fa fa-trash-o"></i>
-												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
-												<f:setPropertyActionListener value="#{entry}"
-													target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
-												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-											</h:commandLink>
-											<br />
-											<h:commandLink
-												title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
-												id="moveButton"
-												action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;"
-												rendered="#{not AktuelleSchritteForm.myPlugin.inserting}"
-												onclick="viewImage.close()">
-												<i class="fa fa-scissors"></i>
-												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
-												<f:setPropertyActionListener value="true"
-													target="#{AktuelleSchritteForm.myPlugin.inserting}"/>
-												<f:setPropertyActionListener value="true"
-													target="#{entry.moving}"/>
-												<f:setPropertyActionListener value="#{idx}"
-													target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
-												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-											</h:commandLink>
-											<h:commandLink
-												id="abortButton"
-												title="#{msgs.plugin_intranda_step_olr_toc_abortMove}"
-												rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx == idx}"
-												action="#{AktuelleSchritteForm.myPlugin.abortMove}"
-												styleClass="btn font-size-s margin-top-regular" style="margin-right:30px;">
-												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
-												<i class="fa fa-ban"></i>
-												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-											</h:commandLink>
-										</div>
-	
-									</div>
-									<h:panelGroup id="dropZero" layout="block" styleClass="row" 
-									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
-										<div class="col-sm-11">
-											<h:commandLink id="pasteButton"
-												action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx+1)}" 
-												styleClass="dropArea">
-												<f:passThroughAttribute name="data-entryid" value="#{idx}" />
-												<f:ajax render=":qaform:entrylist  :qaform:bigimage" />
-												<i class="fa fa-paste"></i>
-											</h:commandLink>
-										</div>
-									</h:panelGroup>
-								</x:dataList>
-							
-							</h:panelGroup>
-						</div>
-						<div class="col-sm-5" style="right:30px;">
-							
-							<h:panelGroup id="bigimage">
-								
-									<div class="row" id="topImageNav">
-										<f:subview id="first_image">
-											<ui:include
-												src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
-										</f:subview>
+							</c:forEach>
 
-									</div>
-								
-								<!-- big image -->
-								<h:panelGroup layout="block" class="row margin-top-most margin-bottom-most" id="imageOrOcr">
-									<h:panelGroup styleClass="div-image" layout="block" rendered="#{not AktuelleSchritteForm.myPlugin.showOCR}">
-										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
-										<div id="mainImage" class="" style="border: 1px solid grey;"
-											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
-										<script type="text/javascript">
-										function setHeights() {
-											var myHeight = $(window).height() - $('#breadcrumb').outerHeight() - $('#header').outerHeight() - $('#navigation').outerHeight() - $('#bottomControls').outerHeight() - $('.box-title').outerHeight() -100;
-											$('.max-height').height(myHeight);
-											$('.max-height').css("max-height", myHeight+20 + "px");
-											$('.max-height').css("height", myHeight+20 + "px");
-											myHeight = myHeight - $('#topImageNav').height();
-											$('#mainImage').height(myHeight);
-											console.log(myHeight);
-										}
-										window.setHeights = setHeights;
-										setHeights();
-//                                     $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
-                                    
-                                    var entryGroup = {
-	                                        name : "entry",
-	                                        styleClass : "entry",
-	                                        interactive: false
-	                                    }; 
-                                    var authorGroup = {
-	                                        name : "author",
-	                                        styleClass : "author",
-	                                        interactive: false
-	                                    }; 
-                                    var pagenumGroup = {
-	                                        name : "pagenum",
-	                                        styleClass : "pagenum",
-	                                        interactive: false
-	                                    }; 
-                                    var institutionGroup = {
-	                                        name : "institution",
-	                                        styleClass : "institution",
-	                                        interactive: false
-	                                    }; 
-                                    var titleGroup = {
-	                                        name : "title",
-	                                        styleClass : "title",
-	                                        interactive: false
-	                                    }; 
-                                    
-                                    var entryBorderGroup = {
-	                                        name : "entry-border",
-	                                        styleClass: "entry-border",
-	                                        interactive: false
-	                                    }; 
-                                    var authorBorderGroup = {
-	                                        name : "author-border",
-	                                        styleClass: "author-border",
-	                                        interactive: false
-	                                    }; 
-                                    var pagenumBorderGroup = {
-	                                        name : "pagenum-border",
-	                                        styleClass: "pagenum-border",
-	                                        interactive: false
-	                                    }; 
-                                    var institutionBorderGroup = {
-	                                        name : "institution-border",
-	                                        styleClass: "institution-border",
-	                                        interactive: false
-	                                    }; 
-                                    var titleBorderGroup = {
-	                                        name : "title-border",
-	                                        styleClass: "title-border",
-	                                        interactive: false
-	                                    }; 
-                                    var imageViewConfig = {
-                            			    global: {
-                            			        zoomSpeed: 1.2,
-                            			        divId : 'mainImage',
-                            			        zoomSlider : 'zoomSlider',
-                            			        maxZoomLevel: 10,
-                            			        persistZoom: true,
-                            			        persistRotation: true,
-                            			        persistenceId: "#{AktuelleSchritteForm.myPlugin.step.processId}",
-                            			        overlayGroups: [entryGroup, authorGroup, pagenumGroup, institutionGroup, titleGroup,
-                            			            entryBorderGroup, authorBorderGroup, pagenumBorderGroup, institutionBorderGroup, titleBorderGroup] 
-                            			    },
-                            			    image: {
-                                                mimeType: "image/jpg",
-                                                tileSource : '#{AktuelleSchritteForm.myPlugin.tih.image.imageUrl}',
-                                            } 
-                            			};
-                                    viewImage = new ImageView.Image(imageViewConfig);
-                                    viewImage.close();
-                                    viewImage.load().then(function() {
-	                                    entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.tih.image.entriesAsJSON}');
-	                                    scaleFactor = #{AktuelleSchritteForm.myPlugin.tih.image.scale};
-	                                    if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
-	                                        drawAllRects(viewImage, entries, scaleFactor);
-	                                    } else {
-// 	                                    	$('#tocEntry'+0).find('input').first().focus();
-	                                    }
-	                                    $( '#mainImage' ).click( function( event ) {
-	                                        if(event.target.nodeName !== "CANVAS" || event.ctrlKey) {
-	                                            return;
-	                                        }
-	                                        var pixel = new OpenSeadragon.Point( event.offsetX, event.offsetY );
-	                                        var pos = viewImage.viewer.viewport.viewerElementToImageCoordinates( pixel );
-	                                        findAndMarkRect(entries, pos, scaleFactor);
-	                                    } );
-                                    }).catch(function(err) {
-                                        console.log(err);
-                                    });
-                                    </script>
-									</h:panelGroup>
-									<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.showOCR}">
-										<h:outputText value="#{AktuelleSchritteForm.myPlugin.tih.image.ocrText}" escape="false"/>
-									</h:panelGroup>
-								</h:panelGroup>
-								<!-- // big image -->
-
-								
-								
-							</h:panelGroup>
-						</div>
-
-						<h:panelGroup layout="block"
-							rendered="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList == 0}"
-							styleClass="col-sm-12">
-							<h:outputText value="#{msgs.noImagesFound}" />
 						</h:panelGroup>
-						</h:form>
+						<button:row styleClass="justify-content-end">
+							<!-- Remove all entries of this page -->
+							<h:commandLink
+								title="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"
+								action="#{AktuelleSchritteForm.myPlugin.tih.image.removeAllEntriesOfThisPage}"
+								styleClass="btn btn-hot"
+								onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
+								<span
+									aria-hidden="true"
+									class="fa fa-trash-o" />
+								<span>
+									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"/>
+								</span>
+							</h:commandLink>
+							<!-- Create new entry -->
+							<h:commandLink
+								title="#{msgs.plugin_intranda_step_olr_toc_createEntry}"
+								styleClass="btn btn-primary-400"
+								action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}"
+								id="addEntryButton">
+								<span
+									aria-hidden="true"
+									class="fa fa-plus" />
+								<span>
+									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
+								</span>
+								<f:ajax render=":qaform:entrylist"/>
+							</h:commandLink>
+							<!-- Create page numbers -->
+							<h:commandLink
+								title="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"
+								styleClass="btn btn-blank"
+								action="#{AktuelleSchritteForm.myPlugin.generateEndNumbers}">
+								<span
+									aria-hidden="true"
+									class="fa fa-sort-numeric-asc" />
+								<span>
+									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"/>
+								</span>
+								<f:ajax render=":qaform:entrylist"/>
+							</h:commandLink>
+						</button:row>
 					</div>
+					<div class="col-12 col-sm-5">
+						<h:panelGroup id="bigimage">
+							<div class="row" id="topImageNav">
+								<f:subview id="first_image">
+									<ui:include
+										src="OlrTocCorrectionPlugin_include_imagenavigation.xhtml" />
+								</f:subview>
+							</div>
+							<!-- big image -->
+							<h:panelGroup layout="block" class="row margin-top-most margin-bottom-most" id="imageOrOcr">
+								<h:panelGroup styleClass="div-image" layout="block" rendered="#{not AktuelleSchritteForm.myPlugin.showOCR}">
+									<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
+									<div id="mainImage" class=""
+										rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
+									<script type="text/javascript">
+									function setHeights() {
+										let myHeight = $(window).height() - $('#breadcrumb').outerHeight() - $('#header').outerHeight() - $('#navigation').outerHeight() - $('#bottomControls').outerHeight() - $('.box-title').outerHeight() -100;
+										$('.max-height').height(myHeight);
+										$('.max-height').css("max-height", myHeight+20 + "px");
+										$('.max-height').css("height", myHeight+20 + "px");
+										myHeight = myHeight - $('#topImageNav').height();
+										$('#mainImage').height(myHeight);
+										console.log(myHeight);
+									}
+									window.setHeights = setHeights;
+									setHeights();
+									// $('#mainImage').height($('#mainImage').width() * #{AktuelleSchritteForm.myPlugin.tih.imageHeight}/#{AktuelleSchritteForm.myPlugin.tih.imageWidth});
 
-					<div class="form-actions" id="bottomControls">
-						<h:form>
-						<!-- Remove all entries of this page -->
-						<h:commandLink
-							title="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"
-							action="#{AktuelleSchritteForm.myPlugin.tih.image.removeAllEntriesOfThisPage}"
-							styleClass="btn btn-red font-size-s margin-right-10"
-							onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
-							<i class="fa fa-trash-o margin-right-5"></i>
-							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"/>
-						</h:commandLink>
+								let entryGroup = {
+										name : "entry",
+										styleClass : "entry",
+										interactive: false
+									};
+								let authorGroup = {
+										name : "author",
+										styleClass : "author",
+										interactive: false
+									};
+								let pagenumGroup = {
+										name : "pagenum",
+										styleClass : "pagenum",
+										interactive: false
+									};
+								let institutionGroup = {
+										name : "institution",
+										styleClass : "institution",
+										interactive: false
+									};
+								let titleGroup = {
+										name : "title",
+										styleClass : "title",
+										interactive: false
+									};
 
-						<!-- Create new entry -->
-						<h:commandLink
-							title="#{msgs.plugin_intranda_step_olr_toc_createEntry}"
-							styleClass="btn btn-blue font-size-s margin-right-10"
-							action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}"
-                            id="addEntryButton">
-							<i class="fa fa-plus margin-right-5"></i>
-							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
-							<f:ajax render=":qaform:entrylist"/>
-						</h:commandLink>
-						
-						<!-- Create page numbers -->
-						<h:commandLink
-							title="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"
-							styleClass="btn btn-blue font-size-s"
-							action="#{AktuelleSchritteForm.myPlugin.generateEndNumbers}">
-							<i class="fa fa-sort-numeric-asc margin-right-5"></i>
-							<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"/>
-							<f:ajax render=":qaform:entrylist"/>
-						</h:commandLink>
+								let entryBorderGroup = {
+										name : "entry-border",
+										styleClass: "entry-border",
+										interactive: false
+									};
+								let authorBorderGroup = {
+										name : "author-border",
+										styleClass: "author-border",
+										interactive: false
+									};
+								let pagenumBorderGroup = {
+										name : "pagenum-border",
+										styleClass: "pagenum-border",
+										interactive: false
+									};
+								let institutionBorderGroup = {
+										name : "institution-border",
+										styleClass: "institution-border",
+										interactive: false
+									};
+								let titleBorderGroup = {
+										name : "title-border",
+										styleClass: "title-border",
+										interactive: false
+									};
+								let imageViewConfig = {
+										global: {
+											zoomSpeed: 1.2,
+											divId : 'mainImage',
+											zoomSlider : 'zoomSlider',
+											maxZoomLevel: 10,
+											persistZoom: true,
+											persistRotation: true,
+											persistenceId: "#{AktuelleSchritteForm.myPlugin.step.processId}",
+											overlayGroups: [entryGroup, authorGroup, pagenumGroup, institutionGroup, titleGroup,
+												entryBorderGroup, authorBorderGroup, pagenumBorderGroup, institutionBorderGroup, titleBorderGroup]
+										},
+										image: {
+											mimeType: "image/jpg",
+											tileSource : '#{AktuelleSchritteForm.myPlugin.tih.image.imageUrl}',
+										}
+									};
+								viewImage = new ImageView.Image(imageViewConfig);
+								viewImage.close();
+								viewImage.load().then(function() {
+									entries = JSON.parse('#{AktuelleSchritteForm.myPlugin.tih.image.entriesAsJSON}');
+									scaleFactor = #{AktuelleSchritteForm.myPlugin.tih.image.scale};
+									if(#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'true':'false'}) {
+										drawAllRects(viewImage, entries, scaleFactor);
+									} else {
+									// $('#tocEntry'+0).find('input').first().focus();
+									}
+									$( '#mainImage' ).click( function( event ) {
+										if(event.target.nodeName !== "CANVAS" || event.ctrlKey) {
+											return;
+										}
+										let pixel = new OpenSeadragon.Point( event.offsetX, event.offsetY );
+										let pos = viewImage.viewer.viewport.viewerElementToImageCoordinates( pixel );
+										findAndMarkRect(entries, pos, scaleFactor);
+									} );
+								}).catch(function(err) {
+									console.log(err);
+								});
+								</script>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.showOCR}">
+									<h:outputText value="#{AktuelleSchritteForm.myPlugin.tih.image.ocrText}" escape="false"/>
+								</h:panelGroup>
+							</h:panelGroup>
+							<!-- // big image -->
 
-						<!-- Save -->
-						<h:commandLink styleClass="btn btn-success pull-right font-size-s"
-							id="save" action="#{AktuelleSchritteForm.myPlugin.finish}">
-							<i class="fa fa-save margin-right-5"></i>
-							<h:outputText
-								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
-						</h:commandLink>
-
-						<!-- Pica preview -->
-						<h:commandLink styleClass="btn font-size-s pull-right margin-right-10" id="picaPreview"
-							action="#{AktuelleSchritteForm.myPlugin.showPicaPreview}">
-							<h:outputText
-								value="#{msgs.plugin_intranda_step_olr_toc_showPicaPreview}" />
-						</h:commandLink>
-						
-						<!-- Cancel -->
-						<h:commandLink styleClass="btn font-size-s pull-right margin-right-10" id="cancel"
-							action="#{AktuelleSchritteForm.myPlugin.cancel}">
-							<h:outputText
-								value="#{msgs.plugin_intranda_step_olr_toc_pluginLeave}" />
-						</h:commandLink>
-						</h:form>
+						</h:panelGroup>
 					</div>
-
-				</div>
-			</div>
-			
-			<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" style="margin-top:20px;display:block;">
-				
-				<h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/>
-
-				<!-- Close PICA preview -->
-				<h:form>
-					<h:commandLink styleClass="btn font-size-s margin-top-10" id="picaPreview"
+				</h:form>
+			</section:body>
+			<h:form>
+				<section:footer>
+					<!-- Cancel -->
+					<h:commandLink
+						styleClass="btn btn-blank"
+						id="cancel"
+						action="#{AktuelleSchritteForm.myPlugin.cancel}">
+						<h:outputText
+							value="#{msgs.plugin_intranda_step_olr_toc_pluginLeave}" />
+					</h:commandLink>
+					<!-- Pica preview -->
+					<h:commandLink
+						styleClass="btn btn-blank"
+						id="showPicaPreview"
+						action="#{AktuelleSchritteForm.myPlugin.showPicaPreview}">
+						<h:outputText
+							value="#{msgs.plugin_intranda_step_olr_toc_showPicaPreview}" />
+					</h:commandLink>
+					<h:commandLink
+						styleClass="btn btn-blank"
+						id="closePicaPreview"
 						action="#{AktuelleSchritteForm.myPlugin.closePicaPreview}">
 						<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_closePicaPreview}" />
 					</h:commandLink>
-				</h:form>
-			</h:panelGroup>
+					<!-- Save -->
+					<h:commandLink
+						styleClass="btn btn-success"
+						id="save"
+						action="#{AktuelleSchritteForm.myPlugin.finish}">
+						<span
+							aria-hidden="true"
+							class="fa fa-save" />
+						<h:outputText
+							value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
+					</h:commandLink>
+				</section:footer>
+			</h:form>
+		</section:section>
 
 		<script type="text/javascript">
+			window.onload = function() {
+				loadImages();
+				setHeights();
+			}
+			console.log("CORRECT VERSION")
 
-	window.onload = function() {
-    	loadImages();
-    	setHeights();
-    }
-	console.log("CORRECT VERSION")
-	
-	function restoreScrollAndFocus(scrolldown) {
-	    if(window.savedOLR) {
-	        if(window.savedOLR.entryId) {
-		        var entry = document.getElementById(window.savedOLR.entryId);
-		        console.log(entry);
-	        	$(entry).find("input").first().focus();
-        	}
-	        console.log("savedOlr:",window.savedOLR)
-	        if(scrolldown) {
-	        	document.getElementById("qaform:entrylist").scrollTop = 999999999;
-	        } else {
-	        	document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
-	        }
-	    } 
-	}
-	
-	function saveScrollAndFocus(btn) {
-		var add = parseInt(btn.dataset.entryid)
-		if(btn.id.indexOf("moveButton") >= 0) {
-			add = add * 50;
-		} else if(btn.id.indexOf("pasteButton") >= 0 || btn.id.indexOf("abortButton") >= 0) {
-			add = add * -50;
-		} else {
-			add = 0;
+			function restoreScrollAndFocus(scrolldown) {
+				if(window.savedOLR) {
+					if(window.savedOLR.entryId) {
+						let entry = document.getElementById(window.savedOLR.entryId);
+						console.log(entry);
+						$(entry).find("input").first().focus();
+					}
+					console.log("savedOlr:",window.savedOLR)
+					if(scrolldown) {
+						document.getElementById("qaform:entrylist").scrollTop = 999999999;
+					} else {
+						document.getElementById("qaform:entrylist").scrollTop = window.savedOLR.scrollTop;
+					}
+				}
+			}
+
+			function saveScrollAndFocus(btn) {
+				let add = parseInt(btn.dataset.entryid)
+				if(btn.id.indexOf("moveButton") >= 0) {
+					add = add * 50;
+				} else if(btn.id.indexOf("pasteButton") >= 0 || btn.id.indexOf("abortButton") >= 0) {
+					add = add * -50;
+				} else {
+					add = 0;
+				}
+				let delId = "tocEntry" + btn.dataset.entryid;
+				let entry = document.querySelector(".active-entry");
+				if(entry) {
+					let entryId = entry.id;
+					if(entryId > delId) {
+						let num = parseInt(entryId.replace("tocEntry", ""))
+						entryId = "tocEntry" + (num-1)
+					}
+				}
+				let entryList = document.getElementById("qaform:entrylist");
+				if(entryList) {
+					let scrollTop = entryList.scrollTop;
+				} else {
+					console.log("found no entryList for some reason...")
+				}
+				if(entryList){
+					window.savedOLR = {entryId: entryId, scrollTop: scrollTop+add}
+				}
+			}
+
+		jsf.ajax.addOnEvent(function(data) {
+			let ajaxstatus = data.status; // Can be "begin", "complete" and "success"
+			let id = data.source.id;
+			let restore = id.indexOf("deleteButton")>=0
+							|| id.indexOf("pasteButton")>=0
+							|| id.indexOf("abortButton")>=0
+							|| id.indexOf("moveButton")>=0
+							|| id.indexOf("addEntryButton") >= 0;
+			let scrollDown = id.indexOf("addEntryButton") >= 0;
+			console.log(id, restore)
+			switch (ajaxstatus) {
+				case "begin":
+					if(restore) {
+						console.log("would now save stuff");
+						saveScrollAndFocus(data.source);
+					}
+				case "success": // This is called when ajax response is successfully processed.
+					loadImages();
+					setHeights();
+					if(restore) {
+						console.log("restoring...")
+						setTimeout(() => {
+							restoreScrollAndFocus(scrollDown);
+						}, 500);
+					}
+					break;
+			}
+
+		});
+
+		function copyValue(element, e) {
+			console.log(element.id);
+			if (element.id =='qaform:first:txtMoveTo2') {
+				document.getElementById('qaform:second:txtMoveTo2').value = element.value;
+			} else if (element.id =='qaform:second:txtMoveTo2'){
+				document.getElementById('qaform:first:txtMoveTo2').value = element.value;
+			} else if (element.id =='qaform:first_image:txtImageMoveTo2') {
+				document.getElementById('qaform:second_image:txtImageMoveTo2').value = element.value;
+			} else {
+				document.getElementById('qaform:first_image:txtImageMoveTo2').value = element.value;
+			}
+
+			let keycode;
+			if (window.event)
+				keycode = window.event.keyCode;
+			else if (e)
+				keycode = e.which;
+			else
+				return true;
+
+			if (keycode == 13) {
+				document.getElementById(element.id).nextSibling.click();
+				return false;
+			} else
+				return true;
+
 		}
-	    var delId = "tocEntry" + btn.dataset.entryid;
-	    var entry = document.querySelector(".active-entry");
-	    if(entry) {
-	    	var entryId = entry.id;
-	    	if(entryId > delId) {
-	    	    var num = parseInt(entryId.replace("tocEntry", ""))
-	    	    entryId = "tocEntry" + (num-1)
-	    	}
-	    }
-	    var entryList = document.getElementById("qaform:entrylist");
-	    if(entryList) {
-	    	var scrollTop = entryList.scrollTop;
-	    } else {
-	    	console.log("found no entryList for some reason...")
-	    }
-	    if(entryList){
-    		window.savedOLR = {entryId: entryId, scrollTop: scrollTop+add}
-	    }
-	}
-  
 
-
-jsf.ajax.addOnEvent(function(data) {
-      var ajaxstatus = data.status; // Can be "begin", "complete" and "success"
-      var id = data.source.id;
-      var restore = id.indexOf("deleteButton")>=0 
-      				|| id.indexOf("pasteButton")>=0
-      				|| id.indexOf("abortButton")>=0
-      				|| id.indexOf("moveButton")>=0
-      				|| id.indexOf("addEntryButton") >= 0;
-     var scrollDown = id.indexOf("addEntryButton") >= 0;
-	 console.log(id, restore)
-      switch (ajaxstatus) {
-          case "begin":
-              if(restore) {
-                  console.log("would now save stuff");
-                  saveScrollAndFocus(data.source);
-              }
-          case "success": // This is called when ajax response is successfully processed.
-              loadImages();
-              setHeights();
-              if(restore) {
-            	  console.log("restoring...")
-				  setTimeout(() => {
-                      restoreScrollAndFocus(scrollDown);
-				  }, 500);
-              }
-              break;
-      }
-	
-});
-
-function copyValue(element, e) {
-    console.log(element.id);
-    if (element.id =='qaform:first:txtMoveTo2') {
-        document.getElementById('qaform:second:txtMoveTo2').value = element.value;
-    } else if (element.id =='qaform:second:txtMoveTo2'){
-        document.getElementById('qaform:first:txtMoveTo2').value = element.value;
-    } else if (element.id =='qaform:first_image:txtImageMoveTo2') {
-        document.getElementById('qaform:second_image:txtImageMoveTo2').value = element.value;
-    } else {
-        document.getElementById('qaform:first_image:txtImageMoveTo2').value = element.value;
-    }
-    
-    var keycode;
-	if (window.event)
-		keycode = window.event.keyCode;
-	else if (e)
-		keycode = e.which;
-	else
-		return true;
-	
-	if (keycode == 13) {
-		document.getElementById(element.id).nextSibling.click();
-		return false;
-	} else
-		return true;
-    
-}
-
-</script>
+		</script>
 	</ui:define>
 
 </ui:composition>
