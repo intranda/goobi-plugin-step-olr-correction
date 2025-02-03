@@ -7,7 +7,6 @@
 	xmlns:of="http://omnifaces.org/functions"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
 	template="/uii/templatePG/templatePG.html"
-	xmlns:x="http://myfaces.apache.org/tomahawk"
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
     xmlns:section="http://goobi.io/section"
     xmlns:button="http://goobi.io/button">
@@ -627,7 +626,7 @@
 				}
 			}
 
-		jsf.ajax.addOnEvent(function(data) {
+		faces.ajax.addOnEvent(function(data) {
 			let ajaxstatus = data.status; // Can be "begin", "complete" and "success"
 			let id = data.source.id;
 			let restore = id.indexOf("deleteButton")>=0
