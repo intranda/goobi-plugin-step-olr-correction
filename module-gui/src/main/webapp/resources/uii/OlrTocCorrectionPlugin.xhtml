@@ -343,8 +343,11 @@
 									</div>
 
 								</div>
-								<h:panelGroup id="dropZero" layout="block" styleClass="row"
-								rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
+								<h:panelGroup
+									id="dropZero#{idx}"
+									layout="block"
+									styleClass="row"
+									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
 									<div class="col-sm-11">
 										<h:commandLink
 											id="pasteButton"
