@@ -6,8 +6,8 @@
 	xmlns:o="http://omnifaces.org/ui"
 	xmlns:of="http://omnifaces.org/functions"
     xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-	template="/uii/templatePG/templatePG.html"
-	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/compositesPG"
+	template="/uii/template/template.html"
+	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:section="http://goobi.io/section"
     xmlns:button="http://goobi.io/button">
 
@@ -343,8 +343,11 @@
 									</div>
 
 								</div>
-								<h:panelGroup id="dropZero" layout="block" styleClass="row"
-								rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
+								<h:panelGroup
+									id="dropZero#{idx}"
+									layout="block"
+									styleClass="row"
+									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
 									<div class="col-sm-11">
 										<h:commandLink
 											id="pasteButton"
@@ -567,8 +570,10 @@
 						<span
 							aria-hidden="true"
 							class="fa fa-save" />
-						<h:outputText
-							value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
+						<span>
+							<h:outputText
+								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
+						</span>
 					</h:commandLink>
 				</section:footer>
 			</h:form>
