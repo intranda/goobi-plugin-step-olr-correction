@@ -40,7 +40,7 @@ import java.util.Optional;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.goobi.beans.Processproperty;
+import org.goobi.beans.GoobiProperty;
 import org.goobi.beans.Step;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.PluginType;
@@ -78,6 +78,8 @@ import ugh.exceptions.ReadException;
 @PluginImplementation
 @Log4j
 public class OlrCorrectionPlugin implements IStepPlugin {
+
+    private static final long serialVersionUID = -203327178125537657L;
 
     private static final String PLUGIN_NAME = "intranda_step_olr-correction";
 
@@ -176,13 +178,13 @@ public class OlrCorrectionPlugin implements IStepPlugin {
     }
 
     private void setupBornDigital() {
-        List<Processproperty> lstProps = this.step.getProzess().getEigenschaften();
-        for (Processproperty prop : lstProps) {
-            if (prop.getTitel().contentEquals("bornDigital")) {
-                this.bornDigital = Boolean.parseBoolean(prop.getWert());
+        List<GoobiProperty> lstProps = this.step.getProzess().getProperties();
+        for (GoobiProperty prop : lstProps) {
+            if (prop.getPropertyName().contentEquals("bornDigital")) {
+                this.bornDigital = Boolean.parseBoolean(prop.getPropertyValue());
 
                 if (!bornDigital) {
-                    log.debug(this.step.getProzess().getTitel() + " has bornDigital=" + prop.getWert());
+                    log.debug(this.step.getProzess().getTitel() + " has bornDigital=" + prop.getPropertyValue());
                 }
                 break;
             }
