@@ -148,10 +148,19 @@
 				border-bottom: 3px solid black !important;
 			}
 
+			.entry-actions {
+				background: white;
+				display: flex;
+				flex-direction: column;
+				gap: calc(var(--flow-space, 1em) / 4);
+				padding: calc(var(--flow-space, 1em) / 2);
+			}
+
 			.scroll-y {
 				overflow-y: auto;
 				overflow-x: hidden;
 				direction: rtl;
+				margin-bottom: var(--flow-space, 1em);
 			}
 
 			.scroll-y div {
@@ -159,8 +168,9 @@
 			}
 
 			.max-height {
-				max-height: 1106px;
-				height: 1106px;
+				--entry-list-height: calc(100vh - 300px);
+				max-height: var(--entry-list-height);
+				height: var(--entry-list-height);
 			}
 			.image-navigation {
 				padding-bottom: 0;
@@ -250,120 +260,128 @@
 									</h:commandLink>
 								</div>
 							</h:panelGroup>
-							<c:forEach
-								items="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}"
-								var="entry"
-								varStatus="idx">
-								<div class="row">
-									<div
-										class="col-12 col-sm-11 toc-entry #{entry.moving ? 'moving' : ''}"
-										id="tocEntry#{idx}">
-										<intranda:formInputTextAjax
-											label="#{msgs.plugin_intranda_step_olr_toc_title}"
-											field="#{entry.title}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_title}"
-											name="title" fieldStyle="form-control title-border-focus"
-											displayAsRequired="false" required="false" forceId="false"
-											execute="@this"
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										<intranda:formInputTextAjax
-											label="#{msgs.plugin_intranda_step_olr_toc_authors}"
-											field="#{entry.authors}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_authors}"
-											name="authors" fieldStyle="form-control author-border-focus"
-											displayAsRequired="false" required="false" forceId="false"
-											execute="@this"
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-										<intranda:formInputTextAjax
-											label="#{msgs.plugin_intranda_step_olr_toc_page}"
-											field="#{entry.pageLabel}" classLeft="col-sm-2" classRight="col-sm-10"
-											help="#{msgs.plugin_intranda_step_olr_toc_page}"
-											name="pageLabel" fieldStyle="form-control pagenum-border-focus"
-											displayAsRequired="false" required="false" forceId="false"
-											execute="@this"
-											onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx});"/>
-									</div>
-									<div class="col-12 col-sm-1 nopadding">
-										<h:commandLink
-											title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
-											id="deleteButton"
-											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-											styleClass="btn btn-blank"
-											onclick="viewImage.close()">
-											<span
-												aria-hidden="true"
-												class="fa fa-trash-o" />
-											<f:passThroughAttribute
-												name="data-entryid"
-												value="#{idx}" />
-											<f:setPropertyActionListener
-												value="#{entry}"
-												target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
-											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-										</h:commandLink>
-										<br />
-										<h:commandLink
-											title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
-											id="moveButton"
-											action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
-											styleClass="btn btn-blank"
-											rendered="#{not AktuelleSchritteForm.myPlugin.inserting}"
-											onclick="viewImage.close()">
-											<span
-												aria-hidden="true"
-												class="fa fa-scissors" />
-											<f:passThroughAttribute
-												name="data-entryid"
-												value="#{idx}" />
-											<f:setPropertyActionListener
-												value="true"
-												target="#{AktuelleSchritteForm.myPlugin.inserting}"/>
-											<f:setPropertyActionListener
-												value="true"
-												target="#{entry.moving}"/>
-											<f:setPropertyActionListener
-												value="#{idx}"
-												target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
-											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-										</h:commandLink>
-										<h:commandLink
-											id="abortButton"
-											title="#{msgs.plugin_intranda_step_olr_toc_abortMove}"
-											rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx == idx}"
-											action="#{AktuelleSchritteForm.myPlugin.abortMove}"
-											styleClass="btn margin-top-regular">
-											<f:passThroughAttribute
-												name="data-entryid"
-												value="#{idx}" />
-											<span
-												aria-hidden="true"
-												class="fa fa-ban" />
-											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-										</h:commandLink>
+							<div class="d-flex flex-column gap-2 mx-2">
+								<ui:repeat
+									value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}"
+									var="entry"
+									varStatus="idx">
+									<div class="field-set border">
+										<div
+											class="field-set-content toc-entry #{entry.moving ? 'moving' : ''}"
+											id="tocEntry#{idx.index}">
+											<intranda:formInputTextAjax
+												label="#{msgs.plugin_intranda_step_olr_toc_title}"
+												field="#{entry.title}" classLeft="form-label" classRight="form-input" rowClass="form-row"
+												help="#{msgs.plugin_intranda_step_olr_toc_title}"
+												name="title" fieldStyle="form-control title-border-focus"
+												displayAsRequired="false" required="false" forceId="false"
+												execute="@this"
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx.index});"/>
+											<intranda:formInputTextAjax
+												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
+												field="#{entry.authors}" classLeft="form-label" classRight="form-input" rowClass="form-row"
+												help="#{msgs.plugin_intranda_step_olr_toc_authors}"
+												name="authors" fieldStyle="form-control author-border-focus"
+												displayAsRequired="false" required="false" forceId="false"
+												execute="@this"
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx.index});"/>
+											<intranda:formInputTextAjax
+												label="#{msgs.plugin_intranda_step_olr_toc_page}"
+												field="#{entry.pageLabel}" classLeft="form-label" classRight="form-input" rowClass="form-row"
+												help="#{msgs.plugin_intranda_step_olr_toc_page}"
+												name="pageLabel" fieldStyle="form-control pagenum-border-focus"
+												displayAsRequired="false" required="false" forceId="false"
+												execute="@this"
+												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry'); drawRectNumber(viewImage, entries, #{AktuelleSchritteForm.myPlugin.tih.image.scale}, #{idx.index});"/>
+											</div>
+											<div class="entry-actions">
+												<h:commandLink
+													title="#{msgs.plugin_intranda_step_olr_toc_deleteEntry}"
+													id="deleteButton"
+													action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+													styleClass="btn"
+													onclick="viewImage.close()">
+													<span
+														aria-hidden="true"
+														class="fa fa-trash-o" />
+													<f:passThroughAttribute
+														name="data-bs-toggle"
+														value="tooltip" />
+													<f:passThroughAttribute
+														name="data-entryid"
+														value="#{idx.index}" />
+													<f:setPropertyActionListener
+														value="#{entry}"
+														target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
+													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+												</h:commandLink>
+												<br />
+												<h:commandLink
+													title="#{msgs.plugin_intranda_step_olr_toc_moveEntry}"
+													id="moveButton"
+													action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
+													styleClass="btn"
+													rendered="#{not AktuelleSchritteForm.myPlugin.inserting}"
+													onclick="viewImage.close()">
+													<span
+														aria-hidden="true"
+														class="fa fa-scissors" />
+													<f:passThroughAttribute
+														name="data-bs-toggle"
+														value="tooltip" />
+													<f:passThroughAttribute
+														name="data-entryid"
+														value="#{idx.index}" />
+													<f:setPropertyActionListener
+														value="true"
+														target="#{AktuelleSchritteForm.myPlugin.inserting}"/>
+													<f:setPropertyActionListener
+														value="true"
+														target="#{entry.moving}"/>
+													<f:setPropertyActionListener
+														value="#{idx.index}"
+														target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
+													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+												</h:commandLink>
+												<h:commandLink
+													id="abortButton"
+													title="#{msgs.plugin_intranda_step_olr_toc_abortMove}"
+													rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx == idx.entry}"
+													action="#{AktuelleSchritteForm.myPlugin.abortMove}"
+													styleClass="btn">
+													<f:passThroughAttribute
+														name="data-entryid"
+														value="#{idx.index}" />
+													<span
+														aria-hidden="true"
+														class="fa fa-ban" />
+													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+												</h:commandLink>
+											</div>
 									</div>
 
-								</div>
-								<h:panelGroup
-									id="dropZero#{idx}"
-									layout="block"
-									styleClass="row"
-									rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
-									<div class="col-sm-11">
-										<h:commandLink
-											id="pasteButton"
-											action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx+1)}"
-											styleClass="dropArea">
-											<f:passThroughAttribute
-												name="data-entryid"
-												value="#{idx}" />
-											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
-											<span
-												aria-hidden="true"
-												class="fa fa-paste" />
-										</h:commandLink>
-									</div>
-								</h:panelGroup>
-							</c:forEach>
+									<h:panelGroup
+										id="dropZero#{idx}"
+										layout="block"
+										styleClass="row"
+										rendered="#{AktuelleSchritteForm.myPlugin.inserting and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx and AktuelleSchritteForm.myPlugin.movingEntryIdx != idx+1}">
+										<div class="col-sm-11">
+											<h:commandLink
+												id="pasteButton"
+												action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx+1)}"
+												styleClass="dropArea">
+												<f:passThroughAttribute
+													name="data-entryid"
+													value="#{idx}" />
+												<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+												<span
+													aria-hidden="true"
+													class="fa fa-paste" />
+											</h:commandLink>
+										</div>
+									</h:panelGroup>
+								</ui:repeat>
+							</div>
 
 						</h:panelGroup>
 						<button:row styleClass="justify-content-end">
@@ -613,19 +631,15 @@
 				}
 				let delId = "tocEntry" + btn.dataset.entryid;
 				let entry = document.querySelector(".active-entry");
+				let entryId = entry?.id;
 				if(entry) {
-					let entryId = entry.id;
 					if(entryId > delId) {
 						let num = parseInt(entryId.replace("tocEntry", ""))
 						entryId = "tocEntry" + (num-1)
 					}
 				}
 				let entryList = document.getElementById("qaform:entrylist");
-				if(entryList) {
-					let scrollTop = entryList.scrollTop;
-				} else {
-					console.log("found no entryList for some reason...")
-				}
+				let scrollTop = entryList?.scrollTop;
 				if(entryList){
 					window.savedOLR = {entryId: entryId, scrollTop: scrollTop+add}
 				}
