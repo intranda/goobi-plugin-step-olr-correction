@@ -14,7 +14,7 @@
 			<h:commandLink
 				styleClass="btn btn-blank"
 				title="#{msgs.firstImage}"
-				onclick="viewImage.close(); preventDoubleSubmit(this);"
+				onclick="preventDoubleSubmit(this);"
 				pt:data-bs-toggle="tooltip">
 				<span
 					aria-hidden="true"
@@ -25,7 +25,7 @@
 
 			<h:commandLink
 				styleClass="btn btn-primary"
-				onclick="viewImage.close(); preventDoubleSubmit(this);">
+				onclick="preventDoubleSubmit(this);">
 				<span
 					aria-hidden="true"
 					class="fa fa-angle-left" />
@@ -53,7 +53,7 @@
 			</div>
 			<h:commandLink
 				styleClass="btn btn-primary"
-				onclick="viewImage.close(); preventDoubleSubmit(this);">
+				onclick="preventDoubleSubmit(this);">
 				<span>
 					<h:outputText value="#{msgs.lw_nextImage} " />
 				</span>
@@ -67,7 +67,7 @@
 			<h:commandLink
 				styleClass="btn btn-blank"
 				title="#{msgs.lastImage}"
-				onclick="viewImage.close(); preventDoubleSubmit(this);"
+				onclick="preventDoubleSubmit(this);"
 				pt:data-bs-toggle="tooltip">
 				<span
 					aria-hidden="true"
@@ -82,7 +82,7 @@
 				id="showAllButton"
 				action="#{NavigationForm.Reload}"
 				pt:data-bs-toggle="tooltip"
-				onclick="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'drawCurrentSelected()':'drawAllRects(viewImage, entries, scaleFactor)'}">
+				pt:data-plugin-drawRect="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'selected':'all'}">
 				<span
 					aria-hidden="true"
 					class="fa fa-eye" />
@@ -96,8 +96,7 @@
 				styleClass="btn btn-blank"
 				title="#{AktuelleSchritteForm.myPlugin.showOCR ? 'Bild anzeigen' : 'Volltext anzeigen'}"
 				id="showOcrButton"
-				pt:data-bs-toggle="tooltip"
-				onclick="viewImage.close()">
+				pt:data-bs-toggle="tooltip">
 				<span
 					aria-hidden="true"
 					class="fa #{AktuelleSchritteForm.myPlugin.showOCR ? 'fa-picture-o' : 'fa-file-text-o'}" />
