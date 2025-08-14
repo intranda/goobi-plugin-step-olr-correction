@@ -57,6 +57,8 @@
 			console.log(id, restore)
 			switch (ajaxstatus) {
 				case "begin":
+					// Destroy existing image view before creating a new one
+					destroyImageView();
 					if(restore) {
 						console.log("would now save stuff");
 						saveScrollAndFocus(data.source);
@@ -161,8 +163,6 @@
 		};
 
 		const initImage = () => {
-			// Destroy existing image view before creating a new one
-			destroyImageView();
 
 			let entryGroup = {
 					name : "entry",
