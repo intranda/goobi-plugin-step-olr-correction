@@ -138,7 +138,32 @@
             return false;
         };
 
+		// Global variable to hold the current image view instance
+		let currentViewImage = null;
+
+		const destroyImageView = () => {
+			if (currentViewImage) {
+				try {
+					// Destroy the current image view instance
+					if (currentViewImage.viewer) {
+						currentViewImage.viewer.destroy();
+					}
+					if (currentViewImage.close) {
+						currentViewImage.close();
+					}
+					// Remove any event listeners
+					$('#mainImage').off('click');
+				} catch (error) {
+					console.warn('Error destroying image view:', error);
+				}
+				currentViewImage = null;
+			}
+		};
+
 		const initImage = () => {
+			// Destroy existing image view before creating a new one
+			destroyImageView();
+
 			let entryGroup = {
 					name : "entry",
 					styleClass : "entry",
@@ -207,15 +232,15 @@
 						tileSource : getTilesource(),
 					}
 				};
-			const viewImage = new ImageView.Image(imageViewConfig);
-			viewImage.close();
-			viewImage.load().then(function() {
+			currentViewImage = new ImageView.Image(imageViewConfig);
+			currentViewImage.close();
+			currentViewImage.load().then(function() {
 				console.log(imageViewConfig.image.tileSource);
 				const entriesElement = document.querySelector('[id$="entriesJson"]');
 				entries = JSON.parse(entriesElement.value);
 				scaleFactor = getScaleFactor();
 				if(getShowAllEntries()) {
-					drawAllRects(viewImage, entries, scaleFactor);
+					drawAllRects(currentViewImage, entries, scaleFactor);
 				} else {
 				// $('#tocEntry'+0).find('input').first().focus();
 				}
@@ -224,7 +249,7 @@
 						return;
 					}
 					let pixel = new OpenSeadragon.Point( event.offsetX, event.offsetY );
-					let pos = viewImage.viewer.viewport.viewerElementToImageCoordinates( pixel );
+					let pos = currentViewImage.viewer.viewport.viewerElementToImageCoordinates( pixel );
 					findAndMarkRect(entries, pos, scaleFactor);
 				} );
 			}).catch(function(err) {
@@ -270,10 +295,10 @@
                                 drawCurrentSelected();
                                 break;
                             case "all":
-                                drawAllRects(viewImage, entries, getScaleFactor());
+                                drawAllRects(currentViewImage, entries, getScaleFactor());
                                 break;
                             default:
-                                drawRectNumber(viewImage, entries, getScaleFactor(), target)
+                                drawRectNumber(currentViewImage, entries, getScaleFactor(), target)
                         }
                     });
                 });
@@ -309,7 +334,7 @@
 					return;
 				}
 				activeEntryId = activeEntryId.replace('tocEntry', '');
-				drawRectNumber(viewImage, entries, scaleFactor, activeEntryId);
+				drawRectNumber(currentViewImage, entries, scaleFactor, activeEntryId);
 			}
 
 			function findAndMarkRect(entries, pos, scaleFactor) {
