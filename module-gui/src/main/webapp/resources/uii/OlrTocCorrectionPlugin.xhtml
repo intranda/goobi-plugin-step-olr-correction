@@ -276,7 +276,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											<intranda:formInputTextAjax
 												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
 												field="#{entry.authors}" classLeft="form-label" classRight="form-input" rowClass="form-row"
@@ -285,7 +286,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											<intranda:formInputTextAjax
 												label="#{msgs.plugin_intranda_step_olr_toc_page}"
 												field="#{entry.pageLabel}" classLeft="form-label" classRight="form-input" rowClass="form-row"
@@ -294,7 +296,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											</div>
 											<div class="entry-actions">
 												<h:commandLink
@@ -483,7 +486,9 @@
 						onclick="console.log('PICA Preview button clicked');">
 						<h:outputText
 							value="#{msgs.plugin_intranda_step_olr_toc_showPicaPreview}" />
-						<f:ajax render="picaModalForm:picaModalContent" onevent="(event) => {if (event.status === 'success') {showPicaModal();}}" />
+						<f:ajax render="picaModalForm:picaModalContent" onevent="(event) => {
+							if (event.status === 'success') {showPicaModal();}
+						}" />
 					</h:commandLink>
 					<!-- Save -->
 					<h:commandLink
