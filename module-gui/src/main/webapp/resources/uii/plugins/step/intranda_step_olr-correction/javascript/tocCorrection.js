@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	initImage();
 });
 
-function restoreScrollAndFocus(scrolldown) {
+const restoreScrollAndFocus = (scrolldown) => {
 	if(window.savedOLR) {
 		if(window.savedOLR.entryId) {
 			const entry = document.getElementById(window.savedOLR.entryId);
@@ -16,9 +16,9 @@ function restoreScrollAndFocus(scrolldown) {
 			entryList.scrollTop = scrolldown ? 999999999 : window.savedOLR.scrollTop;
 		}
 	}
-}
+};
 
-function saveScrollAndFocus(btn) {
+const saveScrollAndFocus = (btn) => {
 	let add = parseInt(btn.dataset.entryid);
 	if(btn.id.includes("moveButton")) {
 		add = add * 50;
@@ -39,25 +39,25 @@ function saveScrollAndFocus(btn) {
 	if(entryList){
 		window.savedOLR = {entryId: entryId, scrollTop: scrollTop+add};
 	}
-}
+};
 
-faces.ajax.addOnEvent(function(data) {
+faces.ajax.addOnEvent((data) => {
 	const ajaxstatus = data.status;
 	const id = data.source.id;
 
-	// Only handle specific button actions that actually modify the entry list structure
-	const isStructuralChange = ["deleteButton", "pasteButton", "abortButton", "moveButton", "addEntryButton"]
-		.some(action => id.includes(action));
+	// Define action categories for better organization
+	const structuralActions = ["deleteButton", "pasteButton", "abortButton", "moveButton", "addEntryButton"];
+	const navigationActions = ["showOcrButton", "showAllButton"];
+	const ignoredActions = ["showPicaPreview"];
+	const formFields = ["title", "authors", "pageLabel"];
 
-	// Also handle navigation events (pagination) - these need image reinitialization too
+	const isStructuralChange = structuralActions.some(action => id.includes(action));
 	const isNavigation = data.source.closest && (
 		data.source.closest('.dataTables__paginator') !== null ||
-		["showOcrButton", "showAllButton"].some(action => id.includes(action))
+		navigationActions.some(action => id.includes(action))
 	);
-
-	// Ignore PICA preview and form input AJAX events
-	const isPicaPreview = id.includes("showPicaPreview");
-	const isFormInput = ["title", "authors", "pageLabel"].some(field => id.includes(field));
+	const isPicaPreview = ignoredActions.some(action => id.includes(action));
+	const isFormInput = formFields.some(field => id.includes(field));
 
 	// Only proceed if this is a structural change or navigation
 	if ((!isStructuralChange && !isNavigation) || isPicaPreview || isFormInput) {
@@ -82,7 +82,6 @@ faces.ajax.addOnEvent(function(data) {
 			initImage();
 			break;
 	}
-
 });
 
 const copyValue = (element, e) => {
@@ -109,54 +108,152 @@ const copyValue = (element, e) => {
 	return true;
 };
 
+// Configuration and utility functions
 const getTilesource = () => {
 	const element = document.querySelector('[id$="tileSource"]');
-	if (element) {
-		let tileSource = element.value;
-		return tileSource ? tileSource : '';
-	}
-	return '';
+	return element?.value || '';
 };
 
 const getProcessId = () => {
 	const element = document.querySelector('[id$="processId"]');
-	if (element) {
-		let processId = element.value;
-		return processId ? processId : '';
-	}
-	return '';
+	return element?.value || '';
 };
 
 const getScaleFactor = () => {
 	const element = document.querySelector('[id$="scaleFactor"]');
-	if (element) {
-		let scaleFactor = element.value;
-		return scaleFactor ? parseFloat(scaleFactor) : 1.0;
-	}
-	return 1.0;
+	return element ? parseFloat(element.value) || 1.0 : 1.0;
 };
 
 const getShowAllEntries = () => {
 	const element = document.querySelector('[id$="showAllEntries"]');
-	if (element) {
-		let showAllEntries = element.value;
-		return showAllEntries === 'on';
-	}
-	return false;
+	return element?.value === 'on';
 };
 
-// Global variable to hold the current image view instance
+// Global variables
 let currentViewImage = null;
+let entries = null;
+let scaleFactor = 1.0;
+
+// Rectangle drawing functions
+const drawAllRects = (viewImage, entries, scaleFactor) => {
+	if (!viewImage.overlays) {
+		console.error("viewImage.overlays is not available. Cannot draw rectangles.");
+		return;
+	}
+
+	unDraw(viewImage);
+	entries.forEach((entry, entryIndex) => {
+		entry.boxes.forEach((box, boxIndex) => {
+			const add = box.type === "entry" ? 3 : 1;
+			const rect = new OpenSeadragon.Rect(
+				(box.x/scaleFactor) - add,
+				(box.y/scaleFactor) - add,
+				(box.width/scaleFactor) + add*2,
+				(box.height/scaleFactor) + add*2
+			);
+			viewImage.overlays.drawRect(rect, box.type);
+			viewImage.overlays.drawRect(rect, `${box.type}-border`);
+		});
+	});
+};
+
+const unDraw = (viewImage) => {
+	if (!viewImage.overlays) {
+		console.warn("viewImage.overlays is not available. Cannot undraw rectangles.");
+		return;
+	}
+
+	const overlayTypes = ["pagenum", "author", "institution", "title", "entry"];
+	overlayTypes.forEach(type => {
+		viewImage.overlays.unDraw(type);
+		viewImage.overlays.unDraw(`${type}-border`);
+	});
+};
+
+const drawRectNumber = (viewImage, entries, scaleFactor, entryNumber) => {
+	if (!viewImage.overlays) {
+		console.error("viewImage.overlays is not available. Cannot draw rectangles.");
+		return;
+	}
+
+	unDraw(viewImage);
+	for(let i = 0; i < entries.length; i++) {
+		if(i !== entryNumber) {
+			continue;
+		}
+		const entry = entries[i];
+		for(let k = 0; k < entry.boxes.length; k++) {
+			const box = entry.boxes[k];
+			const add = box.type === "entry" ? 3 : 1;
+			const rect = new OpenSeadragon.Rect(
+				(box.x/scaleFactor) - add,
+				(box.y/scaleFactor) - add,
+				(box.width/scaleFactor) + (add*2),
+				(box.height/scaleFactor) + (add*2)
+			);
+			viewImage.overlays.drawRect(rect, box.type);
+			viewImage.overlays.drawRect(rect, `${box.type}-border`);
+		}
+	}
+};
+
+const drawCurrentSelected = () => {
+	const activeEntry = document.querySelector('.active-entry');
+	if(!activeEntry?.id) {
+		const firstEntry = document.querySelector('#tocEntry0 input');
+		firstEntry?.focus();
+		return;
+	}
+	const activeEntryId = activeEntry.id.replace('tocEntry', '');
+	drawRectNumber(currentViewImage, entries, scaleFactor, activeEntryId);
+};
+
+const findAndMarkRect = (entries, pos, scaleFactor) => {
+	entries.forEach((entry, entryIndex) => {
+		entry.boxes.forEach((box) => {
+			if(box.type !== "entry") {
+				return;
+			}
+			const rect = new OpenSeadragon.Rect(
+				(box.x/scaleFactor) - 1,
+				(box.y/scaleFactor) - 1,
+				(box.width/scaleFactor) + 2,
+				(box.height/scaleFactor) + 2
+			);
+			if(pos.x > rect.x && pos.x < rect.x + rect.width &&
+			   pos.y > rect.y && pos.y < rect.y + rect.height) {
+				const entryElement = document.getElementById(`tocEntry${entryIndex}`);
+				const inputs = entryElement?.querySelectorAll('input');
+				if (inputs && inputs.length > 0) {
+					inputs[inputs.length - 1].focus();
+					inputs[0].focus();
+				}
+			}
+		});
+	});
+};
 
 const highlightTocEntry = (element) => {
+	// Remove active state from all entries
 	document.querySelectorAll('.toc-entry').forEach(entry => {
 		entry.classList.remove('active-entry');
 	});
 
-	// Add active-entry class to the closest toc-entry parent
+	// Add active state to current entry and draw rectangles
 	const tocEntry = element.closest('.toc-entry');
 	if (tocEntry) {
 		tocEntry.classList.add('active-entry');
+
+		// Draw rectangles for the highlighted entry
+		if (currentViewImage?.overlays && entries) {
+			const entryId = tocEntry.id;
+			if (entryId?.startsWith('tocEntry')) {
+				const entryNumber = parseInt(entryId.replace('tocEntry', ''));
+				setTimeout(() => {
+					drawRectNumber(currentViewImage, entries, scaleFactor, entryNumber);
+				}, 50);
+			}
+		}
 	}
 };
 
@@ -180,78 +277,40 @@ const destroyImageView = () => {
 };
 
 const initImage = () => {
+	// Define overlay groups configuration
+	const overlayGroups = [
+		{ name: "entry", styleClass: "entry", interactive: false },
+		{ name: "author", styleClass: "author", interactive: false },
+		{ name: "pagenum", styleClass: "pagenum", interactive: false },
+		{ name: "institution", styleClass: "institution", interactive: false },
+		{ name: "title", styleClass: "title", interactive: false },
+		{ name: "entry-border", styleClass: "entry-border", interactive: false },
+		{ name: "author-border", styleClass: "author-border", interactive: false },
+		{ name: "pagenum-border", styleClass: "pagenum-border", interactive: false },
+		{ name: "institution-border", styleClass: "institution-border", interactive: false },
+		{ name: "title-border", styleClass: "title-border", interactive: false }
+	];
 
-	let entryGroup = {
-			name : "entry",
-			styleClass : "entry",
-			interactive: false
-		};
-	let authorGroup = {
-			name : "author",
-			styleClass : "author",
-			interactive: false
-		};
-	let pagenumGroup = {
-			name : "pagenum",
-			styleClass : "pagenum",
-			interactive: false
-		};
-	let institutionGroup = {
-			name : "institution",
-			styleClass : "institution",
-			interactive: false
-		};
-	let titleGroup = {
-			name : "title",
-			styleClass : "title",
-			interactive: false
-		};
-
-	let entryBorderGroup = {
-			name : "entry-border",
-			styleClass: "entry-border",
-			interactive: false
-		};
-	let authorBorderGroup = {
-			name : "author-border",
-			styleClass: "author-border",
-			interactive: false
-		};
-	let pagenumBorderGroup = {
-			name : "pagenum-border",
-			styleClass: "pagenum-border",
-			interactive: false
-		};
-	let institutionBorderGroup = {
-			name : "institution-border",
-			styleClass: "institution-border",
-			interactive: false
-		};
-	let titleBorderGroup = {
-			name : "title-border",
-			styleClass: "title-border",
-			interactive: false
-		};
-	let imageViewConfig = {
-			global: {
-				zoomSpeed: 1.2,
-				divId : 'mainImage',
-				zoomSlider : 'zoomSlider',
-				maxZoomLevel: 10,
-				persistZoom: true,
-				persistRotation: true,
-				persistenceId: getProcessId(),
-				overlayGroups: [entryGroup, authorGroup, pagenumGroup, institutionGroup, titleGroup,
-					entryBorderGroup, authorBorderGroup, pagenumBorderGroup, institutionBorderGroup, titleBorderGroup]
-			},
-			image: {
-				mimeType: "image/jpg",
-				tileSource : getTilesource(),
-			}
-		};
+	const imageViewConfig = {
+		global: {
+			zoomSpeed: 1.2,
+			divId: 'mainImage',
+			zoomSlider: 'zoomSlider',
+			maxZoomLevel: 10,
+			persistZoom: true,
+			persistRotation: true,
+			persistenceId: getProcessId(),
+			overlayGroups: overlayGroups
+		},
+		image: {
+			mimeType: "image/jpg",
+			tileSource: getTilesource(),
+		}
+	};
 	currentViewImage = new ImageView.Image(imageViewConfig);
 	currentViewImage.close();
-	currentViewImage.load().then(function() {
+
+	currentViewImage.load().then(() => {
 		const entriesElement = document.querySelector('[id$="entriesJson"]');
 		entries = JSON.parse(entriesElement.value);
 		scaleFactor = getScaleFactor();
@@ -266,105 +325,33 @@ const initImage = () => {
 				setTimeout(waitForOverlays, 100);
 			}
 		};
-
 		waitForOverlays();
 
+		// Set up click handler for image interaction
 		const mainImage = document.getElementById('mainImage');
 		if (mainImage) {
-			mainImage.addEventListener('click', function(event) {
-				if(event.target.nodeName !== "CANVAS" || event.ctrlKey) {
-					return;
-				}
+			mainImage.addEventListener('click', (event) => {
+				if(event.target.nodeName !== "CANVAS" || event.ctrlKey) return;
+
 				const pixel = new OpenSeadragon.Point(event.offsetX, event.offsetY);
 				const pos = currentViewImage.viewer.viewport.viewerElementToImageCoordinates(pixel);
 				findAndMarkRect(entries, pos, scaleFactor);
 			});
 		}
-	}).catch(function(err) {
-		console.log(err);
-	});
+	}).catch(err => console.error('Image loading error:', err));
 
-	function drawAllRects(viewImage, entries, scaleFactor) {
-		if (!viewImage.overlays) {
-			console.error("viewImage.overlays is not available. Cannot draw rectangles.");
-			return;
-		}
-
-		unDraw(viewImage);
-		entries.forEach((entry, entryIndex) => {
-			entry.boxes.forEach((box, boxIndex) => {
-				let add = 1;
-				if(box.type === "entry") {
-					add = 3;
-				}
-				let rect = new OpenSeadragon.Rect((box.x/scaleFactor)-add, (box.y/scaleFactor)-add, (box.width/scaleFactor)+add*2, (box.height/scaleFactor)+add*2);
-				viewImage.overlays.drawRect(rect, box.type);
-				rect = new OpenSeadragon.Rect((box.x/scaleFactor)-add, (box.y/scaleFactor)-add, (box.width/scaleFactor)+add*2, (box.height/scaleFactor)+add*2);
-				viewImage.overlays.drawRect(rect, box.type + "-border");
-			});
-		})
-	}
-
-	function unDraw(viewImage) {
-		if (!viewImage.overlays) {
-			console.warn("viewImage.overlays is not available. Cannot undraw rectangles.");
-			return;
-		}
-
-		viewImage.overlays.unDraw("pagenum");
-		viewImage.overlays.unDraw("author");
-		viewImage.overlays.unDraw("institution");
-		viewImage.overlays.unDraw("title");
-		viewImage.overlays.unDraw("entry");
-
-		viewImage.overlays.unDraw("pagenum-border");
-		viewImage.overlays.unDraw("author-border");
-		viewImage.overlays.unDraw("institution-border");
-		viewImage.overlays.unDraw("title-border");
-		viewImage.overlays.unDraw("entry-border");
-	}
-
-	// Simple rectangle draw initialization - called each time initImage runs
+	// Initialize click handlers for buttons with data-plugin-drawRect
 	const initRectDraw = () => {
-		// Use event delegation for better compatibility with AJAX-generated content
-		document.removeEventListener('focus', window._globalRectDrawHandler, true);
 		document.removeEventListener('click', window._globalRectClickHandler, true);
 
-		// Global focus handler for rectangle drawing only
-		window._globalRectDrawHandler = (event) => {
-			const target = event.target;
-			if (target && target.dataset && target.dataset.pluginDrawRect) {
-				if (!currentViewImage || !currentViewImage.overlays) {
-					return;
-				}
-
-				const rectTarget = target.dataset.pluginDrawRect;
-				setTimeout(() => {
-					switch (rectTarget) {
-						case "selected":
-							drawCurrentSelected();
-							break;
-						case "all":
-							drawAllRects(currentViewImage, entries, scaleFactor);
-							break;
-						default:
-							drawRectNumber(currentViewImage, entries, scaleFactor, parseInt(rectTarget));
-					}
-				}, 50);
-			}
-		};
-
-		// Global click handler for buttons
 		window._globalRectClickHandler = (event) => {
 			const target = event.target;
-			if (target && target.dataset && target.dataset.pluginDrawRect &&
+			if (target?.dataset?.pluginDrawRect &&
 				(target.tagName === 'A' || target.tagName === 'BUTTON')) {
 
 				event.preventDefault();
 
-				if (!currentViewImage || !currentViewImage.overlays) {
-					return;
-				}
+				if (!currentViewImage?.overlays) return;
 
 				const rectTarget = target.dataset.pluginDrawRect;
 				switch (rectTarget) {
@@ -380,74 +367,8 @@ const initImage = () => {
 			}
 		};
 
-		// Add event listeners with capture=true to catch events early
-		document.addEventListener('focus', window._globalRectDrawHandler, true);
 		document.addEventListener('click', window._globalRectClickHandler, true);
-	}
+	};
 
-	// Initialize rectangle drawing
 	initRectDraw();
-
-	function drawRectNumber(viewImage, entries, scaleFactor, entryNumber) {
-		if (!viewImage.overlays) {
-			console.error("viewImage.overlays is not available. Cannot draw rectangles.");
-			return;
-		}
-
-		unDraw(viewImage);
-		for(let i = 0; i < entries.length; i++) {
-			if(i !== entryNumber) {
-				continue;
-			}
-			const entry = entries[i];
-			for(let k = 0; k < entry.boxes.length; k++) {
-				const box = entry.boxes[k];
-				const add = box.type === "entry" ? 3 : 1;
-				const rect = new OpenSeadragon.Rect(
-					(box.x/scaleFactor) - add,
-					(box.y/scaleFactor) - add,
-					(box.width/scaleFactor) + (add*2),
-					(box.height/scaleFactor) + (add*2)
-				);
-				viewImage.overlays.drawRect(rect, box.type);
-				viewImage.overlays.drawRect(rect, `${box.type}-border`);
-			}
-		}
-	}
-
-	function drawCurrentSelected() {
-		const activeEntry = document.querySelector('.active-entry');
-		if(!activeEntry?.id) {
-			const firstEntry = document.querySelector('#tocEntry0 input');
-			firstEntry?.focus();
-			return;
-		}
-		const activeEntryId = activeEntry.id.replace('tocEntry', '');
-		drawRectNumber(currentViewImage, entries, scaleFactor, activeEntryId);
-	}
-
-	function findAndMarkRect(entries, pos, scaleFactor) {
-		entries.forEach((entry, entryIndex) => {
-			entry.boxes.forEach((box) => {
-				if(box.type !== "entry") {
-					return;
-				}
-				const rect = new OpenSeadragon.Rect(
-					(box.x/scaleFactor) - 1,
-					(box.y/scaleFactor) - 1,
-					(box.width/scaleFactor) + 2,
-					(box.height/scaleFactor) + 2
-				);
-				if(pos.x > rect.x && pos.x < rect.x + rect.width &&
-					pos.y > rect.y && pos.y < rect.y + rect.height) {
-					const entryElement = document.getElementById(`tocEntry${entryIndex}`);
-					const inputs = entryElement?.querySelectorAll('input');
-					if (inputs && inputs.length > 0) {
-						inputs[inputs.length - 1].focus();
-						inputs[0].focus();
-					}
-				}
-			});
-		});
-	}
 };
