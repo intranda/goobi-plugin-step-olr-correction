@@ -276,7 +276,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											<intranda:formInputTextAjax
 												label="#{msgs.plugin_intranda_step_olr_toc_authors}"
 												field="#{entry.authors}" classLeft="form-label" classRight="form-input" rowClass="form-row"
@@ -285,7 +286,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											<intranda:formInputTextAjax
 												label="#{msgs.plugin_intranda_step_olr_toc_page}"
 												field="#{entry.pageLabel}" classLeft="form-label" classRight="form-input" rowClass="form-row"
@@ -294,7 +296,8 @@
 												displayAsRequired="false" required="false" forceId="false"
 												execute="@this"
 												pt:data-plugin-drawRect="#{idx.index}"
-												onfocus="$('.toc-entry').removeClass('active-entry'); $(this).parent().parent().parent().addClass('active-entry');"/>
+												onfocus="highlightTocEntry(this);"
+												/>
 											</div>
 											<div class="entry-actions">
 												<h:commandLink
@@ -479,15 +482,13 @@
 					<h:commandLink
 						styleClass="btn btn-blank"
 						id="showPicaPreview"
-						action="#{AktuelleSchritteForm.myPlugin.showPicaPreview}">
+						action="#{AktuelleSchritteForm.myPlugin.showPicaPreview}"
+						onclick="console.log('PICA Preview button clicked');">
 						<h:outputText
 							value="#{msgs.plugin_intranda_step_olr_toc_showPicaPreview}" />
-					</h:commandLink>
-					<h:commandLink
-						styleClass="btn btn-blank"
-						id="closePicaPreview"
-						action="#{AktuelleSchritteForm.myPlugin.closePicaPreview}">
-						<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_closePicaPreview}" />
+						<f:ajax render="picaModalForm:picaModalContent" onevent="(event) => {
+							if (event.status === 'success') {showPicaModal();}
+						}" />
 					</h:commandLink>
 					<!-- Save -->
 					<h:commandLink
@@ -505,6 +506,58 @@
 				</section:footer>
 			</h:form>
 		</section:section>
+
+		<!-- PICA Preview Modal -->
+		<div class="modal fade" id="picaPreviewModal" tabindex="-1" role="dialog" aria-labelledby="picaPreviewModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl" role="document">
+				<div class="modal-content">
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title" id="picaPreviewModalLabel">PICA</h5>
+						<button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true" class="fa fa-times"></span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<h:form id="picaModalForm">
+							<h:panelGroup id="picaModalContent" layout="block">
+								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" layout="block"
+									style="max-height: 60vh; overflow-y: auto; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; background-color: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 0.25rem;">
+									<h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview == null}" layout="block"
+									styleClass="alert alert-warning">
+									<h:outputText value="No PICA preview available." />
+								</h:panelGroup>
+							</h:panelGroup>
+						</h:form>
+					</div>
+					<div class="modal-footer">
+						<h:form>
+							<h:commandLink
+								styleClass="btn btn-secondary"
+								action="#{AktuelleSchritteForm.myPlugin.closePicaPreview}">
+								#{msgs.close}
+								<f:ajax render="picaModalForm:picaModalContent" onevent="(event) => {if (event.status === 'success') {hidePicaModal();}}" />
+							</h:commandLink>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			function showPicaModal() {
+				let modal = new bootstrap.Modal(document.getElementById('picaPreviewModal'));
+				modal.show();
+			}
+
+			function hidePicaModal() {
+				let modal = bootstrap.Modal.getInstance(document.getElementById('picaPreviewModal'));
+				if (modal) {
+					modal.hide();
+				}
+			}
+		</script>
 	</ui:define>
 
 </ui:composition>

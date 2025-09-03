@@ -69,6 +69,11 @@ public class Image {
         return gson.toJson(this.entryList);
     }
 
+    @SuppressWarnings("unchecked")
+    public void setEntriesAsJSON(String json) {
+        entryList = gson.fromJson(json, List.class);
+    }
+
     private void initGson() {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(String.class, new EscapeStringSerializer());
@@ -95,7 +100,7 @@ public class Image {
     }
 
     public void createEntry() {
-        entryList.add(new Entry("", "", "", "", new ArrayList<Box>(), false));
+        entryList.add(new Entry("", "", "", "", new ArrayList<>(), false));
     }
 
     public void removeEntry() {

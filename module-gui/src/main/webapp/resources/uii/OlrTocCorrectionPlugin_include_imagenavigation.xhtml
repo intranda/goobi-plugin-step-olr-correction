@@ -14,7 +14,6 @@
 			<h:commandLink
 				styleClass="btn btn-blank"
 				title="#{msgs.firstImage}"
-				onclick="preventDoubleSubmit(this);"
 				pt:data-bs-toggle="tooltip">
 				<span
 					aria-hidden="true"
@@ -24,8 +23,7 @@
 			</h:commandLink>
 
 			<h:commandLink
-				styleClass="btn btn-primary"
-				onclick="preventDoubleSubmit(this);">
+				styleClass="btn btn-primary">
 				<span
 					aria-hidden="true"
 					class="fa fa-angle-left" />
@@ -52,8 +50,7 @@
 				<h:commandButton action="#{NavigationForm.Reload}" value="go" style="display:none" />
 			</div>
 			<h:commandLink
-				styleClass="btn btn-primary"
-				onclick="preventDoubleSubmit(this);">
+				styleClass="btn btn-primary">
 				<span>
 					<h:outputText value="#{msgs.lw_nextImage} " />
 				</span>
@@ -67,7 +64,6 @@
 			<h:commandLink
 				styleClass="btn btn-blank"
 				title="#{msgs.lastImage}"
-				onclick="preventDoubleSubmit(this);"
 				pt:data-bs-toggle="tooltip">
 				<span
 					aria-hidden="true"
@@ -89,7 +85,7 @@
 				<f:setPropertyActionListener
 					value="#{NavigationForm.uiStatus.olr_showAllEntries eq 'on'?'':'on'}"
 					target="#{NavigationForm.uiStatus.olr_showAllEntries}" />
-				<f:ajax execute="@this" render="@this"/>
+				<f:ajax execute="@this" render="@form"/>
 			</h:commandLink>
 
 			<h:commandLink
