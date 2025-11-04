@@ -3,6 +3,10 @@ title: Korrektur von Inhaltverzeichnissen nach einer OLR
 identifier: plugin_intranda_step_olr-correction
 description: Step-Plugin für die Korrektur von erkannten Inhaltsverzeichnissen und die Generierung von PICA-Datensätzen
 published: true
+keywords:
+    - Goobi workflow
+    - Plugin
+    - Step Plugin
 ---
 
 ## Einführung
