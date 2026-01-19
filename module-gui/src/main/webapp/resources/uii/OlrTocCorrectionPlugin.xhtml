@@ -69,23 +69,18 @@
 			}
 
 			.title {
-				opacity: 0.2;
+				opacity: 0.1;
 				background-color: #{AktuelleSchritteForm.myPlugin.colors['title']};
 			}
 
 			.author {
-				opacity: 0.2;
+				opacity: 0.1;
 				background-color: #{AktuelleSchritteForm.myPlugin.colors['author']};
 			}
 
 			.institution {
-				opacity: 0.2;
+				opacity: 0.1;
 				background-color: #{AktuelleSchritteForm.myPlugin.colors['institution']};
-			}
-
-			.entry {
-				opacity: 0.2;
-				background-color: #{AktuelleSchritteForm.myPlugin.colors['entry']};
 			}
 
 			.pagenum-border {
@@ -209,7 +204,7 @@
 		<script type="text/javascript"
 			src="#{HelperForm.applicationWebsiteUrl}/uii/plugins/step/#{AktuelleSchritteForm.myPlugin.title}/javascript/tocCorrection.js"></script>
 
-		<section:section type="neutral">
+		<section:section type="neutral" id="tocCorrection">
 			<section:header
 				icon="puzzle-piece"
 				title="#{msgs.plugin}: #{msgs[('plugin_').concat(AktuelleSchritteForm.myPlugin.title)]}">
@@ -251,8 +246,8 @@
 									<h:commandLink
 										id="pasteButton"
 										action="#{AktuelleSchritteForm.myPlugin.moveEntry(0)}"
-										styleClass="dropArea">
-										<f:ajax render=":qaform:entrylist" />
+										styleClass="btn dropArea">
+										<f:ajax render=":tocCorrection:qaform:entrylist" />
 										<span
 											aria-hidden="true"
 											class="fa fa-paste" />
@@ -264,7 +259,7 @@
 									value="#{AktuelleSchritteForm.myPlugin.tih.image.entryList}"
 									var="entry"
 									varStatus="idx">
-									<div class="field-set border">
+									<fieldset class="field-set border">
 										<div
 											class="field-set-content toc-entry #{entry.moving ? 'moving' : ''}"
 											id="tocEntry#{idx.index}">
@@ -317,7 +312,7 @@
 													<f:setPropertyActionListener
 														value="#{entry}"
 														target="#{AktuelleSchritteForm.myPlugin.tih.image.currentEntry}"/>
-													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+													<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
 												</h:commandLink>
 												<br />
 												<h:commandLink
@@ -344,7 +339,7 @@
 													<f:setPropertyActionListener
 														value="#{idx.index}"
 														target="#{AktuelleSchritteForm.myPlugin.movingEntryIdx}"/>
-													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+													<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
 												</h:commandLink>
 												<h:commandLink
 													id="abortButton"
@@ -358,10 +353,10 @@
 													<span
 														aria-hidden="true"
 														class="fa fa-ban" />
-													<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+													<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
 												</h:commandLink>
 											</div>
-									</div>
+									</fieldset>
 
 									<h:panelGroup
 										id="dropZero#{idx.index}"
@@ -371,11 +366,11 @@
 										<h:commandLink
 											id="pasteButton"
 											action="#{AktuelleSchritteForm.myPlugin.moveEntry(idx.index+1)}"
-											styleClass="dropArea">
+											styleClass="btn dropArea">
 											<f:passThroughAttribute
 												name="data-entryid"
 												value="#{idx.index}" />
-											<f:ajax render=":qaform:entrylist :qaform:bigimage" />
+											<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
 											<span
 												aria-hidden="true"
 												class="fa fa-paste" />
@@ -411,7 +406,7 @@
 								<span>
 									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
 								</span>
-								<f:ajax render=":qaform:entrylist"/>
+								<f:ajax render=":tocCorrection:qaform:entrylist"/>
 							</h:commandLink>
 							<!-- Create page numbers -->
 							<h:commandLink
@@ -424,7 +419,7 @@
 								<span>
 									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"/>
 								</span>
-								<f:ajax render=":qaform:entrylist"/>
+								<f:ajax render=":tocCorrection:qaform:entrylist"/>
 							</h:commandLink>
 						</button:row>
 					</div>
@@ -520,9 +515,8 @@
 					<div class="modal-body">
 						<h:form id="picaModalForm">
 							<h:panelGroup id="picaModalContent" layout="block">
-								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" layout="block"
-									style="max-height: 60vh; overflow-y: auto; white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; background-color: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 0.25rem;">
-									<h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/>
+								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" layout="block">
+									<pre><code class="microlight"><h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/></code></pre>
 								</h:panelGroup>
 								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview == null}" layout="block"
 									styleClass="alert alert-warning">
