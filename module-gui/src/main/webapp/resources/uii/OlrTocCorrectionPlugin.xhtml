@@ -433,14 +433,16 @@
 							</div>
 							<!-- big image -->
 							<h:panelGroup layout="block" class="d-flex flex-column flex-grow-1" id="imageOrOcr">
-								<h:panelGroup styleClass="div-image flex-grow-1 d-flex flex-column m-3 border" layout="block" rendered="#{not AktuelleSchritteForm.myPlugin.showOCR}">
-									<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
-									<div id="mainImage" class="flex-grow-1"
-										rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
-								</h:panelGroup>
-								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.showOCR}">
-									<h:outputText value="#{AktuelleSchritteForm.myPlugin.tih.image.ocrText}" escape="false"/>
-								</h:panelGroup>
+								<div class="div-image flex-grow-1 d-flex flex-column m-3 border">
+									<h:panelGroup layout="block" rendered="#{not AktuelleSchritteForm.myPlugin.showOCR}">
+										<!--                                     <h:graphicImage class="margin-bottom-regular" value="#{AktuelleSchritteForm.myPlugin.bild}" rendered="#{AktuelleSchritteForm.myPlugin.image != null}" width="100%" /> -->
+										<div id="mainImage" class="flex-grow-1"
+											rendered="#{AktuelleSchritteForm.myPlugin.tih.image != null}" />
+									</h:panelGroup>
+									<h:panelGroup layout="block" styleClass="p-3" rendered="#{AktuelleSchritteForm.myPlugin.showOCR}">
+										<h:outputText value="#{AktuelleSchritteForm.myPlugin.tih.image.ocrText}" escape="false"/>
+									</h:panelGroup>
+								</div>
 							</h:panelGroup>
 							<!-- // big image -->
 

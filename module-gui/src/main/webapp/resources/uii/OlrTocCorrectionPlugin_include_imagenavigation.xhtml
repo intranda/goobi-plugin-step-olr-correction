@@ -99,7 +99,7 @@
 				<f:setPropertyActionListener
 					value="#{not AktuelleSchritteForm.myPlugin.showOCR}"
 					target="#{AktuelleSchritteForm.myPlugin.showOCR}" />
-				<f:ajax execute="@this" render="qaform:imageOrOcr @this"/>
+				<f:ajax execute="@this" render=":tocCorrection:qaform:imageOrOcr @this"/>
 			</h:commandLink>
 
 			<h:outputText styleClass="font-light"
