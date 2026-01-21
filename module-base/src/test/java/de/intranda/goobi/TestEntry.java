@@ -158,4 +158,22 @@ public class TestEntry {
         assertEquals("N., T. A.", authors.get(2).getPicaName());
     }
 
+    @Test
+    public void TestAuthorAbbreviationNoWhitespace() {
+        Entry entry = new Entry("", "M.F., F.A., T.A.N.", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("M. F.", authors.get(0).getFullName());
+        assertEquals("F. A.", authors.get(1).getFullName());
+        assertEquals("T. A. N.", authors.get(2).getFullName());
+    }
+
+    @Test
+    public void TestAuthorAbbreviationPicaNoWhitespace() {
+        Entry entry = new Entry("", "M.F., F.A., T.A.N.", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("F., M.", authors.get(0).getPicaName());
+        assertEquals("A., F.", authors.get(1).getPicaName());
+        assertEquals("N., T. A.", authors.get(2).getPicaName());
+    }
+
 }
