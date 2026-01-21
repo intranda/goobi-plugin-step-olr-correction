@@ -36,107 +36,126 @@ public class TestEntry {
     public void TestAuthorSplitSemicolon() {
         Entry entry = new Entry("", "Maik Folger; Frank Alkatiri; Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Maik Folger").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("Frank Alkatiri").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("Tom Albert Nguyen").getFullName(), authors.get(2).getFullName());
+        assertEquals("Maik Folger", authors.get(0).getFullName());
+        assertEquals("Frank Alkatiri", authors.get(1).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitSemicolonPica() {
         Entry entry = new Entry("", "Maik Folger; Frank Alkatiri; Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, Maik").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, Frank").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, Tom Albert").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, Maik", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, Frank", authors.get(1).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(2).getPicaName());
     }
 
     @Test
     public void TestAuthorSplitSemicolonColon() {
         Entry entry = new Entry("", "Folger, M.;Alkatiri, F.;Nguyen, T.A.", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, M.").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("Alkatiri, F.").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("Nguyen, T.A.").getFullName(), authors.get(2).getFullName());
+        assertEquals("Folger, M.", authors.get(0).getFullName());
+        assertEquals("Alkatiri, F.", authors.get(1).getFullName());
+        assertEquals("Nguyen, T. A.", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitSemicolonColonPica() {
         Entry entry = new Entry("", "Folger, M.;Alkatiri, F.;Nguyen, T.A.", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, M.").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, F.").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, T.A.").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, M.", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, F.", authors.get(1).getPicaName());
+        assertEquals("Nguyen, T. A.", authors.get(2).getPicaName());
     }
 
     @Test
     public void TestAuthorSplitColon() {
         Entry entry = new Entry("", "Maik Folger, Frank Alkatiri, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Maik Folger").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("Frank Alkatiri").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("Tom Albert Nguyen").getFullName(), authors.get(2).getFullName());
+        assertEquals("Maik Folger", authors.get(0).getFullName());
+        assertEquals("Frank Alkatiri", authors.get(1).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitColonPica() {
         Entry entry = new Entry("", "Maik Folger, Frank Alkatiri, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, Maik").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, Frank").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, Tom Albert").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, Maik", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, Frank", authors.get(1).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(2).getPicaName());
     }
 
     @Test
     public void TestAuthorSplitAnd() {
         Entry entry = new Entry("", "Maik Folger and Frank Alkatiri and Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Maik Folger").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("Frank Alkatiri").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("Tom Albert Nguyen").getFullName(), authors.get(2).getFullName());
+        assertEquals("Maik Folger", authors.get(0).getFullName());
+        assertEquals("Frank Alkatiri", authors.get(1).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitAndPica() {
         Entry entry = new Entry("", "Maik Folger and Frank Alkatiri and Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, Maik").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, Frank").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, Tom Albert").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, Maik", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, Frank", authors.get(1).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(2).getPicaName());
     }
 
     @Test
     public void TestAuthorSplitAndColon() {
         Entry entry = new Entry("", "Folger, M and Alkatiri, F and Nguyen T.A.", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, M").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("Alkatiri, F").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("Nguyen T.A.").getFullName(), authors.get(2).getFullName());
+        assertEquals("Folger, M", authors.get(0).getFullName());
+        assertEquals("Alkatiri, F", authors.get(1).getFullName());
+        assertEquals("Nguyen T. A.", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitAndColonPica() {
         Entry entry = new Entry("", "Folger, M and Alkatiri, F and Nguyen T.A.", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, M").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, F").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, T.A.").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, M", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, F", authors.get(1).getPicaName());
+        assertEquals("Nguyen, T. A.", authors.get(2).getPicaName());
     }
 
     @Test
     public void TestAuthorSplitComma() {
         Entry entry = new Entry("", "M. Folger, F. Alkatiri, T.A. Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("M. Folger").getFullName(), authors.get(0).getFullName());
-        assertEquals(new EntryAuthor("F. Alkatiri").getFullName(), authors.get(1).getFullName());
-        assertEquals(new EntryAuthor("T.A. Nguyen").getFullName(), authors.get(2).getFullName());
+        assertEquals("M. Folger", authors.get(0).getFullName());
+        assertEquals("F. Alkatiri", authors.get(1).getFullName());
+        assertEquals("T. A. Nguyen", authors.get(2).getFullName());
     }
 
     @Test
     public void TestAuthorSplitCommaPica() {
         Entry entry = new Entry("", "M. Folger, F. Alkatiri, T.A. Nguyen", "", "", new ArrayList<Box>(), false);
         List<EntryAuthor> authors = entry.getAuthorList();
-        assertEquals(new EntryAuthor("Folger, M.").getFullName(), authors.get(0).getPicaName());
-        assertEquals(new EntryAuthor("Alkatiri, F.").getFullName(), authors.get(1).getPicaName());
-        assertEquals(new EntryAuthor("Nguyen, T.A.").getFullName(), authors.get(2).getPicaName());
+        assertEquals("Folger, M.", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, F.", authors.get(1).getPicaName());
+        assertEquals("Nguyen, T. A.", authors.get(2).getPicaName());
     }
+
+    @Test
+    public void TestAuthorAbbreviation() {
+        Entry entry = new Entry("", "M. F., F. A., T.A. N.", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("M. F.", authors.get(0).getFullName());
+        assertEquals("F. A.", authors.get(1).getFullName());
+        assertEquals("T. A. N.", authors.get(2).getFullName());
+    }
+
+    @Test
+    public void TestAuthorAbbreviationPica() {
+        Entry entry = new Entry("", "M. F., F. A., T.A. N.", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("F., M.", authors.get(0).getPicaName());
+        assertEquals("A., F.", authors.get(1).getPicaName());
+        assertEquals("N., T. A.", authors.get(2).getPicaName());
+    }
+
 }
