@@ -44,17 +44,18 @@ public class EntryAuthor {
             return name;
         }
 
-        // Condition 3: Last word is an initial (e.g. "Nguyen T.A." or "Nguyen T. A.")
-        if (isInitial(parts[parts.length - 1])) {
+        // Condition 3: Last word is an initial but first word is not (e.g. "Nguyen T.A." or "Nguyen T. A.")
+        // If all parts are initials (e.g. "M. F."), treat last as last name (fall through to Condition 4)
+        if (isInitial(parts[parts.length - 1]) && !isInitial(parts[0])) {
             String lastName = parts[0];
-            StringBuilder firstName = new StringBuilder();
+            StringBuilder firstNames = new StringBuilder();
             for (int i = 1; i < parts.length; i++) {
                 if (i > 1) {
-                    firstName.append(" ");
+                    firstNames.append(" ");
                 }
-                firstName.append(parts[i]);
+                firstNames.append(parts[i]);
             }
-            return lastName + ", " + firstName;
+            return lastName + ", " + firstNames;
         }
 
         // Condition 4: Standard - last word is last name (e.g. "M. Folger" or "Maik Folger")
