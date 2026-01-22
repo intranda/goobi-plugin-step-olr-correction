@@ -176,4 +176,23 @@ public class TestEntry {
         assertEquals("N., T. A.", authors.get(2).getPicaName());
     }
 
+    @Test
+    public void TestAuthorMixed() {
+        Entry entry = new Entry("", "M. Folger, F. Alkatiri and T.A. Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("M. Folger", authors.get(0).getFullName());
+        assertEquals("F. Alkatiri", authors.get(1).getFullName());
+        assertEquals("T. A. Nguyen", authors.get(2).getFullName());
+    }
+
+    @Test
+    public void TestAuthorMixedPica() {
+        Entry entry = new Entry("", "M. Folger, F. Alkatiri and T.A. Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Folger, M.", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, F.", authors.get(1).getPicaName());
+        assertEquals("Nguyen, T. A.", authors.get(2).getPicaName());
+    }
+
+
 }

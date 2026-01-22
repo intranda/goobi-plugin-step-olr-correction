@@ -50,25 +50,36 @@ public class Entry {
         return extractAuthors(authors);
     }
 
+    private static final String AUTHOR_SEPARATOR_PATTERN = "\\s+(?i:and|und|u\\.|et|y|e|en|with|mit|avec|&)\\s+";
+
     private List<EntryAuthor> extractAuthors(String authorString) {
         if (authorString == null || authorString.trim().isEmpty()) {
             return Collections.emptyList();
         }
 
         List<EntryAuthor> result = new LinkedList<>();
+
+        if (authorString.matches(".*" + AUTHOR_SEPARATOR_PATTERN + ".*")) {
+            String[] parts = authorString.split(AUTHOR_SEPARATOR_PATTERN);
+            for (String part : parts) {
+                result.addAll(extractAuthors(part.trim()));
+            }
+            return result;
+        }
+
         String[] authorArray;
 
         // Pattern 1: Semicolon-separated (e.g., "Folger, M.;Alkatiri, F.;Nguyen, T.A.")
         if (authorString.contains(";")) {
             authorArray = authorString.split("\\s*;\\s*");
         }
-        // Pattern 2: " and " separated (e.g., "Maik Folger and Frank Alkatiri and Tom Albert Nguyen")
-        else if (authorString.matches(".*\\s+and\\s+.*")) {
-            authorArray = authorString.split("\\s+and\\s+");
-        }
-        // Pattern 3: Comma-separated initials (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
+        // Pattern 2: Comma-separated initials (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
         else if (authorString.matches(".*,\\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.(\\s|$).*")) {
             authorArray = authorString.split("\\s*,\\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.)");
+        }
+        // Pattern 3: Single author in "Lastname, Firstname" format (only one comma)
+        else if (authorString.contains(",") && authorString.indexOf(",") == authorString.lastIndexOf(",")) {
+            authorArray = new String[] { authorString };
         }
         // Pattern 4: Simple comma-separated (e.g., "Folger, Alkatiri, Nguyen")
         else if (authorString.contains(",")) {
