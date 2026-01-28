@@ -60,7 +60,8 @@ public class Entry {
 
         List<EntryAuthor> result = new LinkedList<>();
 
-        if (authorString.matches(".*" + AUTHOR_SEPARATOR_PATTERN + ".*")) {
+        // First, split by word separators (and, und, et, etc.)
+        if (containsWordSeparator(authorString)) {
             String[] parts = authorString.split(AUTHOR_SEPARATOR_PATTERN);
             for (String part : parts) {
                 result.addAll(extractAuthors(part.trim()));
@@ -68,32 +69,7 @@ public class Entry {
             return result;
         }
 
-        String[] authorArray;
-
-        // Pattern 1: Semicolon-separated (e.g., "Folger, M.;Alkatiri, F.;Nguyen, T.A.")
-        if (authorString.contains(";")) {
-            authorArray = authorString.split("\\s*;\\s*");
-        }
-        // Pattern 2: Comma-separated initials - only if ALL parts after comma start with initial
-        // (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
-        else if (authorString.matches(".*,\\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.(\\s|$).*") && allPartsStartWithInitial(authorString)) {
-            authorArray = authorString.split("\\s*,\\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.)");
-        }
-        // Pattern 3: Single author in "Lastname, Firstname" format (only one comma)
-        // The part after the comma must look like a first name (one or more words, no comma),
-        // not like another full name "Firstname Lastname"
-        else if (authorString.contains(",") && authorString.indexOf(",") == authorString.lastIndexOf(",")
-                && looksLikeLastnameFirstname(authorString)) {
-            authorArray = new String[] { authorString };
-        }
-        // Pattern 4: Simple comma-separated (e.g., "Folger, Alkatiri, Nguyen" or "Maik Folger, Tom Nguyen")
-        else if (authorString.contains(",")) {
-            authorArray = authorString.split("\\s*,\\s*");
-        }
-        // Fallback: Single Author
-        else {
-            authorArray = new String[] { authorString };
-        }
+        String[] authorArray = splitByPattern(authorString);
 
         for (String author : authorArray) {
             String trimmed = author.trim();
@@ -103,6 +79,63 @@ public class Entry {
         }
 
         return result;
+    }
+
+    private boolean containsWordSeparator(String authorString) {
+        return authorString.matches(".*" + AUTHOR_SEPARATOR_PATTERN + ".*");
+    }
+
+    /**
+     * Determines the appropriate splitting pattern and splits the author string accordingly.
+     */
+    private String[] splitByPattern(String authorString) {
+        if (isSemicolonSeparated(authorString)) {
+            return authorString.split("\\s*;\\s*");
+        }
+        if (isCommaSeparatedWithInitials(authorString)) {
+            return authorString.split("\\s*,\\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.)");
+        }
+        if (isSingleAuthorLastnameFirstname(authorString)) {
+            return new String[] { authorString };
+        }
+        if (isCommaSeparated(authorString)) {
+            return authorString.split("\\s*,\\s*");
+        }
+        // Fallback: Single author
+        return new String[] { authorString };
+    }
+
+    /**
+     * Pattern 1: Semicolon-separated authors (e.g., "Folger, M.;Alkatiri, F.;Nguyen, T.A.")
+     */
+    private boolean isSemicolonSeparated(String authorString) {
+        return authorString.contains(";");
+    }
+
+    /**
+     * Pattern 2: Comma-separated with initials - only if ALL parts after comma start with initial
+     * (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
+     */
+    private boolean isCommaSeparatedWithInitials(String authorString) {
+        return authorString.matches(".*,\\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.(\\s|$).*")
+                && allPartsStartWithInitial(authorString);
+    }
+
+    /**
+     * Pattern 3: Single author in "Lastname, Firstname" format (exactly one comma,
+     * and the part after the comma looks like a first name, not a full name)
+     */
+    private boolean isSingleAuthorLastnameFirstname(String authorString) {
+        return authorString.contains(",")
+                && authorString.indexOf(",") == authorString.lastIndexOf(",")
+                && looksLikeLastnameFirstname(authorString);
+    }
+
+    /**
+     * Pattern 4: Simple comma-separated authors (e.g., "Folger, Alkatiri, Nguyen" or "Maik Folger, Tom Nguyen")
+     */
+    private boolean isCommaSeparated(String authorString) {
+        return authorString.contains(",");
     }
 
     public String getEntryId() {
@@ -138,7 +171,7 @@ public class Entry {
         String afterComma = authorString.substring(commaIndex + 1).trim();
 
         // If the part after the comma contains multiple words where at least two start
-        // with uppercase letters (like "Tom Albert Nguyen" or "Aditya Veer Gautam"),
+        // with uppercase letters (like "Tom Albert Nguyen"),
         // it's likely another full author name, not a first name
         String[] words = afterComma.split("\\s+");
         if (words.length >= 2) {
