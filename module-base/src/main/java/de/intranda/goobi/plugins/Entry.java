@@ -50,7 +50,8 @@ public class Entry {
         return extractAuthors(authors);
     }
 
-    private static final String AUTHOR_SEPARATOR_PATTERN = "\\s+(?i:and|und|u\\.|et|y|e|en|with|mit|avec|&)\\s+";
+    // Note: "u." (German abbreviation for "und") is case-sensitive to avoid matching author initials like "U. Pal"
+    private static final String AUTHOR_SEPARATOR_PATTERN = "\\s+(?:(?i:and|und|et|y|e|en|with|mit|avec|&)|u\\.)\\s+";
 
     private List<EntryAuthor> extractAuthors(String authorString) {
         if (authorString == null || authorString.trim().isEmpty()) {
