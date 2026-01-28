@@ -80,10 +80,13 @@ public class Entry {
             authorArray = authorString.split("\\s*,\\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.)");
         }
         // Pattern 3: Single author in "Lastname, Firstname" format (only one comma)
-        else if (authorString.contains(",") && authorString.indexOf(",") == authorString.lastIndexOf(",")) {
+        // The part after the comma must look like a first name (one or more words, no comma),
+        // not like another full name "Firstname Lastname"
+        else if (authorString.contains(",") && authorString.indexOf(",") == authorString.lastIndexOf(",")
+                && looksLikeLastnameFirstname(authorString)) {
             authorArray = new String[] { authorString };
         }
-        // Pattern 4: Simple comma-separated (e.g., "Folger, Alkatiri, Nguyen")
+        // Pattern 4: Simple comma-separated (e.g., "Folger, Alkatiri, Nguyen" or "Maik Folger, Tom Nguyen")
         else if (authorString.contains(",")) {
             authorArray = authorString.split("\\s*,\\s*");
         }
@@ -118,6 +121,35 @@ public class Entry {
         String[] parts = authorString.split("\\s*,\\s*");
         for (int i = 1; i < parts.length; i++) {
             if (!parts[i].matches("^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\..*")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks if a string with exactly one comma looks like "Lastname, Firstname" format.
+     * Returns false if the part after the comma looks like a full name (e.g., "Firstname Lastname"),
+     * which would indicate comma-separated authors.
+     * Returns true if the part after the comma looks like a first name only.
+     */
+    private boolean looksLikeLastnameFirstname(String authorString) {
+        int commaIndex = authorString.indexOf(",");
+        String afterComma = authorString.substring(commaIndex + 1).trim();
+
+        // If the part after the comma contains multiple words where at least two start
+        // with uppercase letters (like "Tom Albert Nguyen" or "Aditya Veer Gautam"),
+        // it's likely another full author name, not a first name
+        String[] words = afterComma.split("\\s+");
+        if (words.length >= 2) {
+            int uppercaseWordCount = 0;
+            for (String word : words) {
+                if (!word.isEmpty() && Character.isUpperCase(word.charAt(0)) && !word.matches("^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.$")) {
+                    uppercaseWordCount++;
+                }
+            }
+            // If there are 2+ uppercase words that aren't initials, this looks like a full name
+            if (uppercaseWordCount >= 2) {
                 return false;
             }
         }

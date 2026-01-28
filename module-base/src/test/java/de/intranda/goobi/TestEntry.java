@@ -212,4 +212,24 @@ public class TestEntry {
         assertEquals("Nguyen, Tom Albert", authors.get(2).getPicaName());
     }
 
+    @Test
+    public void TestAuthorShortList() {
+        Entry entry = new Entry("", "Maik Folger, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Maik Folger", authors.get(0).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(1).getFullName());
+        assertEquals("Folger, Maik", authors.get(0).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(1).getPicaName());
+    }
+
+    @Test
+    public void TestAuthorShortList2() {
+        Entry entry = new Entry("", "Tom Albert Nguyen, Maik Folger", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Tom Albert Nguyen", authors.get(0).getFullName());
+        assertEquals("Maik Folger", authors.get(1).getFullName());
+        assertEquals("Nguyen, Tom Albert", authors.get(0).getPicaName());
+        assertEquals("Folger, Maik", authors.get(1).getPicaName());
+    }
+
 }
