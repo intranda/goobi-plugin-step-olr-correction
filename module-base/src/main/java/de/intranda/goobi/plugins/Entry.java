@@ -74,8 +74,9 @@ public class Entry {
         if (authorString.contains(";")) {
             authorArray = authorString.split("\\s*;\\s*");
         }
-        // Pattern 2: Comma-separated initials (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
-        else if (authorString.matches(".*,\\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.(\\s|$).*")) {
+        // Pattern 2: Comma-separated initials - only if ALL parts after comma start with initial
+        // (e.g., "M. Folger, F. Alkatiri, T.A. Nguyen")
+        else if (authorString.matches(".*,\\s+[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.(\\s|$).*") && allPartsStartWithInitial(authorString)) {
             authorArray = authorString.split("\\s*,\\s*(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\.)");
         }
         // Pattern 3: Single author in "Lastname, Firstname" format (only one comma)
@@ -107,5 +108,19 @@ public class Entry {
             id.append("-").append(boxes.get(0).getX()).append("-").append(boxes.get(0).getY());
         }
         return id.toString();
+    }
+
+    /**
+     * Checks if all parts after commas start with an initial (e.g., "M." or "T.A.").
+     * This is used to determine if Pattern 2 (comma-separated initials) should be applied.
+     */
+    private boolean allPartsStartWithInitial(String authorString) {
+        String[] parts = authorString.split("\\s*,\\s*");
+        for (int i = 1; i < parts.length; i++) {
+            if (!parts[i].matches("^[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]\\..*")) {
+                return false;
+            }
+        }
+        return true;
     }
 }
