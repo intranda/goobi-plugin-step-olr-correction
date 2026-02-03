@@ -58,6 +58,8 @@ public class Entry {
             return Collections.emptyList();
         }
 
+        authorString = cleanUpAuthorString(authorString);
+
         List<EntryAuthor> result = new LinkedList<>();
 
         // First, split by word separators (and, und, et, etc.)
@@ -79,6 +81,16 @@ public class Entry {
         }
 
         return result;
+    }
+
+    /**
+     * Removes troublesome whitespaces from the author string.
+     */
+    private String cleanUpAuthorString(String authorString) {
+        if (authorString == null) {
+            return null;
+        }
+        return authorString.replace("\u00A0", " ").trim();
     }
 
     private boolean containsWordSeparator(String authorString) {

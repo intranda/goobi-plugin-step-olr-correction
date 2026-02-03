@@ -232,4 +232,19 @@ public class TestEntry {
         assertEquals("Folger, Maik", authors.get(1).getPicaName());
     }
 
+    /**
+     * Tests for special characters AND non breaking whitespaces
+     */
+    @Test
+    public void TestAuthorsSpecChars() {
+        Entry entry = new Entry("", "D. Nešpor, T. Kříž, R. Kubásek", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("D. Nešpor", authors.get(0).getFullName());
+        assertEquals("T. Kříž", authors.get(1).getFullName());
+        assertEquals("R. Kubásek", authors.get(2).getFullName());
+        assertEquals("Nešpor, D.", authors.get(0).getPicaName());
+        assertEquals("Kříž, T.", authors.get(1).getPicaName());
+        assertEquals("Kubásek, R.", authors.get(2).getPicaName());
+    }
+
 }
