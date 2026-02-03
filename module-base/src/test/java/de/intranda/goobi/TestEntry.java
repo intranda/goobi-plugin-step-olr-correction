@@ -194,5 +194,57 @@ public class TestEntry {
         assertEquals("Nguyen, T. A.", authors.get(2).getPicaName());
     }
 
+    @Test
+    public void TestAuthorMixedInitials() {
+        Entry entry = new Entry("", "Maik M. Folger, F. Frank Alkatiri, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Maik M. Folger", authors.get(0).getFullName());
+        assertEquals("F. Frank Alkatiri", authors.get(1).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(2).getFullName());
+    }
+
+    @Test
+    public void TestAuthorMixedInitialsPica() {
+        Entry entry = new Entry("", "Maik M. Folger, F. Frank Alkatiri, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Folger, Maik M.", authors.get(0).getPicaName());
+        assertEquals("Alkatiri, F. Frank", authors.get(1).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(2).getPicaName());
+    }
+
+    @Test
+    public void TestAuthorShortList() {
+        Entry entry = new Entry("", "Maik Folger, Tom Albert Nguyen", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Maik Folger", authors.get(0).getFullName());
+        assertEquals("Tom Albert Nguyen", authors.get(1).getFullName());
+        assertEquals("Folger, Maik", authors.get(0).getPicaName());
+        assertEquals("Nguyen, Tom Albert", authors.get(1).getPicaName());
+    }
+
+    @Test
+    public void TestAuthorShortList2() {
+        Entry entry = new Entry("", "Tom Albert Nguyen, Maik Folger", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("Tom Albert Nguyen", authors.get(0).getFullName());
+        assertEquals("Maik Folger", authors.get(1).getFullName());
+        assertEquals("Nguyen, Tom Albert", authors.get(0).getPicaName());
+        assertEquals("Folger, Maik", authors.get(1).getPicaName());
+    }
+
+    /**
+     * Tests for special characters AND non breaking whitespaces
+     */
+    @Test
+    public void TestAuthorsSpecChars() {
+        Entry entry = new Entry("", "D. Nešpor, T. Kříž, R. Kubásek", "", "", new ArrayList<Box>(), false);
+        List<EntryAuthor> authors = entry.getAuthorList();
+        assertEquals("D. Nešpor", authors.get(0).getFullName());
+        assertEquals("T. Kříž", authors.get(1).getFullName());
+        assertEquals("R. Kubásek", authors.get(2).getFullName());
+        assertEquals("Nešpor, D.", authors.get(0).getPicaName());
+        assertEquals("Kříž, T.", authors.get(1).getPicaName());
+        assertEquals("Kubásek, R.", authors.get(2).getPicaName());
+    }
 
 }
