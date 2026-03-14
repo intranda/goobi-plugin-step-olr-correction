@@ -25,7 +25,7 @@ The file `plugin_intranda_step_olr-correction.jar` contains the program logic, a
 
 The file `plugin_intranda_step_olr-correction.xml` is the config file, and should be copied to the folder `/opt/digiverso/goobi/config/`.
 
-fter the installation of the plugin, it can be selected in a work step.
+After the installation of the plugin, it can be selected in a work step.
 
 ![Configuration of the work step for using the plugin](screen1_en.png)
 
