@@ -9,12 +9,6 @@
          <!-- Are the files originally digital rather than scanned? -->
         <bornDigital>true</bornDigital>      
         
-        <!-- which image sizes to use for the big image -->
-        <imagesize>800</imagesize>
-        <imagesize>3000</imagesize>
-        <!-- which image format to generate -->
-        <imageFormat>jpg</imageFormat>
-        
         <!-- colors for different groups -->
         <class>
             <type>pagenum</type>

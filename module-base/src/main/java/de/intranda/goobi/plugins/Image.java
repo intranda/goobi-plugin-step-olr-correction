@@ -42,7 +42,6 @@ public class Image {
     private int order;
     //    private String thumbnailUrl;
     //    private String largeThumbnailUrl;
-    private List<ImageLevel> imageLevels = new ArrayList<>();
     private String tooltip;
     private Dimension size = null;
     private String tempName;
@@ -86,13 +85,6 @@ public class Image {
         } else {
             return imageName;
         }
-    }
-
-    public void addImageLevel(String imageUrl, int size) {
-        double scale = size / (double) (Math.max(getSize().height, getSize().width));
-        Dimension dim = new Dimension((int) (getSize().width * scale), (int) (getSize().height * scale));
-        ImageLevel layer = new ImageLevel(imageUrl, dim);
-        imageLevels.add(layer);
     }
 
     public void addEntry(Entry entry) {

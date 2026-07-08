@@ -30,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -100,14 +99,6 @@ public class OlrCorrectionPlugin implements IStepPlugin {
         picaPreview = null;
         this.returnPath = returnPath;
         SubnodeConfiguration myconfig = ConfigPlugins.getProjectAndStepConfig(PLUGIN_NAME, step);
-
-        tih.setImageFormat(myconfig.getString("imageFormat", "jpg"));
-        List<String> imageSizes = Arrays.asList(myconfig.getStringArray("imagesize"));
-        if (imageSizes == null || imageSizes.isEmpty()) {
-            imageSizes = new ArrayList<>();
-            imageSizes.add("600");
-        }
-        tih.setImageSizes(imageSizes);
 
         this.step = step;
         try {

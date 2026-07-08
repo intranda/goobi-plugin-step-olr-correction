@@ -19,22 +19,13 @@
 
 package de.intranda.goobi.plugins;
 
-import java.awt.Dimension;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.goobi.beans.Process;
 
-import de.sub.goobi.helper.FacesContextHelper;
-import de.unigoettingen.sub.commons.cache.ContentServerCacheManager;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ContentLibImageException;
-import de.unigoettingen.sub.commons.contentlib.servlet.controller.GetImageDimensionAction;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -42,12 +33,6 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class TocImageHelper {
 
-    @Getter
-    @Setter
-    private List<String> imageSizes;
-    @Getter
-    @Setter
-    private String imageFormat = "jpg";
     @Getter
     @Setter
     private String imageFolderName = "";
@@ -62,63 +47,6 @@ public class TocImageHelper {
     private List<Image> allImages = new ArrayList<>();
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
     private int pageNo = 0;
-
-    public void createImage(Image currentImage) {
-
-        if (currentImage.getSize() == null) {
-            currentImage.setSize(getActualImageSize(currentImage));
-        }
-
-        String contextPath = getContextPath();
-        for (String sizeString : imageSizes) {
-            try {
-                int size = Integer.parseInt(sizeString);
-                String imageUrl = createImageUrl(currentImage, size, imageFormat, contextPath);
-                currentImage.addImageLevel(imageUrl, size);
-            } catch (NullPointerException | NumberFormatException e) {
-                log.error("Cannot build image with size " + sizeString);
-            }
-        }
-        Collections.sort(currentImage.getImageLevels());
-    }
-
-    private String getContextPath() {
-        FacesContext context = FacesContextHelper.getCurrentFacesContext();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return session.getServletContext().getContextPath();
-    }
-
-    private Dimension getActualImageSize(Image image) {
-        Dimension dim;
-        try {
-            String imagePath = "file://" + imageFolderName + image.getImageName();
-            String dimString = new GetImageDimensionAction(ContentServerCacheManager.noCache()).getDimensions(imagePath);
-            int width = Integer.parseInt(dimString.replaceAll("::.*", ""));
-            int height = Integer.parseInt(dimString.replaceAll(".*::", ""));
-            dim = new Dimension(width, height);
-        } catch (NullPointerException | NumberFormatException | ContentLibImageException | URISyntaxException | IOException e) {
-            log.error("Could not retrieve actual image size", e);
-            dim = new Dimension(0, 0);
-        }
-        return dim;
-    }
-
-    private String createImageUrl(Image currentImage, Integer size, String format, String baseUrl) {
-        StringBuilder url = new StringBuilder(baseUrl);
-        url.append("/cs")
-                .append("?action=")
-                .append("image")
-                .append("&format=")
-                .append(format)
-                .append("&sourcepath=")
-                .append("file://"
-                        + imageFolderName + currentImage.getImageName())
-                .append("&width=")
-                .append(size)
-                .append("&height=")
-                .append(size);
-        return url.toString();
-    }
 
     public void setImageMoveTo(String page) {
         try {
@@ -136,26 +64,6 @@ public class TocImageHelper {
 
     public String getImageMoveTo() {
         return this.imageIndex + 1 + "";
-    }
-
-    public int getImageWidth() {
-        if (image == null) {
-            log.error("Must set image before querying image size");
-            return 0;
-        } else if (image.getSize() == null) {
-            createImage(image);
-        }
-        return image.getSize().width;
-    }
-
-    public int getImageHeight() {
-        if (image == null) {
-            log.error("Must set image before querying image size");
-            return 0;
-        } else if (image.getSize() == null) {
-            createImage(image);
-        }
-        return image.getSize().height;
     }
 
     public void setImage(Image image) {
