@@ -121,6 +121,7 @@ public class OlrCorrectionPlugin implements IStepPlugin {
                 imageFolderName = step.getProzess().getImagesTifDirectory(false);
             }
             tih.setImageFolderName(imageFolderName);
+            tih.setProcess(step.getProzess());
             Path xmlPath = Paths.get(step.getProzess().getOcrDirectory(), step.getProzess().getTitel() + "_tocxml");
 
             Path path = Paths.get(imageFolderName);

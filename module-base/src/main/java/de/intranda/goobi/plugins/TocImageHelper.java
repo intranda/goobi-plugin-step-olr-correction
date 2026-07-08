@@ -1,41 +1,36 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
+ *
  * Visit the websites for more information.
  *          - https://goobi.io
  *          - https://www.intranda.com
  *          - https://github.com/intranda/goobi-workflow
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59
  * Temple Place, Suite 330, Boston, MA 02111-1307 USA
- * 
+ *
  */
 
 package de.intranda.goobi.plugins;
 
 import java.awt.Dimension;
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.sub.goobi.config.ConfigurationHelper;
+import org.goobi.beans.Process;
+
 import de.sub.goobi.helper.FacesContextHelper;
 import de.unigoettingen.sub.commons.cache.ContentServerCacheManager;
-import de.unigoettingen.sub.commons.contentlib.exceptions.ContentLibException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ContentLibImageException;
-import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
-import de.unigoettingen.sub.commons.contentlib.imagelib.PngInterpreter;
 import de.unigoettingen.sub.commons.contentlib.servlet.controller.GetImageDimensionAction;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,6 +52,9 @@ public class TocImageHelper {
     @Setter
     private String imageFolderName = "";
     @Getter
+    @Setter
+    private Process process;
+    @Getter
     private int imageIndex = 0;
     @Getter
     private Image image = null;
@@ -64,33 +62,6 @@ public class TocImageHelper {
     private List<Image> allImages = new ArrayList<>();
     private int NUMBER_OF_IMAGES_PER_PAGE = 10;
     private int pageNo = 0;
-
-    public float scaleFile(String inFileName, String outFileName, int size) throws IOException, ContentLibException {
-        ImageManager im = null;
-        PngInterpreter pi = null;
-        FileOutputStream outputFileStream = null;
-        try {
-            im = new ImageManager(new File(inFileName).toURI());
-            Dimension dim = new Dimension();
-            dim.setSize(size, size);
-            float originalHeight = im.getMyInterpreter().getHeight();
-            RenderedImage ri = im.scaleImageByPixel(dim, ImageManager.SCALE_TO_BOX, 0);
-            pi = new PngInterpreter(ri);
-            outputFileStream = new FileOutputStream(outFileName);
-            pi.writeToStream(null, outputFileStream);
-            return originalHeight / size;
-        } finally {
-            if (im != null) {
-                im.close();
-            }
-            if (pi != null) {
-                pi.close();
-            }
-            if (outputFileStream != null) {
-                outputFileStream.close();
-            }
-        }
-    }
 
     public void createImage(Image currentImage) {
 
@@ -189,22 +160,8 @@ public class TocImageHelper {
 
     public void setImage(Image image) {
         this.image = image;
-        FacesContext context = FacesContextHelper.getCurrentFacesContext();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String scaledImageOut = ConfigurationHelper.getTempImagesPathAsCompleteDirectory() + session.getId() + "_" + image.getImageName() + "_large_"
-                + ".png";
-        String baseUrl = getServletPathWithHostAsUrlFromJsfContext();
-        String currentImageUrl = baseUrl + ConfigurationHelper.getTempImagesPath() + session.getId() + "_" + image.getImageName() + "_large_"
-                + ".png";
-        try {
-            if (scaledImageOut != null) {
-                float scale = scaleFile(imageFolderName + "/" + image.getImageName(), scaledImageOut, 1200);
-                image.setScale(scale);
-                image.setImageUrl(currentImageUrl);
-            }
-        } catch (ContentLibException | IOException e) {
-            log.error(e);
-        }
+        image.setImageUrl(de.sub.goobi.metadaten.Image.createIIIFUrl(process, imageFolderName, image.getImageName()));
+        image.setScale(1f);
     }
 
     public void setImageIndex(int imageIndex) {
