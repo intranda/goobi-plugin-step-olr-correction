@@ -9,6 +9,7 @@
 	template="/uii/template/template.html"
 	xmlns:intranda="http://xmlns.jcp.org/jsf/composite/composites"
     xmlns:section="http://goobi.io/section"
+    xmlns:util="http://goobi.io/util"
     xmlns:button="http://goobi.io/button">
 
 	<ui:param name="myPageTitle"
@@ -206,7 +207,7 @@
 
 		<section:section type="neutral" id="tocCorrection">
 			<section:header
-				icon="puzzle-piece"
+				icon="puzzle"
 				title="#{msgs.plugin}: #{msgs[('plugin_').concat(AktuelleSchritteForm.myPlugin.title)]}">
 				<section:header-actions>
 					<h:commandLink
@@ -215,9 +216,7 @@
 						styleClass="btn d-flex align-items-center btn--title-action"
 						title="#{msgs.reload}"
 						pt:data-bs-trigger="tooltip">
-						<span
-							aria-hidden="true"
-							class="fa fa-refresh" />
+						<util:icon icon="refresh" />
 					</h:commandLink>
 				</section:header-actions>
 			</section:header>
@@ -248,9 +247,7 @@
 										action="#{AktuelleSchritteForm.myPlugin.moveEntry(0)}"
 										styleClass="btn dropArea">
 										<f:ajax render=":tocCorrection:qaform:entrylist" />
-										<span
-											aria-hidden="true"
-											class="fa fa-paste" />
+										<util:icon icon="clipboard-plus" />
 									</h:commandLink>
 								</div>
 							</h:panelGroup>
@@ -300,9 +297,7 @@
 													id="deleteButton"
 													action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
 													styleClass="btn">
-													<span
-														aria-hidden="true"
-														class="fa fa-trash-o" />
+													<util:icon icon="trash" />
 													<f:passThroughAttribute
 														name="data-bs-toggle"
 														value="tooltip" />
@@ -321,9 +316,7 @@
 													action="#{AktuelleSchritteForm.myPlugin.tih.image.removeEntry}"
 													styleClass="btn"
 													rendered="#{not AktuelleSchritteForm.myPlugin.inserting}">
-													<span
-														aria-hidden="true"
-														class="fa fa-scissors" />
+													<util:icon icon="cut" />
 													<f:passThroughAttribute
 														name="data-bs-toggle"
 														value="tooltip" />
@@ -350,9 +343,7 @@
 													<f:passThroughAttribute
 														name="data-entryid"
 														value="#{idx.index}" />
-													<span
-														aria-hidden="true"
-														class="fa fa-ban" />
+													<util:icon icon="cancel" />
 													<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
 												</h:commandLink>
 											</div>
@@ -371,9 +362,7 @@
 												name="data-entryid"
 												value="#{idx.index}" />
 											<f:ajax render=":tocCorrection:qaform:entrylist qaform:bigimage" />
-											<span
-												aria-hidden="true"
-												class="fa fa-paste" />
+											<util:icon icon="clipboard-plus" />
 										</h:commandLink>
 									</h:panelGroup>
 								</ui:repeat>
@@ -387,9 +376,7 @@
 								action="#{AktuelleSchritteForm.myPlugin.tih.image.removeAllEntriesOfThisPage}"
 								styleClass="btn btn-hot"
 								onclick="if (!confirm('#{msgs.wirklichAusfuehren}')) return false" >
-								<span
-									aria-hidden="true"
-									class="fa fa-trash-o" />
+								<util:icon icon="trash" />
 								<span>
 									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_deleteAllEntriesOfThisPage}"/>
 								</span>
@@ -400,9 +387,7 @@
 								styleClass="btn btn-primary-400"
 								action="#{AktuelleSchritteForm.myPlugin.tih.image.createEntry}"
 								id="addEntryButton">
-								<span
-									aria-hidden="true"
-									class="fa fa-plus" />
+								<util:icon icon="plus" />
 								<span>
 									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createEntry}"/>
 								</span>
@@ -413,9 +398,7 @@
 								title="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"
 								styleClass="btn btn-blank"
 								action="#{AktuelleSchritteForm.myPlugin.generateEndNumbers}">
-								<span
-									aria-hidden="true"
-									class="fa fa-sort-numeric-asc" />
+								<util:icon icon="sort-ascending-numbers" />
 								<span>
 									<h:outputText value="#{msgs.plugin_intranda_step_olr_toc_createPagenumbers}"/>
 								</span>
@@ -492,9 +475,7 @@
 						styleClass="btn btn-success"
 						id="save"
 						action="#{AktuelleSchritteForm.myPlugin.finish}">
-						<span
-							aria-hidden="true"
-							class="fa fa-save" />
+						<util:icon icon="device-floppy" />
 						<span>
 							<h:outputText
 								value="#{msgs.plugin_intranda_step_olr_toc_saveAndLeave}" />
@@ -511,7 +492,7 @@
 					<div class="modal-header bg-primary text-white">
 						<h5 class="modal-title" id="picaPreviewModalLabel">PICA</h5>
 						<button type="button" class="btn text-white" data-bs-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true" class="fa fa-times"></span>
+							<util:icon icon="x" />
 						</button>
 					</div>
 					<div class="modal-body">
