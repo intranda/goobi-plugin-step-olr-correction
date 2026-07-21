@@ -221,12 +221,10 @@
 				</section:header-actions>
 			</section:header>
 			<section:body padding="true">
-				<h:panelGroup
-					layout="block"
+				<util:alert
 					rendered="#{AktuelleSchritteForm.myPlugin.tih.sizeOfImageList == 0}"
-					styleClass="alert alert-info">
-					<h:outputText value="#{msgs.noImagesFound}" />
-				</h:panelGroup>
+					type="info"
+					message="#{msgs.noImagesFound}" />
 				<h:form
 					id="qaform"
 					styleClass="row"
@@ -501,10 +499,9 @@
 								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview != null}" layout="block">
 									<pre><code class="microlight"><h:outputText value="#{AktuelleSchritteForm.myPlugin.picaPreview}" escape="false"/></code></pre>
 								</h:panelGroup>
-								<h:panelGroup rendered="#{AktuelleSchritteForm.myPlugin.picaPreview == null}" layout="block"
-									styleClass="alert alert-warning">
-									<h:outputText value="No PICA preview available." />
-								</h:panelGroup>
+								<util:alert rendered="#{AktuelleSchritteForm.myPlugin.picaPreview == null}"
+									type="warning"
+									message="No PICA preview available." />
 							</h:panelGroup>
 						</h:form>
 					</div>
