@@ -1,6 +1,9 @@
 # Goobi workflow Plugin: goobi-plugin-step-olr-correction
 
-<img src="https://goobi.io/wp-content/uploads/logo_goobi_plugin.png" align="right" style="margin:0 0 20px 20px;" alt="Plugin for Goobi workflow" width="175" height="109">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://goobi.io/logo_goobi_workflow_dark.png">
+  <img src="https://goobi.io/logo_goobi_workflow.png" align="right" alt="Plugin for Goobi workflow" width="240" height="132" hspace="20" vspace="10">
+</picture>
 
 This Step plugin for Goobi workflow is used by the TIB Hanover to manually refine and correct the results from https://gitea.intranda.com/ocr/olr-toc-distribution. After correction, it can also be used to create the entries into the catalogue.
 
